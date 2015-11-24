@@ -1,10 +1,11 @@
 [package]
 name = "guardhaus"
-version = "0.0.1"
+version = "0.0.2"
 authors = ["Mark Lee"]
 
 [dependencies]
 hyper = "0.6.15"
 rust-crypto = "0.2.34"
+rustc-serialize = "0.3.16"
 unicase = "1.0.0"
 url = "0.2.37"

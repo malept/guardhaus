@@ -2,6 +2,12 @@
 name = "guardhaus"
 version = "0.0.3"
 authors = ["Mark Lee"]
+description = "An HTTP authentication/authorization library."
+documentation = "https://malept.github.io/guardhaus/"
+repository = "https://github.com/malept/guardhaus"
+readme = "README.md"
+keywords = ["http", "hyper", "authentication", "authorization", "digest"]
+license = "MIT"
 
 [dependencies]
 hyper = "0.7.0"

@@ -194,7 +194,7 @@ fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
     }
 }
 
-fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
+pub fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_a1(digest, password) {
         Ok(hash_value(&digest.algorithm, a1))
     } else {
@@ -230,21 +230,29 @@ fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> Strin
     hash_value(algorithm, value)
 }
 
-pub fn generate_digest(digest: &Digest, method: Method, password: String) -> Result<String, Error> {
+pub fn generate_digest_using_password(digest: &Digest, method: Method, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_hashed_a1(digest, password) {
-        let a2 = generate_hashed_a2(digest, method);
-        Ok(generate_kd(&digest.algorithm, a1, format!("{}:{}", digest.nonce, a2)))
+        Ok(generate_digest_using_hashed_a1(digest, method, a1))
     } else {
         Err(Error::Header)
     }
 }
 
-pub fn validate_digest(digest: &Digest, method: Method, password: String) -> bool {
-    if let Ok(hex_digest) = generate_digest(digest, method, password) {
+pub fn generate_digest_using_hashed_a1(digest: &Digest, method: Method, a1: String) -> String {
+    let a2 = generate_hashed_a2(digest, method);
+    generate_kd(&digest.algorithm, a1, format!("{}:{}", digest.nonce, a2))
+}
+
+pub fn validate_digest_using_password(digest: &Digest, method: Method, password: String) -> bool {
+    if let Ok(hex_digest) = generate_digest_using_password(digest, method, password) {
         hex_digest == digest.response
     } else {
         false
     }
+}
+
+pub fn validate_digest_using_hashed_a1(digest: &Digest, method: Method, a1: String) -> bool {
+    generate_digest_using_hashed_a1(digest, method, a1) == digest.response
 }
 
 #[cfg(test)]
@@ -452,7 +460,6 @@ mod test {
     #[test]
     fn test_fmt_scheme() {
         use hyper::header::{Authorization, Headers};
-        use super::{Digest, HashAlgorithm};
 
         let digest = rfc2069_a1_digest_header();
         let mut headers = Headers::new();
@@ -547,7 +554,7 @@ mod test {
     fn test_generate_digest_from_header() {
         use hyper::header::{Authorization, Header};
         use hyper::method::Method;
-        use super::{Digest, generate_digest};
+        use super::{Digest, generate_digest_using_password};
 
         let password = "CircleOfLife".to_string();
         let header: Authorization<Digest> = Header::parse_header(
@@ -558,7 +565,7 @@ mod test {
                 response=\"1949323746fe6a43ef61f9606e7febea\",\
                 opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"".to_vec()][..]).unwrap();
 
-        let hex_digest = generate_digest(&header.0, Method::Get, password);
+        let hex_digest = generate_digest_using_password(&header.0, Method::Get, password);
         assert!(hex_digest.is_ok());
         assert_eq!(header.0.response, hex_digest.unwrap())
     }
@@ -567,7 +574,7 @@ mod test {
     fn test_generate_digest_from_passport_http_header() {
         use hyper::header::{Authorization, Header};
         use hyper::method::Method;
-        use super::{Digest, generate_digest};
+        use super::{Digest, generate_digest_using_password};
 
         let password = "secret".to_string();
         let header: Authorization<Digest> = Header::parse_header(
@@ -577,9 +584,21 @@ mod test {
                 uri=\"/\",\
                 response=\"22e3e0a9bbefeb9d229905230cb9ddc8\"".to_vec()][..]).unwrap();
 
-        let hex_digest = generate_digest(&header.0, Method::Head, password);
+        let hex_digest = generate_digest_using_password(&header.0, Method::Head, password);
         assert!(hex_digest.is_ok());
         assert_eq!(header.0.response, hex_digest.unwrap())
+    }
+
+    #[test]
+    fn test_generate_digest_using_hashed_a1() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_hashed_a1, HashAlgorithm};
+
+        let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
+        let expected = "670fd8c2df070c60b045671b8b24ff02".to_string();
+        let digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, hashed_a1);
+        assert_eq!(expected, hex_digest)
     }
 
     fn rfc2069_digest_header(realm: &str) -> super::Digest {

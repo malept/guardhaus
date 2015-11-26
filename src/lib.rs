@@ -20,6 +20,7 @@
 
 extern crate crypto;
 extern crate hyper;
+extern crate rustc_serialize;
 extern crate unicase;
 extern crate url;
 

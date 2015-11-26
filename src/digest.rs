@@ -590,6 +590,18 @@ mod test {
     }
 
     #[test]
+    fn test_generate_digest_using_password_and_md5_session_sans_client_nonce() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_password, HashAlgorithm};
+
+        let password = "Circle Of Life".to_string();
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
+        digest.client_nonce = None;
+        let hex_digest = generate_digest_using_password(&digest, Method::Get, password);
+        assert!(hex_digest.is_err())
+    }
+
+    #[test]
     fn test_generate_digest_using_hashed_a1() {
         use hyper::method::Method;
         use super::{generate_digest_using_hashed_a1, HashAlgorithm};

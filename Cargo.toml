@@ -1,6 +1,6 @@
 [package]
 name = "guardhaus"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Mark Lee"]
 
 [dependencies]

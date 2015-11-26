@@ -46,6 +46,15 @@ impl FromStr for HashAlgorithm {
     }
 }
 
+impl fmt::Display for HashAlgorithm {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            HashAlgorithm::MD5 => write!(f, "{}", "MD5"),
+            HashAlgorithm::MD5Session => write!(f, "{}", "MD5-sess")
+        }
+    }
+}
+
 #[derive(Clone, Debug, PartialEq)]
 pub enum Qop {
     Auth,
@@ -107,8 +116,21 @@ impl Scheme for Digest {
         append_parameter(&mut serialized, "username", &self.username);
         append_parameter(&mut serialized, "realm", &self.realm);
         append_parameter(&mut serialized, "nonce", &self.nonce);
+        if let Some(nonce_count) = self.nonce_count {
+            append_parameter(&mut serialized, "nc", &format!("{:08x}", nonce_count));
+        }
         append_parameter(&mut serialized, "response", &self.response);
         append_parameter(&mut serialized, "uri", &self.request_uri);
+        append_parameter(&mut serialized, "algorithm", &format!("{}", self.algorithm));
+        if let Some(ref qop) = self.qop {
+            append_parameter(&mut serialized, "qop", &format!("{}", qop));
+        }
+        if let Some(ref client_nonce) = self.client_nonce {
+            append_parameter(&mut serialized, "cnonce", client_nonce);
+        }
+        if let Some(ref opaque) = self.opaque {
+            append_parameter(&mut serialized, "opaque", opaque);
+        }
         write!(f, "{}", serialized)
     }
 }
@@ -568,7 +590,25 @@ mod test {
         assert_eq!(headers.to_string(),
                    "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
                     nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
-                    response=\"1949323746fe6a43ef61f9606e7febea\", uri=\"/dir/index.html\"\r\n")
+                    response=\"1949323746fe6a43ef61f9606e7febea\", uri=\"/dir/index.html\", \
+                    algorithm=\"MD5\"\r\n")
+    }
+
+    #[test]
+    fn test_fmt_scheme_for_md5_sess_algorithm() {
+        use hyper::header::{Authorization, Headers};
+        use super::HashAlgorithm;
+
+        let digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
+        let mut headers = Headers::new();
+        headers.set(Authorization(digest));
+
+        assert_eq!(headers.to_string(),
+                   "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
+                    nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", nc=\"00000001\", \
+                    response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
+                    algorithm=\"MD5-sess\", qop=\"auth\", cnonce=\"0a4f113b\", \
+                    opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
     }
 
     #[test]

@@ -4,7 +4,7 @@ version = "0.0.3"
 authors = ["Mark Lee"]
 
 [dependencies]
-hyper = "0.6.15"
+hyper = "0.7.0"
 rust-crypto = "0.2.34"
 rustc-serialize = "0.3.16"
 unicase = "1.0.0"

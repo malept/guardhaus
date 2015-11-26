@@ -46,6 +46,32 @@ impl FromStr for HashAlgorithm {
     }
 }
 
+#[derive(Clone, Debug, PartialEq)]
+pub enum Qop {
+    Auth,
+    AuthInt,
+}
+
+impl FromStr for Qop {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<Qop, Error> {
+        match s {
+            "auth" => Ok(Qop::Auth),
+            "auth-int" => Ok(Qop::AuthInt),
+            _ => Err(Error::Header)
+        }
+    }
+}
+
+impl fmt::Display for Qop {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match *self {
+            Qop::Auth => write!(f, "{}", "auth"),
+            Qop::AuthInt => write!(f, "{}", "auth-int"),
+        }
+    }
+}
+
 #[derive(Clone, PartialEq, Debug)]
 pub struct Digest {
     pub username: String,
@@ -56,7 +82,7 @@ pub struct Digest {
     pub request_uri: String,
     pub algorithm: HashAlgorithm,
     // quality of protection
-    pub qop: Option<String>,
+    pub qop: Option<Qop>,
     pub client_nonce: Option<String>,
     pub opaque: Option<String>,
 }
@@ -117,6 +143,7 @@ impl FromStr for Digest {
         let response: String;
         let request_uri: String;
         let algorithm: HashAlgorithm;
+        let qop: Option<Qop>;
         match unraveled_map_value(&param_map, "username") {
             Some(value) => username = value,
             None => return Err(Error::Header),
@@ -160,6 +187,14 @@ impl FromStr for Digest {
         } else {
             algorithm = HashAlgorithm::MD5;
         }
+        if let Some(value) = unraveled_map_value(&param_map, "qop") {
+            match Qop::from_str(&value[..]) {
+                Ok(converted) => qop = Some(converted),
+                Err(_) => return Err(Error::Header)
+            }
+        } else {
+            qop = None;
+        }
         Ok(Digest {
             username: username,
             realm: realm,
@@ -168,7 +203,7 @@ impl FromStr for Digest {
             response: response,
             request_uri: request_uri,
             algorithm: algorithm,
-            qop: unraveled_map_value(&param_map, "qop"),
+            qop: qop,
             client_nonce: unraveled_map_value(&param_map, "cnonce"),
             opaque: unraveled_map_value(&param_map, "opaque"),
         })
@@ -203,12 +238,15 @@ pub fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, E
 }
 
 // RFC 2617, Section 3.2.2.3
-fn generate_a2(digest: &Digest, method: Method) -> String {
-    format!("{}:{}", method, digest.request_uri)
+fn generate_a2(digest: &Digest, method: Method, entity_body: String) -> String {
+    match digest.qop {
+        Some(Qop::AuthInt) => format!("{}:{}:{}", method, digest.request_uri, hash_value(&digest.algorithm, entity_body)),
+        _ => format!("{}:{}", method, digest.request_uri)
+    }
 }
 
-fn generate_hashed_a2(digest: &Digest, method: Method) -> String {
-    hash_value(&digest.algorithm, generate_a2(digest, method))
+fn generate_hashed_a2(digest: &Digest, method: Method, entity_body: String) -> String {
+    hash_value(&digest.algorithm, generate_a2(digest, method, entity_body))
 }
 
 fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
@@ -230,29 +268,49 @@ fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> Strin
     hash_value(algorithm, value)
 }
 
-pub fn generate_digest_using_password(digest: &Digest, method: Method, password: String) -> Result<String, Error> {
+pub fn generate_digest_using_password(digest: &Digest, method: Method, entity_body: String, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_hashed_a1(digest, password) {
-        Ok(generate_digest_using_hashed_a1(digest, method, a1))
+        generate_digest_using_hashed_a1(digest, method, entity_body, a1)
     } else {
         Err(Error::Header)
     }
 }
 
-pub fn generate_digest_using_hashed_a1(digest: &Digest, method: Method, a1: String) -> String {
-    let a2 = generate_hashed_a2(digest, method);
-    generate_kd(&digest.algorithm, a1, format!("{}:{}", digest.nonce, a2))
+pub fn generate_digest_using_hashed_a1(digest: &Digest, method: Method, entity_body: String, a1: String) -> Result<String, Error> {
+    let a2 = generate_hashed_a2(digest, method, entity_body);
+    let data: String;
+    if let Some(ref qop) = digest.qop {
+        match *qop {
+            Qop::Auth | Qop::AuthInt => {
+                if digest.client_nonce.is_none() || digest.nonce_count.is_none() {
+                    return Err(Error::Header)
+                }
+                let nonce = digest.nonce.clone();
+                let nonce_count = digest.nonce_count.clone().unwrap();
+                let client_nonce = digest.client_nonce.clone().unwrap();
+                data = format!("{}:{:08x}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
+            }
+        }
+    } else {
+        data = format!("{}:{}", digest.nonce, a2);
+    }
+    Ok(generate_kd(&digest.algorithm, a1, data))
 }
 
-pub fn validate_digest_using_password(digest: &Digest, method: Method, password: String) -> bool {
-    if let Ok(hex_digest) = generate_digest_using_password(digest, method, password) {
+pub fn validate_digest_using_password(digest: &Digest, method: Method, entity_body: String, password: String) -> bool {
+    if let Ok(hex_digest) = generate_digest_using_password(digest, method, entity_body, password) {
         hex_digest == digest.response
     } else {
         false
     }
 }
 
-pub fn validate_digest_using_hashed_a1(digest: &Digest, method: Method, a1: String) -> bool {
-    generate_digest_using_hashed_a1(digest, method, a1) == digest.response
+pub fn validate_digest_using_hashed_a1(digest: &Digest, method: Method, entity_body: String, a1: String) -> bool {
+    if let Ok(hex_digest) = generate_digest_using_hashed_a1(digest, method, entity_body, a1) {
+        hex_digest == digest.response
+    } else {
+        false
+    }
 }
 
 #[cfg(test)]
@@ -439,6 +497,48 @@ mod test {
     }
 
     #[test]
+    fn test_parse_header_with_auth_int_qop() {
+        use hyper::header::{Authorization, Header};
+        use super::{HashAlgorithm, Qop};
+
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        digest.qop = Some(Qop::AuthInt);
+        let expected = Authorization(digest);
+        let actual = Header::parse_header(
+            &[b"Digest username=\"Mufasa\",\
+                realm=\"testrealm@host.com\",\
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+                uri=\"/dir/index.html\",\
+                algorithm=\"MD5\",\
+                qop=auth-int,\
+                nc=00000001,\
+                cnonce=\"0a4f113b\",\
+                response=\"6629fae49393a05397450978507c4ef1\",\
+                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                       .to_vec()][..]);
+        assert_eq!(actual.ok(), Some(expected))
+    }
+
+    #[test]
+    fn test_parse_header_with_bad_qop() {
+        use hyper::header::{Authorization, Header};
+        use super::Digest;
+
+        let header: Result<Authorization<Digest>, _> = Header::parse_header(
+            &[b"Digest username=\"Mufasa\",\
+                realm=\"testrealm@host.com\",\
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+                uri=\"/dir/index.html\",\
+                qop=badvalue,\
+                nc=00000001,\
+                cnonce=\"0a4f113b\",\
+                response=\"6629fae49393a05397450978507c4ef1\",\
+                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                       .to_vec()][..]);
+        assert!(header.is_err())
+    }
+
+    #[test]
     fn test_parse_header_with_bad_nonce_count() {
         use hyper::header::{Authorization, Header};
         use super::Digest;
@@ -535,7 +635,7 @@ mod test {
 
         let digest = rfc2069_a2_digest_header();
         let expected = "GET:/dir/index.html";
-        let actual = generate_a2(&digest, Method::Get);
+        let actual = generate_a2(&digest, Method::Get, "".to_string());
         assert_eq!(expected, actual)
     }
 
@@ -546,7 +646,7 @@ mod test {
 
         let digest = rfc2069_a2_digest_header();
         let expected = "39aff3a2bab6126f332b942af96d3366";
-        let actual = generate_hashed_a2(&digest, Method::Get);
+        let actual = generate_hashed_a2(&digest, Method::Get, "".to_string());
         assert_eq!(expected, actual)
     }
 
@@ -565,7 +665,7 @@ mod test {
                 response=\"1949323746fe6a43ef61f9606e7febea\",\
                 opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"".to_vec()][..]).unwrap();
 
-        let hex_digest = generate_digest_using_password(&header.0, Method::Get, password);
+        let hex_digest = generate_digest_using_password(&header.0, Method::Get, "".to_string(), password);
         assert!(hex_digest.is_ok());
         assert_eq!(header.0.response, hex_digest.unwrap())
     }
@@ -584,7 +684,7 @@ mod test {
                 uri=\"/\",\
                 response=\"22e3e0a9bbefeb9d229905230cb9ddc8\"".to_vec()][..]).unwrap();
 
-        let hex_digest = generate_digest_using_password(&header.0, Method::Head, password);
+        let hex_digest = generate_digest_using_password(&header.0, Method::Head, "".to_string(), password);
         assert!(hex_digest.is_ok());
         assert_eq!(header.0.response, hex_digest.unwrap())
     }
@@ -597,7 +697,7 @@ mod test {
         let password = "Circle Of Life".to_string();
         let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
         digest.client_nonce = None;
-        let hex_digest = generate_digest_using_password(&digest, Method::Get, password);
+        let hex_digest = generate_digest_using_password(&digest, Method::Get, "".to_string(), password);
         assert!(hex_digest.is_err())
     }
 
@@ -607,10 +707,64 @@ mod test {
         use super::{generate_digest_using_hashed_a1, HashAlgorithm};
 
         let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
-        let expected = "670fd8c2df070c60b045671b8b24ff02".to_string();
         let digest = rfc2617_digest_header(HashAlgorithm::MD5);
-        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, hashed_a1);
-        assert_eq!(expected, hex_digest)
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, "".to_string(), hashed_a1);
+        assert!(hex_digest.is_ok());
+        assert_eq!(digest.response, hex_digest.unwrap())
+    }
+
+    #[test]
+    fn test_generate_digest_using_hashed_a1_with_auth_int_qop() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+
+        let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
+        let expected = "7b9be1c2def9d4ad657b26ac8bc651a0".to_string();
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        digest.qop = Some(Qop::AuthInt);
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, "foo=bar".to_string(), hashed_a1);
+        assert!(hex_digest.is_ok());
+        assert_eq!(expected, hex_digest.unwrap())
+    }
+
+    #[test]
+    fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_nonce_count() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+
+        let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        digest.qop = Some(Qop::AuthInt);
+        digest.nonce_count = None;
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, "foo=bar".to_string(), hashed_a1);
+        assert!(hex_digest.is_err())
+    }
+
+    #[test]
+    fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+
+        let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        digest.qop = Some(Qop::AuthInt);
+        digest.client_nonce = None;
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, "foo=bar".to_string(), hashed_a1);
+        assert!(hex_digest.is_err())
+    }
+
+    #[test]
+    fn test_generate_digest_using_hashed_a1_sans_qop() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_hashed_a1, HashAlgorithm};
+
+        let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
+        let expected = "670fd8c2df070c60b045671b8b24ff02".to_string();
+        let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
+        digest.qop = None;
+        let hex_digest = generate_digest_using_hashed_a1(&digest, Method::Get, "".to_string(), hashed_a1);
+        assert!(hex_digest.is_ok());
+        assert_eq!(expected, hex_digest.unwrap())
     }
 
     fn rfc2069_digest_header(realm: &str) -> super::Digest {
@@ -646,7 +800,7 @@ mod test {
             response: "6629fae49393a05397450978507c4ef1".to_string(),
             request_uri: "/dir/index.html".to_string(),
             algorithm: algorithm,
-            qop: Some("auth".to_string()),
+            qop: Some(super::Qop::Auth),
             client_nonce: Some("0a4f113b".to_string()),
             opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_string()),
         }

@@ -18,6 +18,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+//! An HTTP Digest Authentication implementation for Hyper.
+
 use hyper::error::Error;
 use hyper::header::parsing::from_comma_delimited;
 use hyper::header::Scheme;

@@ -18,10 +18,12 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+//! Guardhaus is an HTTP authentication/authorization library.
+
 extern crate crypto;
 extern crate hyper;
 extern crate rustc_serialize;
 extern crate unicase;
 extern crate url;
 
-mod digest;
+pub mod digest;

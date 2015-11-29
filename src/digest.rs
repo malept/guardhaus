@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! An HTTP Digest Authentication implementation for Hyper.
+//! An HTTP Digest implementation for [Hyper](../hyper/)'s `Authentication` header.
 
 use hyper::error::Error;
 use hyper::header::parsing::from_comma_delimited;
@@ -31,9 +31,12 @@ use std::str::FromStr;
 use unicase::UniCase;
 use url::percent_encoding::percent_decode;
 
+/// Allowable hash algorithms for the `algorithm` parameter.
 #[derive(Clone, Debug, PartialEq)]
 pub enum HashAlgorithm {
+    /// `MD5`
     MD5,
+    /// `MD5-sess`
     MD5Session,
 }
 
@@ -57,9 +60,12 @@ impl fmt::Display for HashAlgorithm {
     }
 }
 
+/// Allowable values for the `qop`, or "quality of protection" parameter.
 #[derive(Clone, Debug, PartialEq)]
 pub enum Qop {
+    /// `auth`
     Auth,
+    /// `auth-int`
     AuthInt,
 }
 
@@ -83,18 +89,32 @@ impl fmt::Display for Qop {
     }
 }
 
+/// Parameters for the `Authorization` header when using the `Digest` scheme.
+///
+/// The parameters are described in more detail in
+/// [RFC 2617](https://tools.ietf.org/html/rfc2617#section-3.2.2).
+/// Unless otherwise noted, the parameter name maps to the struct variable name.
 #[derive(Clone, PartialEq, Debug)]
 pub struct Digest {
+    /// User name.
     pub username: String,
+    /// Authentication realm.
     pub realm: String,
+    /// Cryptographic nonce.
     pub nonce: String,
-    pub nonce_count: Option<u32>, // nc
+    /// Nonce count, parameter name `nc`. Optional only in RFC2067 mode.
+    pub nonce_count: Option<u32>,
+    /// The hexadecimal digest of the payload as described by the RFCs.
     pub response: String,
+    /// Either the absolute path or URI of the HTTP request, parameter name `uri`.
     pub request_uri: String,
+    /// The hash algorithm to use when generating the `response`.
     pub algorithm: HashAlgorithm,
-    // quality of protection
+    /// Quality of protection. Optional only in RFC2067 mode.
     pub qop: Option<Qop>,
+    /// Cryptographic nonce from the client. Optional only in RFC2067 mode.
     pub client_nonce: Option<String>,
+    /// Optional opaque string.
     pub opaque: Option<String>,
 }
 
@@ -254,6 +274,10 @@ fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
     }
 }
 
+/// Generates a hexadecimal digest from an A1 value.
+///
+/// To see how an A1 value is constructed, see
+/// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
 pub fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_a1(digest, password) {
         Ok(hash_value(&digest.algorithm, a1))
@@ -296,6 +320,7 @@ fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> Strin
     hash_value(algorithm, value)
 }
 
+/// Generates a digest, given an HTTP request and a password.
 pub fn generate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -308,6 +333,10 @@ pub fn generate_digest_using_password(digest: &Digest,
     }
 }
 
+/// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.
+///
+/// This is intended to be used in applications that use the `htdigest` style of secret hash
+/// generation.
 pub fn generate_digest_using_hashed_a1(digest: &Digest,
                                        method: Method,
                                        entity_body: String,
@@ -338,6 +367,7 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
     Ok(generate_kd(&digest.algorithm, a1, data))
 }
 
+/// Validates a `Digest.response`, given an HTTP request and a password.
 pub fn validate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -350,6 +380,10 @@ pub fn validate_digest_using_password(digest: &Digest,
     }
 }
 
+/// Validates a `Digest.response`, given an HTTP request and a hexadecimal digest of an A1 string.
+///
+/// This is intended to be used in applications that use the `htdigest` style of secret hash
+/// generation.
 pub fn validate_digest_using_hashed_a1(digest: &Digest,
                                        method: Method,
                                        entity_body: String,

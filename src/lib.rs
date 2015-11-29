@@ -26,4 +26,5 @@ extern crate rustc_serialize;
 extern crate unicase;
 extern crate url;
 
+#[warn(missing_docs)]
 pub mod digest;

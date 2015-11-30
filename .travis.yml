@@ -26,6 +26,7 @@ script:
       travis-cargo build &&
       travis-cargo test &&
       travis-cargo --only stable doc
+  - cd examples/ghdigest && cargo build
 after_success:
   # upload the documentation from the build with stable (automatically only actually
   # runs on the master branch, not individual PRs)

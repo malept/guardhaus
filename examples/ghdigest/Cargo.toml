@@ -1,0 +1,10 @@
+[package]
+name = "ghdigest"
+version = "0.1.0"
+authors = ["Mark Lee"]
+
+[dependencies]
+
+getopts = "0.2"
+guardhaus = { path = "../.." }
+rpassword = "0.1"

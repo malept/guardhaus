@@ -421,7 +421,7 @@ pub fn validate_digest_using_hashed_a1(digest: &Digest,
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     #[test]
     fn test_scheme() {
         use hyper::header::Scheme;

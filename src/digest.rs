@@ -254,8 +254,24 @@ impl FromStr for Digest {
     }
 }
 
+fn format_simple_a1(username: String, realm: String, password: String) -> String {
+    format!("{}:{}:{}", username, realm, password)
+}
+
 fn generate_simple_a1(digest: &Digest, password: String) -> String {
-    format!("{}:{}:{}", digest.username, digest.realm, password)
+    format_simple_a1(digest.username.clone(), digest.realm.clone(), password)
+}
+
+/// Generates a simple hexadecimal digest from an A1 value and given algorithm.
+///
+/// This is intended to be used in applications that use the `htdigest` style of secret hash
+/// generation.
+///
+/// To see how a simple A1 value is constructed, see
+/// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
+/// This is the definition when the algorithm is "unspecified".
+pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm, username: String, realm: String, password: String) -> String {
+    hash_value(algorithm, format_simple_a1(username, realm, password))
 }
 
 // RFC 2617, Section 3.2.2.2
@@ -278,7 +294,7 @@ fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
 ///
 /// To see how an A1 value is constructed, see
 /// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
-pub fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
+fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_a1(digest, password) {
         Ok(hash_value(&digest.algorithm, a1))
     } else {
@@ -678,6 +694,16 @@ mod test {
                     response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
                     algorithm=\"MD5-sess\", qop=\"auth\", cnonce=\"0a4f113b\", \
                     opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
+    }
+
+    #[test]
+    fn test_generate_simple_hashed_a1() {
+        use super::generate_simple_hashed_a1;
+
+        let digest = rfc2069_a1_digest_header();
+        let expected = "939e7578ed9e3c518a452acee763bce9";
+        let actual = generate_simple_hashed_a1(&digest.algorithm, digest.username, digest.realm, "Circle Of Life".to_string());
+        assert_eq!(expected, actual)
     }
 
     #[test]

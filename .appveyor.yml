@@ -1,13 +1,26 @@
 environment:
   matrix:
     - RUST_VERSION: 1.4.0
+      TARGET: x86_64-pc-windows-msvc
+    - RUST_VERSION: 1.4.0
+      TARGET: x86_64-pc-windows-gnu
+    - RUST_VERSION: 1.4.0
+      TARGET: i686-pc-windows-gnu
     - RUST_VERSION: beta
-    - RUST_VERSION: nightly
-    - TARGET: x86_64-pc-windows-msvc
-    # XXX Only for nightly as of 1.4.0 stable release
-    #- TARGET: i686-pc-windows-msvc
-    - TARGET: i686-pc-windows-gnu
-    - TARGET: x86_64-pc-windows-gnu
+      TARGET: x86_64-pc-windows-msvc
+    - RUST_VERSION: beta
+      TARGET: x86_64-pc-windows-gnu
+    - RUST_VERSION: beta
+      TARGET: i686-pc-windows-gnu
+    allow_failures:
+      - RUST_VERSION: nightly
+        TARGET: x86_64-pc-windows-msvc
+      - RUST_VERSION: nightly
+        TARGET: x86_64-pc-windows-gnu
+      - RUST_VERSION: nightly
+        TARGET: i686-pc-windows-msvc
+      - RUST_VERSION: nightly
+        TARGET: i686-pc-windows-gnu
 install:
   - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUST_VERSION}-${env:TARGET}.exe" -FileName "rust-installer.exe"
   - ps: .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null

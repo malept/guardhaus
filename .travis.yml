@@ -9,6 +9,12 @@ addons:
       - libdw-dev
       - binutils-dev # needed for --verify
 
+cache:
+  apt: true
+  directories:
+    - target/debug/deps
+    - target/debug/build
+
 rust:
   - nightly
   - beta

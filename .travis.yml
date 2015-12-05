@@ -30,18 +30,18 @@ rust:
 before_script:
   - |
       pip install 'travis-cargo<0.2' --user &&
-      export PATH=$HOME/.local/bin:$PATH
+      export PATH=$HOME/Library/Python/2.7/bin:$HOME/.local/bin:$PATH
 
 # the main build
 script:
   - |
       travis-cargo build &&
       travis-cargo test &&
-      travis-cargo --only stable doc
+      (test "$TRAVIS_OS_NAME" = "linux" && travis-cargo --only stable doc)
 after_success:
   # upload the documentation from the build with stable (automatically only actually
   # runs on the master branch, not individual PRs)
-  - travis-cargo --only stable doc-upload
+  - (test "$TRAVIS_OS_NAME" = "linux" && travis-cargo --only stable doc-upload)
   # measure code coverage and upload to coveralls.io (the verify
   # argument mitigates kcov crashes due to malformed debuginfo, at the
   # cost of some speed <https://github.com/huonw/travis-cargo/issues/12>)

@@ -2,6 +2,9 @@ platform:
   - x86
   - x64
 environment:
+  OPENSSL_INCLUDE_DIR: C:\OpenSSL\include
+  OPENSSL_LIB_DIR: C:\OpenSSL\lib
+  OPENSSL_LIBS: ssleay32:libeay32
   matrix:
     - RUST_VERSION: stable
       TARGET: msvc
@@ -29,16 +32,20 @@ install:
         if ($env:platform -eq 'x86') {
           $arch_expanded = "i686-pc-windows-${env:TARGET}";
           $env:ARCH = "x86";
+          $bits = "32";
         } else {
           $arch_expanded = "x86_64-pc-windows-${env:TARGET}";
           $env:ARCH = "amd64";
+          $bits ="64";
         }
         if ($env:TARGET -eq 'gnu') {
-          $env:PATH = "$env:PATH;C:\MinGW\bin";
-          gcc --version
+          $env:PATH = "$env:PATH;C:\msys64\mingw${bits}\bin";
+          gcc --version;
         }
+        Start-FileDownload "http://slproweb.com/download/Win${bits}OpenSSL-1_0_2d.exe" -FileName "openssl-installer.exe"
+        .\openssl-installer.exe /SILENT /VERYSILENT /SP- /DIR="C:\OpenSSL"
         Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUST_VERSION}-${arch_expanded}.exe" -FileName "rust-installer.exe";
-        .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null
+        .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null;
   - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
   - rustc -vV
   - cargo -vV

@@ -14,6 +14,7 @@ cache:
   directories:
     - target/debug/deps
     - target/debug/build
+    - $HOME/.cargo
 
 rust:
   - nightly

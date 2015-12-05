@@ -1,6 +1,6 @@
 [package]
 name = "guardhaus"
-version = "0.0.4"
+version = "0.0.5"
 authors = ["Mark Lee"]
 description = "An HTTP authentication/authorization library."
 documentation = "https://malept.github.io/guardhaus/"
@@ -10,7 +10,9 @@ keywords = ["http", "hyper", "authentication", "authorization", "digest"]
 license = "MIT"
 
 [dependencies]
+getopts = "0.2"
 hyper = "0.7.0"
+rpassword = "0.1"
 rust-crypto = "0.2.34"
 rustc-serialize = "0.3.16"
 unicase = "1.0.0"

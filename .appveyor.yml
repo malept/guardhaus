@@ -1,39 +1,45 @@
+platform:
+  - x86
+  - x64
 environment:
   matrix:
-    - RUST_VERSION: 1.4.0
-      TARGET: x86_64-pc-windows-msvc
-    - RUST_VERSION: 1.4.0
-      TARGET: x86_64-pc-windows-gnu
-    - RUST_VERSION: 1.4.0
-      TARGET: i686-pc-windows-gnu
+    - RUST_VERSION: stable
+      TARGET: msvc
+    - RUST_VERSION: stable
+      TARGET: gnu
     - RUST_VERSION: beta
-      TARGET: x86_64-pc-windows-msvc
+      TARGET: msvc
     - RUST_VERSION: beta
-      TARGET: x86_64-pc-windows-gnu
-    - RUST_VERSION: beta
-      TARGET: i686-pc-windows-gnu
+      TARGET: gnu
     - RUST_VERSION: nightly
-      TARGET: x86_64-pc-windows-msvc
+      TARGET: msvc
     - RUST_VERSION: nightly
-      TARGET: x86_64-pc-windows-gnu
-    - RUST_VERSION: nightly
-      TARGET: i686-pc-windows-msvc
-    - RUST_VERSION: nightly
-      TARGET: i686-pc-windows-gnu
+      TARGET: gnu
 matrix:
   allow_failures:
+    - TARGET: msvc
+      platform: x86
     - RUST_VERSION: nightly
-      TARGET: x86_64-pc-windows-msvc
-    - RUST_VERSION: nightly
-      TARGET: x86_64-pc-windows-gnu
-    - RUST_VERSION: nightly
-      TARGET: i686-pc-windows-msvc
-    - RUST_VERSION: nightly
-      TARGET: i686-pc-windows-gnu
 install:
-  - ps: Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUST_VERSION}-${env:TARGET}.exe" -FileName "rust-installer.exe"
-  - ps: .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null
-  - ps: $env:PATH="$env:PATH;C:\rust\bin"
+  - ps: |
+        $env:PATH = "$env:PATH;C:\rust\bin";
+        if ($env:RUST_VERSION -eq 'stable') {
+          $env:RUST_VERSION = "1.4.0";
+        }
+        if ($env:platform -eq 'x86') {
+          $arch_expanded = "i686-pc-windows-${env:TARGET}";
+          $env:ARCH = "x86";
+        } else {
+          $arch_expanded = "x86_64-pc-windows-${env:TARGET}";
+          $env:ARCH = "amd64";
+        }
+        if ($env:TARGET -eq 'gnu') {
+          $env:PATH = "$env:PATH;C:\MinGW\bin";
+          gcc --version
+        }
+        Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUST_VERSION}-${env:TARGET}.exe" -FileName "rust-installer.exe";
+        .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null
+  - call "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\vcvarsall.bat" %ARCH%
   - rustc -vV
   - cargo -vV
 build: false

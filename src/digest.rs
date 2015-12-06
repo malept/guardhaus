@@ -338,7 +338,8 @@ fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> Strin
 
 /// Generates a digest, given an HTTP request and a password.
 ///
-/// `entity_body` is terminology in the RFC which means the body of the HTTP request.
+/// `entity_body` is defined in
+/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 pub fn generate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -353,7 +354,8 @@ pub fn generate_digest_using_password(digest: &Digest,
 
 /// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.
 ///
-/// `entity_body` is terminology in the RFC which means the body of the HTTP request.
+/// `entity_body` is defined in
+/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 ///
 /// This is intended to be used in applications that use the `htdigest` style of secret hash
 /// generation.
@@ -389,7 +391,8 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
 
 /// Validates a `Digest.response`, given an HTTP request and a password.
 ///
-/// `entity_body` is terminology in the RFC which means the body of the HTTP request.
+/// `entity_body` is defined in
+/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 pub fn validate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -404,7 +407,8 @@ pub fn validate_digest_using_password(digest: &Digest,
 
 /// Validates a `Digest.response`, given an HTTP request and a hexadecimal digest of an A1 string.
 ///
-/// `entity_body` is terminology in the RFC which means the body of the HTTP request.
+/// `entity_body` is defined in
+/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 ///
 /// This is intended to be used in applications that use the `htdigest` style of secret hash
 /// generation.

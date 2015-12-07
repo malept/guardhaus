@@ -39,7 +39,7 @@ install:
           $env:bits ="64";
         }
         if ($env:TARGET -eq 'gnu') {
-          $env:PATH = "$env:PATH;C:\msys64\mingw${bits}\bin";
+          $env:PATH = "$env:PATH;C:\msys64\mingw${env:bits}\bin";
           gcc --version;
         }
   - curl --show-error --location --retry 5 --output openssl-installer.exe https://slproweb.com/download/Win%bits%OpenSSL-1_0_2e.exe

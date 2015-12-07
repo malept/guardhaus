@@ -144,11 +144,17 @@ impl Scheme for Digest {
         append_parameter(&mut serialized, "realm", &self.realm, true);
         append_parameter(&mut serialized, "nonce", &self.nonce, true);
         if let Some(nonce_count) = self.nonce_count {
-            append_parameter(&mut serialized, "nc", &format!("{:08x}", nonce_count), false);
+            append_parameter(&mut serialized,
+                             "nc",
+                             &format!("{:08x}", nonce_count),
+                             false);
         }
         append_parameter(&mut serialized, "response", &self.response, true);
         append_parameter(&mut serialized, "uri", &self.request_uri, true);
-        append_parameter(&mut serialized, "algorithm", &format!("{}", self.algorithm), false);
+        append_parameter(&mut serialized,
+                         "algorithm",
+                         &format!("{}", self.algorithm),
+                         false);
         if let Some(ref qop) = self.qop {
             append_parameter(&mut serialized, "qop", &format!("{}", qop), false);
         }
@@ -275,7 +281,11 @@ fn generate_simple_a1(digest: &Digest, password: String) -> String {
 /// To see how a simple A1 value is constructed, see
 /// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
 /// This is the definition when the algorithm is "unspecified".
-pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm, username: String, realm: String, password: String) -> String {
+pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
+                                 username: String,
+                                 realm: String,
+                                 password: String)
+                                 -> String {
     hash_value(algorithm, format_simple_a1(username, realm, password))
 }
 
@@ -310,10 +320,12 @@ fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error
 // RFC 2617, Section 3.2.2.3
 fn generate_a2(digest: &Digest, method: Method, entity_body: String) -> String {
     match digest.qop {
-        Some(Qop::AuthInt) => format!("{}:{}:{}",
-                                      method,
-                                      digest.request_uri,
-                                      hash_value(&digest.algorithm, entity_body)),
+        Some(Qop::AuthInt) => {
+            format!("{}:{}:{}",
+                    method,
+                    digest.request_uri,
+                    hash_value(&digest.algorithm, entity_body))
+        }
         _ => format!("{}:{}", method, digest.request_uri),
     }
 }
@@ -711,7 +723,10 @@ mod tests {
 
         let digest = rfc2069_a1_digest_header();
         let expected = "939e7578ed9e3c518a452acee763bce9";
-        let actual = generate_simple_hashed_a1(&digest.algorithm, digest.username, digest.realm, "Circle Of Life".to_string());
+        let actual = generate_simple_hashed_a1(&digest.algorithm,
+                                               digest.username,
+                                               digest.realm,
+                                               "Circle Of Life".to_string());
         assert_eq!(expected, actual)
     }
 
@@ -960,7 +975,7 @@ mod tests {
                 qop=auth,\
                 nc=00000001,\
                 cnonce=\"b24ce2519b8cdb10\""
-                                        .to_vec()][..])
+                                       .to_vec()][..])
                 .unwrap();
         let validated = validate_digest_using_password(&header.0,
                                                        Method::Get,
@@ -982,7 +997,8 @@ mod tests {
         use super::{validate_digest_using_hashed_a1, HashAlgorithm};
 
         let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_string();
-        let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
+        let mut digest = rfc7616_digest_header(HashAlgorithm::MD5,
+                                               "8ca523f5e9506fed4657c9700eebdbec");
         let validated = validate_digest_using_hashed_a1(&digest,
                                                         Method::Get,
                                                         "".to_string(),

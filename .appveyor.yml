@@ -42,7 +42,7 @@ install:
           $env:PATH = "$env:PATH;C:\msys64\mingw${bits}\bin";
           gcc --version;
         }
-        Start-FileDownload "https://slproweb.com/download/Win${bits}OpenSSL-1_0_2e.exe" -FileName "openssl-installer.exe"
+        curl --retry 5 --output "openssl-installer.exe" "https://slproweb.com/download/Win${bits}OpenSSL-1_0_2e.exe"
         .\openssl-installer.exe /SILENT /VERYSILENT /SP- /DIR="C:\OpenSSL"
         Start-FileDownload "https://static.rust-lang.org/dist/rust-${env:RUST_VERSION}-${arch_expanded}.exe" -FileName "rust-installer.exe";
         .\rust-installer.exe /VERYSILENT /NORESTART /DIR="C:\rust" | Out-Null;

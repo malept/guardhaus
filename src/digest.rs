@@ -118,14 +118,19 @@ pub struct Digest {
     pub opaque: Option<String>,
 }
 
-fn append_parameter(serialized: &mut String, key: &str, value: &String) {
+fn append_parameter(serialized: &mut String, key: &str, value: &String, quoted: bool) {
     if serialized.len() > 0 {
         serialized.push_str(", ")
     }
     serialized.push_str(key);
-    serialized.push_str("=\"");
+    serialized.push_str("=");
+    if quoted {
+        serialized.push_str("\"");
+    }
     serialized.push_str(value);
-    serialized.push_str("\"")
+    if quoted {
+        serialized.push_str("\"");
+    }
 }
 
 impl Scheme for Digest {
@@ -135,23 +140,23 @@ impl Scheme for Digest {
 
     fn fmt_scheme(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut serialized = String::new();
-        append_parameter(&mut serialized, "username", &self.username);
-        append_parameter(&mut serialized, "realm", &self.realm);
-        append_parameter(&mut serialized, "nonce", &self.nonce);
+        append_parameter(&mut serialized, "username", &self.username, true);
+        append_parameter(&mut serialized, "realm", &self.realm, true);
+        append_parameter(&mut serialized, "nonce", &self.nonce, true);
         if let Some(nonce_count) = self.nonce_count {
-            append_parameter(&mut serialized, "nc", &format!("{:08x}", nonce_count));
+            append_parameter(&mut serialized, "nc", &format!("{:08x}", nonce_count), false);
         }
-        append_parameter(&mut serialized, "response", &self.response);
-        append_parameter(&mut serialized, "uri", &self.request_uri);
-        append_parameter(&mut serialized, "algorithm", &format!("{}", self.algorithm));
+        append_parameter(&mut serialized, "response", &self.response, true);
+        append_parameter(&mut serialized, "uri", &self.request_uri, true);
+        append_parameter(&mut serialized, "algorithm", &format!("{}", self.algorithm), false);
         if let Some(ref qop) = self.qop {
-            append_parameter(&mut serialized, "qop", &format!("{}", qop));
+            append_parameter(&mut serialized, "qop", &format!("{}", qop), false);
         }
         if let Some(ref client_nonce) = self.client_nonce {
-            append_parameter(&mut serialized, "cnonce", client_nonce);
+            append_parameter(&mut serialized, "cnonce", client_nonce, true);
         }
         if let Some(ref opaque) = self.opaque {
-            append_parameter(&mut serialized, "opaque", opaque);
+            append_parameter(&mut serialized, "opaque", opaque, true);
         }
         write!(f, "{}", serialized)
     }
@@ -556,7 +561,7 @@ mod tests {
                 realm=\"testrealm@host.com\",\
                 nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
                 uri=\"/dir/index.html\",\
-                algorithm=\"MD5\",\
+                algorithm=MD5,\
                 qop=auth,\
                 nc=00000001,\
                 cnonce=\"0a4f113b\",\
@@ -577,7 +582,7 @@ mod tests {
                 realm=\"testrealm@host.com\",\
                 nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
                 uri=\"/dir/index.html\",\
-                algorithm=\"MD5-sess\",\
+                algorithm=MD5-sess,\
                 qop=auth,\
                 nc=00000001,\
                 cnonce=\"0a4f113b\",\
@@ -597,7 +602,7 @@ mod tests {
                 realm=\"testrealm@host.com\",\
                 nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
                 uri=\"/dir/index.html\",\
-                algorithm=\"invalid\",\
+                algorithm=invalid,\
                 qop=auth,\
                 nc=00000001,\
                 cnonce=\"0a4f113b\",\
@@ -620,7 +625,7 @@ mod tests {
                 realm=\"testrealm@host.com\",\
                 nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
                 uri=\"/dir/index.html\",\
-                algorithm=\"MD5\",\
+                algorithm=MD5,\
                 qop=auth-int,\
                 nc=00000001,\
                 cnonce=\"0a4f113b\",\
@@ -680,7 +685,7 @@ mod tests {
                    "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
                     nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
                     response=\"1949323746fe6a43ef61f9606e7febea\", uri=\"/dir/index.html\", \
-                    algorithm=\"MD5\"\r\n")
+                    algorithm=MD5\r\n")
     }
 
     #[test]
@@ -694,9 +699,9 @@ mod tests {
 
         assert_eq!(headers.to_string(),
                    "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
-                    nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", nc=\"00000001\", \
+                    nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", nc=00000001, \
                     response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
-                    algorithm=\"MD5-sess\", qop=\"auth\", cnonce=\"0a4f113b\", \
+                    algorithm=MD5-sess, qop=auth, cnonce=\"0a4f113b\", \
                     opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
     }
 

@@ -38,6 +38,10 @@ pub enum HashAlgorithm {
     MD5,
     /// `MD5-sess`
     MD5Session,
+    /// `SHA-256`
+    SHA256,
+    /// `SHA-256-sess`
+    SHA256Session,
 }
 
 impl FromStr for HashAlgorithm {
@@ -46,6 +50,8 @@ impl FromStr for HashAlgorithm {
         match s {
             "MD5" => Ok(HashAlgorithm::MD5),
             "MD5-sess" => Ok(HashAlgorithm::MD5Session),
+            "SHA-256" => Ok(HashAlgorithm::SHA256),
+            "SHA-256-sess" => Ok(HashAlgorithm::SHA256Session),
             _ => Err(Error::Header),
         }
     }
@@ -56,6 +62,8 @@ impl fmt::Display for HashAlgorithm {
         match *self {
             HashAlgorithm::MD5 => write!(f, "{}", "MD5"),
             HashAlgorithm::MD5Session => write!(f, "{}", "MD5-sess"),
+            HashAlgorithm::SHA256 => write!(f, "{}", "SHA-256"),
+            HashAlgorithm::SHA256Session => write!(f, "{}", "SHA-256-sess"),
         }
     }
 }
@@ -292,8 +300,8 @@ pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
 // RFC 2617, Section 3.2.2.2
 fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
     match digest.algorithm {
-        HashAlgorithm::MD5 => Ok(generate_simple_a1(digest, password)),
-        HashAlgorithm::MD5Session => {
+        HashAlgorithm::MD5 | HashAlgorithm::SHA256 => Ok(generate_simple_a1(digest, password)),
+        HashAlgorithm::MD5Session | HashAlgorithm::SHA256Session => {
             if let Some(ref client_nonce) = digest.client_nonce {
                 let hashed_simple_a1 = hash_value(&HashAlgorithm::MD5,
                                                   generate_simple_a1(digest, password));
@@ -337,6 +345,7 @@ fn generate_hashed_a2(digest: &Digest, method: Method, entity_body: String) -> S
 fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
     use crypto::digest::Digest;
     use crypto::md5::Md5;
+    use crypto::sha2::Sha256;
 
     match *algorithm {
         HashAlgorithm::MD5 |
@@ -344,6 +353,12 @@ fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
             let mut md5 = Md5::new();
             md5.input_str(&value[..]);
             md5.result_str().to_string()
+        }
+        HashAlgorithm::SHA256 |
+        HashAlgorithm::SHA256Session => {
+            let mut sha256 = Sha256::new();
+            sha256.input_str(&value[..]);
+            sha256.result_str().to_string()
         }
     }
 }
@@ -443,6 +458,16 @@ pub fn validate_digest_using_hashed_a1(digest: &Digest,
 
 #[cfg(test)]
 mod tests {
+    #[test]
+    fn test_display_sha256_for_hashalgorithm() {
+        assert_eq!("SHA-256", format!("{}", super::HashAlgorithm::SHA256))
+    }
+
+    #[test]
+    fn test_display_sha256session_for_hashalgorithm() {
+        assert_eq!("SHA-256-sess", format!("{}", super::HashAlgorithm::SHA256Session))
+    }
+
     #[test]
     fn test_scheme() {
         use hyper::header::Scheme;
@@ -873,6 +898,23 @@ mod tests {
                                                         "".to_string(),
                                                         password);
         assert!(hex_digest.is_err())
+    }
+
+    #[test]
+    fn test_generate_digest_using_password_and_sha256() {
+        use hyper::method::Method;
+        use super::{generate_digest_using_password, HashAlgorithm};
+
+        let password = "Circle of Life".to_string();
+        let digest = rfc7616_digest_header(HashAlgorithm::SHA256,
+                                           "753927fa0e85d155564e2e272a28d1802ca10daf4496794697cf8\
+                                            db5856cb6c1");
+        let hex_digest = generate_digest_using_password(&digest,
+                                                        Method::Get,
+                                                        "".to_string(),
+                                                        password);
+        assert!(hex_digest.is_ok());
+        assert_eq!(digest.response, hex_digest.unwrap())
     }
 
     #[test]

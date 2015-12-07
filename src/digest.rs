@@ -941,6 +941,61 @@ mod tests {
         assert_eq!(expected, hex_digest.unwrap())
     }
 
+    #[test]
+    fn test_validate_digest_using_password() {
+        use hyper::header::{Authorization, Header};
+        use hyper::method::Method;
+        use super::{Digest, validate_digest_using_password};
+
+        let password = "Circle of Life".to_string();
+        // From RFC 7616 and the result from Firefox
+        let header: Authorization<Digest> =
+            Header::parse_header(&[b"Digest username=\"Mufasa\",\
+                realm=\"http-auth@example.org\",\
+                nonce=\"7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v\",\
+                uri=\"/dir/index.html\",\
+                algorithm=MD5,\
+                response=\"65e4930cfb0b33cb53405ecea0705cec\",\
+                opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\",\
+                qop=auth,\
+                nc=00000001,\
+                cnonce=\"b24ce2519b8cdb10\""
+                                        .to_vec()][..])
+                .unwrap();
+        let validated = validate_digest_using_password(&header.0,
+                                                       Method::Get,
+                                                       "".to_string(),
+                                                       password.clone());
+        assert!(validated);
+        let mut digest = header.0.clone();
+        digest.client_nonce = Some("somethingelse".to_string());
+        let validated_second_cnonce = validate_digest_using_password(&digest,
+                                                                     Method::Get,
+                                                                     "".to_string(),
+                                                                     password);
+        assert!(!validated_second_cnonce);
+    }
+
+    #[test]
+    fn test_validate_digest_using_hashed_a1() {
+        use hyper::method::Method;
+        use super::{validate_digest_using_hashed_a1, HashAlgorithm};
+
+        let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_string();
+        let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
+        let validated = validate_digest_using_hashed_a1(&digest,
+                                                        Method::Get,
+                                                        "".to_string(),
+                                                        hashed_a1.clone());
+        assert!(validated);
+        digest.client_nonce = Some("different".to_string());
+        let validated_second_cnonce = validate_digest_using_hashed_a1(&digest,
+                                                                      Method::Get,
+                                                                      "".to_string(),
+                                                                      hashed_a1);
+        assert!(!validated_second_cnonce);
+    }
+
     fn rfc2069_digest_header(realm: &str) -> super::Digest {
         super::Digest {
             username: "Mufasa".to_string(),
@@ -948,6 +1003,8 @@ mod tests {
             nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_string(),
             nonce_count: None,
             // The response from RFC 2069's example seems very wrong, so this is the "correct" one.
+            // Verified using Firefox and also in the RFC's errata:
+            // https://www.rfc-editor.org/errata_search.php?rfc=2069
             response: "1949323746fe6a43ef61f9606e7febea".to_string(),
             request_uri: "/dir/index.html".to_string(),
             algorithm: super::HashAlgorithm::MD5,
@@ -977,6 +1034,22 @@ mod tests {
             qop: Some(super::Qop::Auth),
             client_nonce: Some("0a4f113b".to_string()),
             opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_string()),
+        }
+    }
+
+    // See: RFC 7616, Section 3.9.1
+    fn rfc7616_digest_header(algorithm: super::HashAlgorithm, response: &str) -> super::Digest {
+        super::Digest {
+            username: "Mufasa".to_string(),
+            realm: "http-auth@example.org".to_string(),
+            nonce: "7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v".to_string(),
+            nonce_count: Some(1),
+            response: response.to_string(),
+            request_uri: "/dir/index.html".to_string(),
+            algorithm: algorithm,
+            qop: Some(super::Qop::Auth),
+            client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_string()),
+            opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_string()),
         }
     }
 }

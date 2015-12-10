@@ -118,7 +118,7 @@ pub struct Digest {
     pub realm: String,
     /// Cryptographic nonce.
     pub nonce: String,
-    /// Nonce count, parameter name `nc`. Optional only in RFC2067 mode.
+    /// Nonce count, parameter name `nc`. Optional only in RFC 2067 mode.
     pub nonce_count: Option<u32>,
     /// The hexadecimal digest of the payload as described by the RFCs.
     pub response: String,
@@ -126,9 +126,9 @@ pub struct Digest {
     pub request_uri: String,
     /// The hash algorithm to use when generating the `response`.
     pub algorithm: HashAlgorithm,
-    /// Quality of protection. Optional only in RFC2067 mode.
+    /// Quality of protection. Optional only in RFC 2067 mode.
     pub qop: Option<Qop>,
-    /// Cryptographic nonce from the client. Optional only in RFC2067 mode.
+    /// Cryptographic nonce from the client. Optional only in RFC 2067 mode.
     pub client_nonce: Option<String>,
     /// Optional opaque string.
     pub opaque: Option<String>,
@@ -392,7 +392,7 @@ fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> Strin
 /// Generates a digest, given an HTTP request and a password.
 ///
 /// `entity_body` is defined in
-/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 pub fn generate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -408,7 +408,7 @@ pub fn generate_digest_using_password(digest: &Digest,
 /// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.
 ///
 /// `entity_body` is defined in
-/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 ///
 /// This is intended to be used in applications that use the `htdigest` style of secret hash
 /// generation.
@@ -445,7 +445,7 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
 /// Validates a `Digest.response`, given an HTTP request and a password.
 ///
 /// `entity_body` is defined in
-/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 pub fn validate_digest_using_password(digest: &Digest,
                                       method: Method,
                                       entity_body: String,
@@ -461,7 +461,7 @@ pub fn validate_digest_using_password(digest: &Digest,
 /// Validates a `Digest.response`, given an HTTP request and a hexadecimal digest of an A1 string.
 ///
 /// `entity_body` is defined in
-/// [RFC2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
 ///
 /// This is intended to be used in applications that use the `htdigest` style of secret hash
 /// generation.

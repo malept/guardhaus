@@ -134,8 +134,8 @@ pub struct Digest {
     pub opaque: Option<String>,
 }
 
-fn append_parameter(serialized: &mut String, key: &str, value: &String, quoted: bool) {
-    if serialized.len() > 0 {
+fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted: bool) {
+    if !serialized.is_empty() {
         serialized.push_str(", ")
     }
     serialized.push_str(key);
@@ -185,7 +185,7 @@ impl Scheme for Digest {
 }
 
 fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) -> Option<String> {
-    let value = match map.get(&UniCase(key.to_string())) {
+    let value = match map.get(&UniCase(key.to_owned())) {
         Some(v) => v,
         None => return None,
     };
@@ -204,8 +204,8 @@ impl FromStr for Digest {
             HashMap::with_capacity(parameters.len());
         for parameter in parameters {
             let parts: Vec<&str> = parameter.splitn(2, '=').collect();
-            param_map.insert(UniCase(parts[0].trim().to_string()).clone(),
-                             parts[1].trim().trim_matches('"').to_string().clone());
+            param_map.insert(UniCase(parts[0].trim().to_owned()),
+                             parts[1].trim().trim_matches('"').to_owned());
         }
         let username: String;
         let realm: String;
@@ -365,19 +365,19 @@ fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
         HashAlgorithm::MD5Session => {
             let mut md5 = Md5::new();
             md5.input_str(&value[..]);
-            md5.result_str().to_string()
+            md5.result_str()
         }
         HashAlgorithm::SHA256 |
         HashAlgorithm::SHA256Session => {
             let mut sha256 = Sha256::new();
             sha256.input_str(&value[..]);
-            sha256.result_str().to_string()
+            sha256.result_str()
         }
         HashAlgorithm::SHA512256 |
         HashAlgorithm::SHA512256Session => {
             let mut sha512 = Sha512::new();
             sha512.input_str(&value[..]);
-            let mut hex_digest = sha512.result_str().to_string();
+            let mut hex_digest = sha512.result_str();
             hex_digest.truncate(64);
             hex_digest
         }

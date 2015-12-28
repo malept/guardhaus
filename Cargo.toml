@@ -9,6 +9,10 @@ readme = "README.md"
 keywords = ["http", "hyper", "authentication", "authorization", "digest"]
 license = "MIT"
 
+[features]
+
+lint = ["clippy"]
+
 [dependencies]
 getopts = "0.2"
 hyper = "0.7"
@@ -17,3 +21,5 @@ rust-crypto = "0.2"
 rustc-serialize = "0.3"
 unicase = "1.0"
 url = "0.5"
+
+clippy = { version = "*", optional = true }

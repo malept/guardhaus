@@ -132,6 +132,8 @@ pub struct Digest {
     pub client_nonce: Option<String>,
     /// Optional opaque string.
     pub opaque: Option<String>,
+    /// Whether `username` is a userhash. Added for RFC 7616.
+    pub userhash: bool,
 }
 
 fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted: bool) {
@@ -180,6 +182,9 @@ impl Scheme for Digest {
         if let Some(ref opaque) = self.opaque {
             append_parameter(&mut serialized, "opaque", opaque, true);
         }
+        if self.userhash {
+            append_parameter(&mut serialized, "userhash", &"true", false);
+        }
         write!(f, "{}", serialized)
     }
 }
@@ -215,6 +220,7 @@ impl FromStr for Digest {
         let request_uri: String;
         let algorithm: HashAlgorithm;
         let qop: Option<Qop>;
+        let userhash: bool;
         match unraveled_map_value(&param_map, "username") {
             Some(value) => username = value,
             None => return Err(Error::Header),
@@ -266,6 +272,15 @@ impl FromStr for Digest {
         } else {
             qop = None;
         }
+        if let Some(value) = unraveled_map_value(&param_map, "userhash") {
+            match &value[..] {
+                "true" => userhash = true,
+                "false" => userhash = false,
+                _ => return Err(Error::Header),
+            }
+        } else {
+            userhash = false;
+        }
         Ok(Digest {
             username: username,
             realm: realm,
@@ -277,7 +292,30 @@ impl FromStr for Digest {
             qop: qop,
             client_nonce: unraveled_map_value(&param_map, "cnonce"),
             opaque: unraveled_map_value(&param_map, "opaque"),
+            userhash: userhash,
         })
+    }
+}
+
+/// Generates a userhash, as defined in
+/// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
+pub fn generate_userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
+    let mut to_hash = username.clone();
+    to_hash.push(b':');
+    to_hash.append(&mut realm.into_bytes());
+    hash_value(algorithm, to_hash)
+}
+
+/// Validates a userhash (as defined in
+/// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4)), given a
+/// `Digest` header.
+///
+/// If userhash is `false`, returns `false`.
+pub fn validate_userhash(digest: &Digest, username: Vec<u8>) -> bool {
+    if digest.userhash {
+        digest.username == generate_userhash(&digest.algorithm, username, digest.realm.clone())
+    } else {
+        false
     }
 }
 
@@ -302,7 +340,7 @@ pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
                                  realm: String,
                                  password: String)
                                  -> String {
-    hash_value(algorithm, format_simple_a1(username, realm, password))
+    hash_value_from_string(algorithm, format_simple_a1(username, realm, password))
 }
 
 // RFC 2617, Section 3.2.2.2
@@ -316,8 +354,8 @@ fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
         HashAlgorithm::SHA256Session |
         HashAlgorithm::SHA512256Session => {
             if let Some(ref client_nonce) = digest.client_nonce {
-                let hashed_simple_a1 = hash_value(&HashAlgorithm::MD5,
-                                                  generate_simple_a1(digest, password));
+                let hashed_simple_a1 = hash_value_from_string(&HashAlgorithm::MD5,
+                                                              generate_simple_a1(digest, password));
                 Ok(format!("{}:{}:{}", hashed_simple_a1, digest.nonce, client_nonce))
             } else {
                 Err(Error::Header)
@@ -332,7 +370,7 @@ fn generate_a1(digest: &Digest, password: String) -> Result<String, Error> {
 /// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
 fn generate_hashed_a1(digest: &Digest, password: String) -> Result<String, Error> {
     if let Ok(a1) = generate_a1(digest, password) {
-        Ok(hash_value(&digest.algorithm, a1))
+        Ok(hash_value_from_string(&digest.algorithm, a1))
     } else {
         Err(Error::Header)
     }
@@ -345,38 +383,44 @@ fn generate_a2(digest: &Digest, method: Method, entity_body: String) -> String {
             format!("{}:{}:{}",
                     method,
                     digest.request_uri,
-                    hash_value(&digest.algorithm, entity_body))
+                    hash_value_from_string(&digest.algorithm, entity_body))
         }
         _ => format!("{}:{}", method, digest.request_uri),
     }
 }
 
 fn generate_hashed_a2(digest: &Digest, method: Method, entity_body: String) -> String {
-    hash_value(&digest.algorithm, generate_a2(digest, method, entity_body))
+    hash_value_from_string(&digest.algorithm, generate_a2(digest, method, entity_body))
 }
 
-fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
+fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
+    hash_value(algorithm, value.into_bytes())
+}
+
+fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
     use crypto::digest::Digest;
     use crypto::md5::Md5;
     use crypto::sha2::{Sha256, Sha512};
+
+    let to_hash = &value[..];
 
     match *algorithm {
         HashAlgorithm::MD5 |
         HashAlgorithm::MD5Session => {
             let mut md5 = Md5::new();
-            md5.input_str(&value[..]);
+            md5.input(to_hash);
             md5.result_str()
         }
         HashAlgorithm::SHA256 |
         HashAlgorithm::SHA256Session => {
             let mut sha256 = Sha256::new();
-            sha256.input_str(&value[..]);
+            sha256.input(to_hash);
             sha256.result_str()
         }
         HashAlgorithm::SHA512256 |
         HashAlgorithm::SHA512256Session => {
             let mut sha512 = Sha512::new();
-            sha512.input_str(&value[..]);
+            sha512.input(to_hash);
             let mut hex_digest = sha512.result_str();
             hex_digest.truncate(64);
             hex_digest
@@ -386,7 +430,7 @@ fn hash_value(algorithm: &HashAlgorithm, value: String) -> String {
 
 fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
     let value = format!("{}:{}", secret, data);
-    hash_value(algorithm, value)
+    hash_value_from_string(algorithm, value)
 }
 
 /// Generates a digest, given an HTTP request and a password.
@@ -744,6 +788,49 @@ mod tests {
     }
 
     #[test]
+    fn test_parse_header_with_explicitly_no_userhash() {
+        use hyper::header::{Authorization, Header};
+        use super::HashAlgorithm;
+
+        let expected = Authorization(rfc2617_digest_header(HashAlgorithm::SHA256));
+        let actual =
+            Header::parse_header(&[b"Digest username=\"Mufasa\",\
+                realm=\"testrealm@host.com\",\
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+                uri=\"/dir/index.html\",\
+                algorithm=SHA-256,\
+                qop=auth,\
+                nc=00000001,\
+                cnonce=\"0a4f113b\",\
+                response=\"6629fae49393a05397450978507c4ef1\",\
+                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
+                userhash=false"
+                                       .to_vec()][..]);
+        assert_eq!(actual.ok(), Some(expected))
+    }
+
+    #[test]
+    fn test_parse_header_with_invalid_userhash_flag() {
+        use hyper::header::{Authorization, Header};
+        use super::Digest;
+
+        let header: Result<Authorization<Digest>, _> =
+            Header::parse_header(&[b"Digest username=\"Mufasa\",\
+                realm=\"testrealm@host.com\",\
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+                uri=\"/dir/index.html\",\
+                algorithm=SHA-256,\
+                qop=auth,\
+                nc=00000001,\
+                cnonce=\"0a4f113b\",\
+                response=\"6629fae49393a05397450978507c4ef1\",\
+                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
+                userhash=invalid"
+                                       .to_vec()][..]);
+        assert!(header.is_err())
+    }
+
+    #[test]
     fn test_fmt_scheme() {
         use hyper::header::{Authorization, Headers};
 
@@ -773,6 +860,49 @@ mod tests {
                     response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
                     algorithm=MD5-sess, qop=auth, cnonce=\"0a4f113b\", \
                     opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
+    }
+
+    #[test]
+    fn test_fmt_scheme_with_userhash() {
+        use hyper::header::{Authorization, Headers};
+
+        let digest = rfc7616_sha512_256_header("488869477bf257147b804c45308cd62ac4e25eb717b12b298\
+                                                c79e62dcea254ec"
+                                                   .to_owned(),
+                                               true);
+        let mut headers = Headers::new();
+        headers.set(Authorization(digest));
+
+        assert_eq!(headers.to_string(),
+                   "Authorization: Digest \
+                    username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\", \
+                    realm=\"api@example.org\", \
+                    nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", nc=00000001, \
+                    response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
+                    uri=\"/doe.json\", algorithm=SHA-512-256, qop=auth, \
+                    cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
+                    opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", userhash=true\r\n")
+    }
+
+    #[test]
+    fn test_generate_userhash() {
+        use super::{generate_userhash, HashAlgorithm};
+
+        let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec"
+                           .to_owned();
+        let actual = generate_userhash(&HashAlgorithm::SHA512256,
+                                       rfc7616_username(),
+                                       "api@example.org".to_owned());
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn test_validate_userhash() {
+        let userhash = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec"
+                           .to_owned();
+        let digest = rfc7616_sha512_256_header(userhash, true);
+
+        assert!(super::validate_userhash(&digest, rfc7616_username()));
     }
 
     #[test]
@@ -1102,6 +1232,7 @@ mod tests {
             qop: None,
             client_nonce: None,
             opaque: None,
+            userhash: false,
         }
     }
 
@@ -1125,7 +1256,12 @@ mod tests {
             qop: Some(super::Qop::Auth),
             client_nonce: Some("0a4f113b".to_string()),
             opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_string()),
+            userhash: false,
         }
+    }
+
+    fn rfc7616_username() -> Vec<u8> {
+        vec![b'J', 0xc3, 0xa4, b's', 0xc3, 0xb8, b'n', b' ', b'D', b'o', b'e']
     }
 
     // See: RFC 7616, Section 3.9.1
@@ -1141,6 +1277,23 @@ mod tests {
             qop: Some(super::Qop::Auth),
             client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_string()),
             opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_string()),
+            userhash: false,
+        }
+    }
+
+    fn rfc7616_sha512_256_header(username: String, userhash: bool) -> super::Digest {
+        super::Digest {
+            username: username,
+            realm: "api@example.org".to_owned(),
+            nonce: "5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK".to_owned(),
+            nonce_count: Some(1),
+            response: "ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd".to_owned(),
+            request_uri: "/doe.json".to_owned(),
+            algorithm: super::HashAlgorithm::SHA512256,
+            qop: Some(super::Qop::Auth),
+            client_nonce: Some("NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v".to_owned()),
+            opaque: Some("HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS".to_owned()),
+            userhash: userhash,
         }
     }
 }

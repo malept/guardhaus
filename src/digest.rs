@@ -536,7 +536,8 @@ mod tests {
 
     #[test]
     fn test_display_sha512_256_for_hashalgorithm() {
-        assert_eq!("SHA-512-256", format!("{}", super::HashAlgorithm::SHA512256))
+        assert_eq!("SHA-512-256",
+                   format!("{}", super::HashAlgorithm::SHA512256))
     }
 
     #[test]

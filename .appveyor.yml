@@ -23,6 +23,10 @@ matrix:
     - TARGET: msvc
       platform: x86
     - RUST_VERSION: nightly
+cache:
+  - target\debug\build
+  - target\debug\deps
+  - '%USERPROFILE%\.cargo'
 install:
   - ps: |
         $env:PATH = "$env:PATH;C:\rust\bin";

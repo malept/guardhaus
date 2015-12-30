@@ -17,8 +17,8 @@ os:
 cache:
   apt: true
   directories:
-    - target/debug/deps
     - target/debug/build
+    - target/debug/deps
     - $HOME/.cargo
 
 rust:

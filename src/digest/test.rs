@@ -19,45 +19,43 @@
 // THE SOFTWARE.
 
 #![cfg(test)]
+use hyper::header::{Authorization, Header, Headers};
 use hyper::header::parsing::parse_extended_value;
-use super::Username;
+use hyper::method::Method;
+use super::{Digest, HashAlgorithm, Qop, Username};
 
 #[test]
 fn test_display_sha256_for_hashalgorithm() {
-    assert_eq!("SHA-256", format!("{}", super::HashAlgorithm::SHA256))
+    assert_eq!("SHA-256", format!("{}", HashAlgorithm::SHA256))
 }
 
 #[test]
 fn test_display_sha256session_for_hashalgorithm() {
     assert_eq!("SHA-256-sess",
-               format!("{}", super::HashAlgorithm::SHA256Session))
+               format!("{}", HashAlgorithm::SHA256Session))
 }
 
 #[test]
 fn test_display_sha512_256_for_hashalgorithm() {
     assert_eq!("SHA-512-256",
-               format!("{}", super::HashAlgorithm::SHA512256))
+               format!("{}", HashAlgorithm::SHA512256))
 }
 
 #[test]
 fn test_display_sha512_256session_for_hashalgorithm() {
     assert_eq!("SHA-512-256-sess",
-               format!("{}", super::HashAlgorithm::SHA512256Session))
+               format!("{}", HashAlgorithm::SHA512256Session))
 }
 
 #[test]
 fn test_scheme() {
     use hyper::header::Scheme;
-    use super::Digest;
 
     assert_eq!(Digest::scheme(), Some("Digest"))
 }
 
 #[test]
 fn test_basic_parse_header() {
-    use hyper::header::{Authorization, Header};
-    use super::HashAlgorithm;
-
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
     let actual =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
@@ -75,9 +73,6 @@ fn test_basic_parse_header() {
 
 #[test]
 fn test_parse_header_with_no_username() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest\
                 realm=\"testrealm@host.com\",\
@@ -94,9 +89,6 @@ fn test_parse_header_with_no_username() {
 
 #[test]
 fn test_parse_header_with_both_username_params() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest \
                 username=\"multiple\",\
@@ -115,9 +107,6 @@ fn test_parse_header_with_both_username_params() {
 
 #[test]
 fn test_parse_header_with_encoded_username_and_userhash() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest \
                 username*=UTF-8''encoded,\
@@ -136,9 +125,6 @@ fn test_parse_header_with_encoded_username_and_userhash() {
 
 #[test]
 fn test_parse_header_with_no_realm() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
@@ -154,9 +140,6 @@ fn test_parse_header_with_no_realm() {
 
 #[test]
 fn test_parse_header_with_no_nonce() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -172,9 +155,6 @@ fn test_parse_header_with_no_nonce() {
 
 #[test]
 fn test_parse_header_with_no_response() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -190,9 +170,6 @@ fn test_parse_header_with_no_response() {
 
 #[test]
 fn test_parse_header_with_no_request_uri() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -208,9 +185,6 @@ fn test_parse_header_with_no_request_uri() {
 
 #[test]
 fn test_parse_header_with_invalid_charset() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -228,9 +202,6 @@ fn test_parse_header_with_invalid_charset() {
 
 #[test]
 fn test_parse_header_with_md5_algorithm() {
-    use hyper::header::{Authorization, Header};
-    use super::HashAlgorithm;
-
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
     let actual =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
@@ -249,9 +220,6 @@ fn test_parse_header_with_md5_algorithm() {
 
 #[test]
 fn test_parse_header_with_md5_sess_algorithm() {
-    use hyper::header::{Authorization, Header};
-    use super::HashAlgorithm;
-
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5Session));
     let actual =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
@@ -270,9 +238,6 @@ fn test_parse_header_with_md5_sess_algorithm() {
 
 #[test]
 fn test_parse_header_with_invalid_algorithm() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -290,9 +255,6 @@ fn test_parse_header_with_invalid_algorithm() {
 
 #[test]
 fn test_parse_header_with_auth_int_qop() {
-    use hyper::header::{Authorization, Header};
-    use super::{HashAlgorithm, Qop};
-
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = Some(Qop::AuthInt);
     let expected = Authorization(digest);
@@ -313,9 +275,6 @@ fn test_parse_header_with_auth_int_qop() {
 
 #[test]
 fn test_parse_header_with_bad_qop() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -332,9 +291,6 @@ fn test_parse_header_with_bad_qop() {
 
 #[test]
 fn test_parse_header_with_bad_nonce_count() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -351,9 +307,6 @@ fn test_parse_header_with_bad_nonce_count() {
 
 #[test]
 fn test_parse_header_with_explicitly_no_userhash() {
-    use hyper::header::{Authorization, Header};
-    use super::HashAlgorithm;
-
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::SHA256));
     let actual =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
@@ -373,9 +326,6 @@ fn test_parse_header_with_explicitly_no_userhash() {
 
 #[test]
 fn test_parse_header_with_invalid_userhash_flag() {
-    use hyper::header::{Authorization, Header};
-    use super::Digest;
-
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest username=\"Mufasa\",\
                 realm=\"testrealm@host.com\",\
@@ -394,8 +344,6 @@ fn test_parse_header_with_invalid_userhash_flag() {
 
 #[test]
 fn test_fmt_scheme() {
-    use hyper::header::{Authorization, Headers};
-
     let digest = rfc2069_a1_digest_header();
     let mut headers = Headers::new();
     headers.set(Authorization(digest));
@@ -409,9 +357,6 @@ fn test_fmt_scheme() {
 
 #[test]
 fn test_fmt_scheme_for_md5_sess_algorithm() {
-    use hyper::header::{Authorization, Headers};
-    use super::HashAlgorithm;
-
     let digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     let mut headers = Headers::new();
     headers.set(Authorization(digest));
@@ -426,8 +371,6 @@ fn test_fmt_scheme_for_md5_sess_algorithm() {
 
 #[test]
 fn test_fmt_scheme_with_userhash() {
-    use hyper::header::{Authorization, Headers};
-
     let digest = rfc7616_sha512_256_header("488869477bf257147b804c45308cd62ac4e25eb717b12b298\
                                                 c79e62dcea254ec"
                                                 .to_owned(),
@@ -449,8 +392,6 @@ fn test_fmt_scheme_with_userhash() {
 
 #[test]
 fn test_fmt_scheme_with_extended_username() {
-    use hyper::header::{Authorization, Headers};
-
     let mut digest = rfc7616_sha512_256_header("".to_owned(), false);
     digest.username = rfc7616_username();
     let mut headers = Headers::new();
@@ -470,7 +411,7 @@ fn test_fmt_scheme_with_extended_username() {
 
 #[test]
 fn test_generate_userhash() {
-    use super::{generate_userhash, HashAlgorithm};
+    use super::generate_userhash;
 
     let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec"
         .to_owned();
@@ -504,9 +445,7 @@ fn test_validate_userhash_with_plain_username() {
 
 #[test]
 fn test_validate_userhash_with_invalid_encoded_username() {
-    use hyper::header::parsing::parse_extended_value;
-
-    let mut digest = rfc7616_digest_header(super::HashAlgorithm::SHA256, "");
+    let mut digest = rfc7616_digest_header(HashAlgorithm::SHA256, "");
     let extended_value = parse_extended_value("UTF-8''hello").expect("Could not parse");
     digest.username = Username::Encoded(extended_value);
 
@@ -540,7 +479,7 @@ fn test_generate_a1() {
 
 #[test]
 fn test_generate_a1_for_md5_sess() {
-    use super::{generate_a1, HashAlgorithm};
+    use super::generate_a1;
 
     let digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     let password = "Circle Of Life".to_string();
@@ -555,7 +494,7 @@ fn test_generate_a1_for_md5_sess() {
 
 #[test]
 fn test_generate_a1_for_md5_sess_without_client_nonce() {
-    use super::{generate_a1, HashAlgorithm};
+    use super::generate_a1;
 
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
@@ -579,7 +518,7 @@ fn test_generate_hashed_a1() {
 
 #[test]
 fn test_generate_hashed_a1_for_md5_sess_without_client_nonce() {
-    use super::{generate_hashed_a1, HashAlgorithm};
+    use super::generate_hashed_a1;
 
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
@@ -590,7 +529,6 @@ fn test_generate_hashed_a1_for_md5_sess_without_client_nonce() {
 
 #[test]
 fn test_generate_a2() {
-    use hyper::method::Method;
     use super::generate_a2;
 
     let digest = rfc2069_a2_digest_header();
@@ -601,7 +539,6 @@ fn test_generate_a2() {
 
 #[test]
 fn test_generate_hashed_a2() {
-    use hyper::method::Method;
     use super::generate_hashed_a2;
 
     let digest = rfc2069_a2_digest_header();
@@ -612,9 +549,7 @@ fn test_generate_hashed_a2() {
 
 #[test]
 fn test_generate_digest_from_header() {
-    use hyper::header::{Authorization, Header};
-    use hyper::method::Method;
-    use super::{Digest, generate_digest_using_password};
+    use super::generate_digest_using_password;
 
     let password = "CircleOfLife".to_string();
     let header: Authorization<Digest> =
@@ -637,9 +572,7 @@ fn test_generate_digest_from_header() {
 
 #[test]
 fn test_generate_digest_from_passport_http_header() {
-    use hyper::header::{Authorization, Header};
-    use hyper::method::Method;
-    use super::{Digest, generate_digest_using_password};
+    use super::generate_digest_using_password;
 
     let password = "secret".to_string();
     let header: Authorization<Digest> =
@@ -661,8 +594,7 @@ fn test_generate_digest_from_passport_http_header() {
 
 #[test]
 fn test_generate_digest_using_password_and_md5_session_sans_client_nonce() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_password, HashAlgorithm};
+    use super::generate_digest_using_password;
 
     let password = "Circle Of Life".to_string();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
@@ -676,8 +608,7 @@ fn test_generate_digest_using_password_and_md5_session_sans_client_nonce() {
 
 #[test]
 fn test_generate_digest_using_password_and_sha256() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_password, HashAlgorithm};
+    use super::generate_digest_using_password;
 
     let password = "Circle of Life".to_string();
     let digest = rfc7616_digest_header(HashAlgorithm::SHA256,
@@ -693,8 +624,7 @@ fn test_generate_digest_using_password_and_sha256() {
 
 #[test]
 fn test_generate_digest_using_hashed_a1() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_hashed_a1, HashAlgorithm};
+    use super::generate_digest_using_hashed_a1;
 
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
     let digest = rfc2617_digest_header(HashAlgorithm::MD5);
@@ -708,8 +638,7 @@ fn test_generate_digest_using_hashed_a1() {
 
 #[test]
 fn test_generate_digest_using_hashed_a1_with_auth_int_qop() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+    use super::generate_digest_using_hashed_a1;
 
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
     let expected = "7b9be1c2def9d4ad657b26ac8bc651a0".to_string();
@@ -725,8 +654,7 @@ fn test_generate_digest_using_hashed_a1_with_auth_int_qop() {
 
 #[test]
 fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_nonce_count() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+    use super::generate_digest_using_hashed_a1;
 
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
@@ -741,8 +669,7 @@ fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_nonce_count() {
 
 #[test]
 fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_hashed_a1, HashAlgorithm, Qop};
+    use super::generate_digest_using_hashed_a1;
 
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
@@ -757,8 +684,7 @@ fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
 
 #[test]
 fn test_generate_digest_using_hashed_a1_sans_qop() {
-    use hyper::method::Method;
-    use super::{generate_digest_using_hashed_a1, HashAlgorithm};
+    use super::generate_digest_using_hashed_a1;
 
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_string();
     let expected = "670fd8c2df070c60b045671b8b24ff02".to_string();
@@ -774,9 +700,7 @@ fn test_generate_digest_using_hashed_a1_sans_qop() {
 
 #[test]
 fn test_validate_digest_using_password() {
-    use hyper::header::{Authorization, Header};
-    use hyper::method::Method;
-    use super::{Digest, validate_digest_using_password};
+    use super::validate_digest_using_password;
 
     let password = "Circle of Life".to_string();
     // From RFC 7616 and the result from Firefox
@@ -809,9 +733,7 @@ fn test_validate_digest_using_password() {
 
 #[test]
 fn test_validate_digest_using_encoded_username_and_password() {
-    use hyper::header::{Authorization, Header};
-    use hyper::method::Method;
-    use super::{Digest, validate_digest_using_password};
+    use super::validate_digest_using_password;
 
     // From RFC 7616
     let password = "Secret, or not?".to_string();
@@ -839,9 +761,7 @@ fn test_validate_digest_using_encoded_username_and_password() {
 
 #[test]
 fn test_validate_digest_using_userhash_and_password() {
-    use hyper::header::{Authorization, Header};
-    use hyper::method::Method;
-    use super::{Digest, validate_digest_using_userhash_and_password};
+    use super::validate_digest_using_userhash_and_password;
 
     // From RFC 7616
     let password = "Secret, or not?".to_string();
@@ -881,8 +801,7 @@ fn test_validate_digest_using_userhash_and_password() {
 
 #[test]
 fn test_validate_digest_using_hashed_a1() {
-    use hyper::method::Method;
-    use super::{validate_digest_using_hashed_a1, HashAlgorithm};
+    use super::validate_digest_using_hashed_a1;
 
     let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_string();
     let mut digest = rfc7616_digest_header(HashAlgorithm::MD5,
@@ -904,8 +823,8 @@ fn rfc2069_username() -> Username {
     Username::Plain("Mufasa".to_owned())
 }
 
-fn rfc2069_digest_header(realm: &str) -> super::Digest {
-    super::Digest {
+fn rfc2069_digest_header(realm: &str) -> Digest {
+    Digest {
         username: rfc2069_username(),
         realm: realm.to_string(),
         nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_string(),
@@ -915,7 +834,7 @@ fn rfc2069_digest_header(realm: &str) -> super::Digest {
         // https://www.rfc-editor.org/errata_search.php?rfc=2069
         response: "1949323746fe6a43ef61f9606e7febea".to_string(),
         request_uri: "/dir/index.html".to_string(),
-        algorithm: super::HashAlgorithm::MD5,
+        algorithm: HashAlgorithm::MD5,
         qop: None,
         client_nonce: None,
         opaque: None,
@@ -924,16 +843,16 @@ fn rfc2069_digest_header(realm: &str) -> super::Digest {
     }
 }
 
-fn rfc2069_a1_digest_header() -> super::Digest {
+fn rfc2069_a1_digest_header() -> Digest {
     rfc2069_digest_header("testrealm@host.com")
 }
 
-fn rfc2069_a2_digest_header() -> super::Digest {
+fn rfc2069_a2_digest_header() -> Digest {
     rfc2069_digest_header("myhost@testrealm.com")
 }
 
-fn rfc2617_digest_header(algorithm: super::HashAlgorithm) -> super::Digest {
-    super::Digest {
+fn rfc2617_digest_header(algorithm: HashAlgorithm) -> Digest {
+    Digest {
         username: rfc2069_username(),
         realm: "testrealm@host.com".to_string(),
         nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_string(),
@@ -941,7 +860,7 @@ fn rfc2617_digest_header(algorithm: super::HashAlgorithm) -> super::Digest {
         response: "6629fae49393a05397450978507c4ef1".to_string(),
         request_uri: "/dir/index.html".to_string(),
         algorithm: algorithm,
-        qop: Some(super::Qop::Auth),
+        qop: Some(Qop::Auth),
         client_nonce: Some("0a4f113b".to_string()),
         opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_string()),
         charset: None,
@@ -955,8 +874,8 @@ fn rfc7616_username() -> Username {
 }
 
 // See: RFC 7616, Section 3.9.1
-fn rfc7616_digest_header(algorithm: super::HashAlgorithm, response: &str) -> super::Digest {
-    super::Digest {
+fn rfc7616_digest_header(algorithm: HashAlgorithm, response: &str) -> Digest {
+    Digest {
         username: rfc2069_username(),
         realm: "http-auth@example.org".to_string(),
         nonce: "7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v".to_string(),
@@ -964,7 +883,7 @@ fn rfc7616_digest_header(algorithm: super::HashAlgorithm, response: &str) -> sup
         response: response.to_string(),
         request_uri: "/dir/index.html".to_string(),
         algorithm: algorithm,
-        qop: Some(super::Qop::Auth),
+        qop: Some(Qop::Auth),
         client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_string()),
         opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_string()),
         charset: None,
@@ -972,18 +891,18 @@ fn rfc7616_digest_header(algorithm: super::HashAlgorithm, response: &str) -> sup
     }
 }
 
-fn rfc7616_sha512_256_header(username: String, userhash: bool) -> super::Digest {
+fn rfc7616_sha512_256_header(username: String, userhash: bool) -> Digest {
     use hyper::header::Charset;
 
-    super::Digest {
+    Digest {
         username: Username::Plain(username),
         realm: "api@example.org".to_owned(),
         nonce: "5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK".to_owned(),
         nonce_count: Some(1),
         response: "ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd".to_owned(),
         request_uri: "/doe.json".to_owned(),
-        algorithm: super::HashAlgorithm::SHA512256,
-        qop: Some(super::Qop::Auth),
+        algorithm: HashAlgorithm::SHA512256,
+        qop: Some(Qop::Auth),
         client_nonce: Some("NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v".to_owned()),
         opaque: Some("HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS".to_owned()),
         charset: Some(Charset::Ext("UTF-8".to_owned())),

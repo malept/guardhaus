@@ -210,7 +210,7 @@ fn parse_nonce_count(hex: &str) -> Result<u32, Error> {
             count |= bytes[3] as u32;
             Ok(count)
         }
-        _ => return Err(Error::Header),
+        _ => Err(Error::Header),
     }
 }
 

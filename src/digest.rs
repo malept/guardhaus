@@ -200,6 +200,20 @@ fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) -> Opt
     }
 }
 
+fn parse_nonce_count(hex: &str) -> Result<u32, Error> {
+    match hex.from_hex() {
+        Ok(bytes) => {
+            let mut count: u32 = 0;
+            count |= (bytes[0] as u32) << 24;
+            count |= (bytes[1] as u32) << 16;
+            count |= (bytes[2] as u32) << 8;
+            count |= bytes[3] as u32;
+            Ok(count)
+        }
+        _ => return Err(Error::Header),
+    }
+}
+
 impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
@@ -234,15 +248,8 @@ impl FromStr for Digest {
             None => return Err(Error::Header),
         }
         if let Some(value) = unraveled_map_value(&param_map, "nc") {
-            match (&value[..]).from_hex() {
-                Ok(bytes) => {
-                    let mut count: u32 = 0;
-                    count |= (bytes[0] as u32) << 24;
-                    count |= (bytes[1] as u32) << 16;
-                    count |= (bytes[2] as u32) << 8;
-                    count |= bytes[3] as u32;
-                    nonce_count = Some(count)
-                }
+            match parse_nonce_count(&value[..]) {
+                Ok(count) => nonce_count = Some(count),
                 _ => return Err(Error::Header),
             }
         } else {

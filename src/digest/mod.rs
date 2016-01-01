@@ -280,7 +280,8 @@ impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
         let bytearr = &[String::from(s).into_bytes()];
-        let parameters: Vec<String> = from_comma_delimited(bytearr).unwrap();
+        let parameters: Vec<String> = from_comma_delimited(bytearr)
+                                          .expect("Could not parse header parameters");
         let mut param_map: HashMap<UniCase<String>, String> =
             HashMap::with_capacity(parameters.len());
         for parameter in parameters {
@@ -583,8 +584,8 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
                     return Err(Error::Header);
                 }
                 let nonce = digest.nonce.clone();
-                let nonce_count = digest.nonce_count.clone().unwrap();
-                let client_nonce = digest.client_nonce.clone().unwrap();
+                let nonce_count = digest.nonce_count.clone().expect("No nonce count found");
+                let client_nonce = digest.client_nonce.clone().expect("No client nonce found");
                 data = format!("{}:{:08x}:{}:{}:{}",
                                nonce,
                                nonce_count,

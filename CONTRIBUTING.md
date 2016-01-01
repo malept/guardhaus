@@ -32,3 +32,12 @@ Want to contribute? Find an issue that fits your skillset.
 
 Please make sure your pull requests pass the continuous integration suite, by running `cargo test`
 before creating your submission. The CI suite is also automatically run for every pull request.
+
+Additionally, please make sure any code changes pass
+[clippy](https://github.com/Manishearth/rust-clippy)'s linting and
+[rustfmt](https://github.com/rust-lang-nursery/rustfmt)'s formatting rules. To run clippy, it is
+recommended to use [cargo-clippy](https://github.com/arcnmx/cargo-clippy):
+
+```shell
+cargo clippy --verbose --features=lint -- -Wclippy_pedantic
+```

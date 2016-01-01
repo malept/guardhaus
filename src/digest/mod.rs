@@ -78,10 +78,10 @@ impl fmt::Display for HashAlgorithm {
     }
 }
 
-/// Represents a username (or userhash, if the header's `userhash` parameter is `true`).
+/// Represents a `username` (or user hash, if the header's `userhash` parameter is `true`).
 #[derive(Clone, Debug, PartialEq)]
 pub enum Username {
-    /// Either a ASCII-encoded username, or a userhash (if the header's `userhash` parameter is
+    /// Either an ASCII-encoded username, or a userhash (if the header's `userhash` parameter is
     /// `true`).
     Plain(String),
     /// An RFC 5987-encoded username.
@@ -133,7 +133,8 @@ impl fmt::Display for Qop {
 /// Unless otherwise noted, the parameter name maps to the struct variable name.
 #[derive(Clone, PartialEq, Debug)]
 pub struct Digest {
-    /// User name.
+    /// Either the user name or the user hash (if `userhash` is `true` - see [RFC 7616, section
+    /// 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4)).
     pub username: Username,
     /// Authentication realm.
     pub realm: String,

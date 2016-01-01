@@ -31,14 +31,12 @@ fn test_display_sha256_for_hashalgorithm() {
 
 #[test]
 fn test_display_sha256session_for_hashalgorithm() {
-    assert_eq!("SHA-256-sess",
-               format!("{}", HashAlgorithm::SHA256Session))
+    assert_eq!("SHA-256-sess", format!("{}", HashAlgorithm::SHA256Session))
 }
 
 #[test]
 fn test_display_sha512_256_for_hashalgorithm() {
-    assert_eq!("SHA-512-256",
-               format!("{}", HashAlgorithm::SHA512256))
+    assert_eq!("SHA-512-256", format!("{}", HashAlgorithm::SHA512256))
 }
 
 #[test]
@@ -57,17 +55,17 @@ fn test_scheme() {
 #[test]
 fn test_basic_parse_header() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
-    let actual =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+    let actual = Header::parse_header(&[b"Digest \
+        username=\"Mufasa\",\
+        realm=\"testrealm@host.com\",\
+        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+        uri=\"/dir/index.html\",\
+        qop=auth,\
+        nc=00000001,\
+        cnonce=\"0a4f113b\",\
+        response=\"6629fae49393a05397450978507c4ef1\",\
+        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                            .to_vec()][..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -75,15 +73,15 @@ fn test_basic_parse_header() {
 fn test_parse_header_with_no_username() {
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
@@ -91,17 +89,17 @@ fn test_parse_header_with_no_username() {
 fn test_parse_header_with_both_username_params() {
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest \
-                username=\"multiple\",\
-                username*=UTF-8''multiple,\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+            username=\"multiple\",\
+            username*=UTF-8''multiple,\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
@@ -109,147 +107,153 @@ fn test_parse_header_with_both_username_params() {
 fn test_parse_header_with_encoded_username_and_userhash() {
     let header: Result<Authorization<Digest>, _> =
         Header::parse_header(&[b"Digest \
-                username*=UTF-8''encoded,\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",
-                userhash=true"
-                .to_vec()][..]);
+            username*=UTF-8''encoded,\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",
+            userhash=true"
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_no_realm() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_no_nonce() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_no_response() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_no_request_uri() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_invalid_charset() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
-                charset=invalid"
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
+            charset=invalid"
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_md5_algorithm() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
-    let actual =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=MD5,\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+    let actual = Header::parse_header(&[b"Digest \
+        username=\"Mufasa\",\
+        realm=\"testrealm@host.com\",\
+        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+        uri=\"/dir/index.html\",\
+        algorithm=MD5,\
+        qop=auth,\
+        nc=00000001,\
+        cnonce=\"0a4f113b\",\
+        response=\"6629fae49393a05397450978507c4ef1\",\
+        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                            .to_vec()][..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
 #[test]
 fn test_parse_header_with_md5_sess_algorithm() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5Session));
-    let actual =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=MD5-sess,\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+    let actual = Header::parse_header(&[b"Digest \
+        username=\"Mufasa\",\
+        realm=\"testrealm@host.com\",\
+        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+        uri=\"/dir/index.html\",\
+        algorithm=MD5-sess,\
+        qop=auth,\
+        nc=00000001,\
+        cnonce=\"0a4f113b\",\
+        response=\"6629fae49393a05397450978507c4ef1\",\
+        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                            .to_vec()][..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
 #[test]
 fn test_parse_header_with_invalid_algorithm() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=invalid,\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            algorithm=invalid,\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
@@ -258,87 +262,90 @@ fn test_parse_header_with_auth_int_qop() {
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = Some(Qop::AuthInt);
     let expected = Authorization(digest);
-    let actual =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=MD5,\
-                qop=auth-int,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+    let actual = Header::parse_header(&[b"Digest \
+        username=\"Mufasa\",\
+        realm=\"testrealm@host.com\",\
+        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+        uri=\"/dir/index.html\",\
+        algorithm=MD5,\
+        qop=auth-int,\
+        nc=00000001,\
+        cnonce=\"0a4f113b\",\
+        response=\"6629fae49393a05397450978507c4ef1\",\
+        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                            .to_vec()][..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
 #[test]
 fn test_parse_header_with_bad_qop() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=badvalue,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=badvalue,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_bad_nonce_count() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                qop=auth,\
-                nc=badhexvalue,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            qop=auth,\
+            nc=badhexvalue,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
 #[test]
 fn test_parse_header_with_explicitly_no_userhash() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::SHA256));
-    let actual =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=SHA-256,\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
-                userhash=false"
-                .to_vec()][..]);
+    let actual = Header::parse_header(&[b"Digest \
+        username=\"Mufasa\",\
+        realm=\"testrealm@host.com\",\
+        nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+        uri=\"/dir/index.html\",\
+        algorithm=SHA-256,\
+        qop=auth,\
+        nc=00000001,\
+        cnonce=\"0a4f113b\",\
+        response=\"6629fae49393a05397450978507c4ef1\",\
+        opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
+        userhash=false"
+                                            .to_vec()][..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
 #[test]
 fn test_parse_header_with_invalid_userhash_flag() {
     let header: Result<Authorization<Digest>, _> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                algorithm=SHA-256,\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"0a4f113b\",\
-                response=\"6629fae49393a05397450978507c4ef1\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
-                userhash=invalid"
-                .to_vec()][..]);
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            algorithm=SHA-256,\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"0a4f113b\",\
+            response=\"6629fae49393a05397450978507c4ef1\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\",\
+            userhash=invalid"
+                                   .to_vec()][..]);
     assert!(header.is_err())
 }
 
@@ -349,10 +356,10 @@ fn test_fmt_scheme() {
     headers.set(Authorization(digest));
 
     assert_eq!(headers.to_string(),
-    "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
-    nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
-                    response=\"1949323746fe6a43ef61f9606e7febea\", uri=\"/dir/index.html\", \
-                    algorithm=MD5\r\n")
+               "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
+                response=\"1949323746fe6a43ef61f9606e7febea\", uri=\"/dir/index.html\", \
+                algorithm=MD5\r\n")
 }
 
 #[test]
@@ -362,32 +369,32 @@ fn test_fmt_scheme_for_md5_sess_algorithm() {
     headers.set(Authorization(digest));
 
     assert_eq!(headers.to_string(),
-    "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
-    nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", nc=00000001, \
-                    response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
-                    algorithm=MD5-sess, qop=auth, cnonce=\"0a4f113b\", \
-                    opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
+               "Authorization: Digest username=\"Mufasa\", realm=\"testrealm@host.com\", \
+                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", nc=00000001, \
+                response=\"6629fae49393a05397450978507c4ef1\", uri=\"/dir/index.html\", \
+                algorithm=MD5-sess, qop=auth, cnonce=\"0a4f113b\", \
+                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"\r\n")
 }
 
 #[test]
 fn test_fmt_scheme_with_userhash() {
-    let digest = rfc7616_sha512_256_header("488869477bf257147b804c45308cd62ac4e25eb717b12b298\
-                                                c79e62dcea254ec"
-                                                .to_owned(),
-                                                true);
+    let digest = rfc7616_sha512_256_header("488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e\
+                                            62dcea254ec"
+                                               .to_owned(),
+                                           true);
     let mut headers = Headers::new();
     headers.set(Authorization(digest));
 
     assert_eq!(headers.to_string(),
-    "Authorization: Digest \
-    username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\", \
-                    realm=\"api@example.org\", \
-                    nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", nc=00000001, \
-                    response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
-                    uri=\"/doe.json\", algorithm=SHA-512-256, qop=auth, \
-                    cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
-                    opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", charset=UTF-8, \
-                    userhash=true\r\n")
+               "Authorization: Digest \
+                username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\", \
+                realm=\"api@example.org\", \
+                nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", nc=00000001, \
+                response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
+                uri=\"/doe.json\", algorithm=SHA-512-256, qop=auth, \
+                cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
+                opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", charset=UTF-8, \
+                userhash=true\r\n")
 }
 
 #[test]
@@ -398,23 +405,20 @@ fn test_fmt_scheme_with_extended_username() {
     headers.set(Authorization(digest));
 
     assert_eq!(headers.to_string(),
-    "Authorization: Digest \
-    username*=UTF-8''J%C3%A4s%C3%B8n%20Doe, \
-                    realm=\"api@example.org\", \
-                    nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", nc=00000001, \
-                    response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
-                    uri=\"/doe.json\", algorithm=SHA-512-256, qop=auth, \
-                    cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
-                    opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
-                    charset=UTF-8\r\n")
+               "Authorization: Digest username*=UTF-8''J%C3%A4s%C3%B8n%20Doe, \
+                realm=\"api@example.org\", \
+                nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", nc=00000001, \
+                response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
+                uri=\"/doe.json\", algorithm=SHA-512-256, qop=auth, \
+                cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
+                opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", charset=UTF-8\r\n")
 }
 
 #[test]
 fn test_generate_userhash() {
     use super::generate_userhash;
 
-    let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec"
-        .to_owned();
+    let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
     if let Username::Encoded(username) = rfc7616_username() {
         let actual = generate_userhash(&HashAlgorithm::SHA512256,
                                        username.value,
@@ -427,8 +431,7 @@ fn test_generate_userhash() {
 
 #[test]
 fn test_validate_userhash() {
-    let userhash = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec"
-        .to_owned();
+    let userhash = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
     let digest = rfc7616_sha512_256_header(userhash, true);
 
     assert!(super::validate_userhash(&digest, rfc7616_username()));
@@ -488,7 +491,7 @@ fn test_generate_a1_for_md5_sess() {
     let expected = format!("939e7578ed9e3c518a452acee763bce9:{}:{}",
                            digest.nonce,
                            digest.client_nonce.unwrap())
-        .into_bytes();
+                       .into_bytes();
     assert_eq!(expected, a1.unwrap())
 }
 
@@ -553,14 +556,15 @@ fn test_generate_digest_from_header() {
 
     let password = "CircleOfLife".to_string();
     let header: Authorization<Digest> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"testrealm@host.com\",\
-                nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
-                uri=\"/dir/index.html\",\
-                response=\"1949323746fe6a43ef61f9606e7febea\",\
-                opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                .to_vec()][..])
-        .unwrap();
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"testrealm@host.com\",\
+            nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\",\
+            uri=\"/dir/index.html\",\
+            response=\"1949323746fe6a43ef61f9606e7febea\",\
+            opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
+                                   .to_vec()][..])
+            .unwrap();
 
     let hex_digest = generate_digest_using_password(&header.0,
                                                     Method::Get,
@@ -576,13 +580,14 @@ fn test_generate_digest_from_passport_http_header() {
 
     let password = "secret".to_string();
     let header: Authorization<Digest> =
-        Header::parse_header(&[b"Digest username=\"bob\",\
-                realm=\"Users\",\
-                nonce=\"NOIEDJ3hJtqSKaty8KF8xlkaYbItAkiS\",
-                uri=\"/\",\
-                response=\"22e3e0a9bbefeb9d229905230cb9ddc8\""
-                .to_vec()][..])
-        .unwrap();
+        Header::parse_header(&[b"Digest \
+            username=\"bob\",\
+            realm=\"Users\",\
+            nonce=\"NOIEDJ3hJtqSKaty8KF8xlkaYbItAkiS\",
+            uri=\"/\",\
+            response=\"22e3e0a9bbefeb9d229905230cb9ddc8\""
+                                   .to_vec()][..])
+            .unwrap();
 
     let hex_digest = generate_digest_using_password(&header.0,
                                                     Method::Head,
@@ -599,10 +604,7 @@ fn test_generate_digest_using_password_and_md5_session_sans_client_nonce() {
     let password = "Circle Of Life".to_string();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
-    let hex_digest = generate_digest_using_password(&digest,
-                                                    Method::Get,
-                                                    "".to_string(),
-                                                    password);
+    let hex_digest = generate_digest_using_password(&digest, Method::Get, "".to_string(), password);
     assert!(hex_digest.is_err())
 }
 
@@ -612,12 +614,9 @@ fn test_generate_digest_using_password_and_sha256() {
 
     let password = "Circle of Life".to_string();
     let digest = rfc7616_digest_header(HashAlgorithm::SHA256,
-                                       "753927fa0e85d155564e2e272a28d1802ca10daf4496794697cf8\
-                                       db5856cb6c1");
-    let hex_digest = generate_digest_using_password(&digest,
-                                                    Method::Get,
-                                                    "".to_string(),
-                                                    password);
+                                       "753927fa0e85d155564e2e272a28d1802ca10daf4496794697cf8db58\
+                                        56cb6c1");
+    let hex_digest = generate_digest_using_password(&digest, Method::Get, "".to_string(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(digest.response, hex_digest.unwrap())
 }
@@ -705,18 +704,19 @@ fn test_validate_digest_using_password() {
     let password = "Circle of Life".to_string();
     // From RFC 7616 and the result from Firefox
     let header: Authorization<Digest> =
-        Header::parse_header(&[b"Digest username=\"Mufasa\",\
-                realm=\"http-auth@example.org\",\
-                nonce=\"7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v\",\
-                uri=\"/dir/index.html\",\
-                algorithm=MD5,\
-                response=\"65e4930cfb0b33cb53405ecea0705cec\",\
-                opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\",\
-                qop=auth,\
-                nc=00000001,\
-                cnonce=\"b24ce2519b8cdb10\""
-                .to_vec()][..])
-        .unwrap();
+        Header::parse_header(&[b"Digest \
+            username=\"Mufasa\",\
+            realm=\"http-auth@example.org\",\
+            nonce=\"7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v\",\
+            uri=\"/dir/index.html\",\
+            algorithm=MD5,\
+            response=\"65e4930cfb0b33cb53405ecea0705cec\",\
+            opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\",\
+            qop=auth,\
+            nc=00000001,\
+            cnonce=\"b24ce2519b8cdb10\""
+                                   .to_vec()][..])
+            .unwrap();
     let validated = validate_digest_using_password(&header.0,
                                                    Method::Get,
                                                    "".to_string(),
@@ -739,19 +739,19 @@ fn test_validate_digest_using_encoded_username_and_password() {
     let password = "Secret, or not?".to_string();
     let header: Authorization<Digest> =
         Header::parse_header(&[b"Digest \
-                username*=UTF-8''J%C3%A4s%C3%B8n%20Doe,\
-                realm=\"api@example.org\",\
-                uri=\"/doe.json\",\
-                algorithm=SHA-512-256,\
-                nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\",\
-                nc=00000001,\
-                cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\",\
-                qop=auth,\
-                response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\",\
-                opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\",\
-                userhash=false"
-                .to_vec()][..])
-        .unwrap();
+            username*=UTF-8''J%C3%A4s%C3%B8n%20Doe,\
+            realm=\"api@example.org\",\
+            uri=\"/doe.json\",\
+            algorithm=SHA-512-256,\
+            nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\",\
+            nc=00000001,\
+            cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\",\
+            qop=auth,\
+            response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\",\
+            opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\",\
+            userhash=false"
+                                   .to_vec()][..])
+            .unwrap();
     let validated = validate_digest_using_password(&header.0,
                                                    Method::Get,
                                                    "".to_string(),
@@ -767,20 +767,20 @@ fn test_validate_digest_using_userhash_and_password() {
     let password = "Secret, or not?".to_string();
     let header: Authorization<Digest> =
         Header::parse_header(&[b"Digest \
-                username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\",\
-                realm=\"api@example.org\",\
-                uri=\"/doe.json\",\
-                algorithm=SHA-512-256,\
-                nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\",\
-                nc=00000001,\
-                cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\",\
-                qop=auth,\
-                response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\",\
-                opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\",\
-                charset=UTF-8,\
-                userhash=true"
-                .to_vec()][..])
-        .unwrap();
+            username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\",\
+            realm=\"api@example.org\",\
+            uri=\"/doe.json\",\
+            algorithm=SHA-512-256,\
+            nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\",\
+            nc=00000001,\
+            cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\",\
+            qop=auth,\
+            response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\",\
+            opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\",\
+            charset=UTF-8,\
+            userhash=true"
+                                   .to_vec()][..])
+            .unwrap();
     let validated = validate_digest_using_userhash_and_password(&header.0,
                                                                 Method::Get,
                                                                 "".to_string(),
@@ -804,8 +804,7 @@ fn test_validate_digest_using_hashed_a1() {
     use super::validate_digest_using_hashed_a1;
 
     let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_string();
-    let mut digest = rfc7616_digest_header(HashAlgorithm::MD5,
-                                           "8ca523f5e9506fed4657c9700eebdbec");
+    let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
     let validated = validate_digest_using_hashed_a1(&digest,
                                                     Method::Get,
                                                     "".to_string(),

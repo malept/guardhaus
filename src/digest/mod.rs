@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authentication` header.
+//! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};

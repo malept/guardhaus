@@ -55,14 +55,14 @@ pub fn rfc2069_username() -> Username {
 fn rfc2069_digest_header(realm: &str) -> Digest {
     Digest {
         username: rfc2069_username(),
-        realm: realm.to_string(),
-        nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_string(),
+        realm: realm.to_owned(),
+        nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_owned(),
         nonce_count: None,
         // The response from RFC 2069's example seems very wrong, so this is the "correct" one.
         // Verified using Firefox and also in the RFC's errata:
         // https://www.rfc-editor.org/errata_search.php?rfc=2069
-        response: "1949323746fe6a43ef61f9606e7febea".to_string(),
-        request_uri: "/dir/index.html".to_string(),
+        response: "1949323746fe6a43ef61f9606e7febea".to_owned(),
+        request_uri: "/dir/index.html".to_owned(),
         algorithm: HashAlgorithm::MD5,
         qop: None,
         client_nonce: None,
@@ -83,15 +83,15 @@ pub fn rfc2069_a2_digest_header() -> Digest {
 pub fn rfc2617_digest_header(algorithm: HashAlgorithm) -> Digest {
     Digest {
         username: rfc2069_username(),
-        realm: "testrealm@host.com".to_string(),
-        nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_string(),
+        realm: "testrealm@host.com".to_owned(),
+        nonce: "dcd98b7102dd2f0e8b11d0f600bfb0c093".to_owned(),
         nonce_count: Some(1),
-        response: "6629fae49393a05397450978507c4ef1".to_string(),
-        request_uri: "/dir/index.html".to_string(),
+        response: "6629fae49393a05397450978507c4ef1".to_owned(),
+        request_uri: "/dir/index.html".to_owned(),
         algorithm: algorithm,
         qop: Some(Qop::Auth),
-        client_nonce: Some("0a4f113b".to_string()),
-        opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_string()),
+        client_nonce: Some("0a4f113b".to_owned()),
+        opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_owned()),
         charset: None,
         userhash: false,
     }
@@ -106,15 +106,15 @@ pub fn rfc7616_username() -> Username {
 pub fn rfc7616_digest_header(algorithm: HashAlgorithm, response: &str) -> Digest {
     Digest {
         username: rfc2069_username(),
-        realm: "http-auth@example.org".to_string(),
-        nonce: "7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v".to_string(),
+        realm: "http-auth@example.org".to_owned(),
+        nonce: "7ypf/xlj9XXwfDPEoM4URrv/xwf94BcCAzFZH4GiTo0v".to_owned(),
         nonce_count: Some(1),
-        response: response.to_string(),
-        request_uri: "/dir/index.html".to_string(),
+        response: response.to_owned(),
+        request_uri: "/dir/index.html".to_owned(),
         algorithm: algorithm,
         qop: Some(Qop::Auth),
-        client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_string()),
-        opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_string()),
+        client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_owned()),
+        opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_owned()),
         charset: None,
         userhash: false,
     }

@@ -32,6 +32,7 @@ use unicase::UniCase;
 use url::percent_encoding::percent_decode;
 
 mod test;
+mod test_helper;
 
 /// Allowable hash algorithms for the `algorithm` parameter.
 #[derive(Clone, Debug, PartialEq)]

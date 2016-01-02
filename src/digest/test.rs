@@ -591,18 +591,13 @@ fn test_validate_digest_using_password() {
                                       response=\"65e4930cfb0b33cb53405ecea0705cec\", \
                                       opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\", \
                                       qop=auth, nc=00000001, cnonce=\"b24ce2519b8cdb10\"");
-    let validated = validate_digest_using_password(&header.0,
-                                                   Method::Get,
-                                                   "".to_owned(),
-                                                   password.clone());
-    assert!(validated);
+    assert!(validate_digest_using_password(&header.0,
+                                           Method::Get,
+                                           "".to_owned(),
+                                           password.clone()));
     let mut digest = header.0.clone();
     digest.client_nonce = Some("somethingelse".to_owned());
-    let validated_second_cnonce = validate_digest_using_password(&digest,
-                                                                 Method::Get,
-                                                                 "".to_owned(),
-                                                                 password);
-    assert!(!validated_second_cnonce);
+    assert!(!validate_digest_using_password(&digest, Method::Get, "".to_owned(), password));
 }
 
 #[test]
@@ -622,11 +617,10 @@ fn test_validate_digest_using_encoded_username_and_password() {
                                       1229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false");
-    let validated = validate_digest_using_password(&header.0,
-                                                   Method::Get,
-                                                   "".to_owned(),
-                                                   password.clone());
-    assert!(validated);
+    assert!(validate_digest_using_password(&header.0,
+                                           Method::Get,
+                                           "".to_owned(),
+                                           password.clone()));
 }
 
 #[test]
@@ -646,22 +640,20 @@ fn test_validate_digest_using_userhash_and_password() {
                                       1229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true");
-    let validated = validate_digest_using_userhash_and_password(&header.0,
-                                                                Method::Get,
-                                                                "".to_owned(),
-                                                                rfc7616_username(),
-                                                                password.clone());
-    assert!(validated);
+    assert!(validate_digest_using_userhash_and_password(&header.0,
+                                                        Method::Get,
+                                                        "".to_owned(),
+                                                        rfc7616_username(),
+                                                        password.clone()));
 
     let mut digest = header.0.clone();
     digest.username = Username::Plain("invalid".to_owned());
 
-    let validated_bad = validate_digest_using_userhash_and_password(&digest,
-                                                                    Method::Get,
-                                                                    "".to_owned(),
-                                                                    rfc7616_username(),
-                                                                    password.clone());
-    assert!(!validated_bad);
+    assert!(!validate_digest_using_userhash_and_password(&digest,
+                                                         Method::Get,
+                                                         "".to_owned(),
+                                                         rfc7616_username(),
+                                                         password.clone()));
 }
 
 #[test]
@@ -670,15 +662,11 @@ fn test_validate_digest_using_hashed_a1() {
 
     let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_owned();
     let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
-    let validated = validate_digest_using_hashed_a1(&digest,
-                                                    Method::Get,
-                                                    "".to_owned(),
-                                                    hashed_a1.clone());
-    assert!(validated);
+    assert!(validate_digest_using_hashed_a1(&digest,
+                                            Method::Get,
+                                            "".to_owned(),
+                                            hashed_a1.clone()));
+
     digest.client_nonce = Some("different".to_owned());
-    let validated_second_cnonce = validate_digest_using_hashed_a1(&digest,
-                                                                  Method::Get,
-                                                                  "".to_owned(),
-                                                                  hashed_a1);
-    assert!(!validated_second_cnonce);
+    assert!(!validate_digest_using_hashed_a1(&digest, Method::Get, "".to_owned(), hashed_a1));
 }

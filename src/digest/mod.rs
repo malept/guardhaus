@@ -636,7 +636,7 @@ pub fn validate_digest_using_password(digest: &Digest,
 }
 
 /// Validates a `Digest.username` and `Digest.response`, given an HTTP request, a username,
-/// a userhash, and a password.
+/// and a password. If a userhash is specified, that is validated first.
 ///
 /// `entity_body` is defined in
 /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
@@ -646,7 +646,7 @@ pub fn validate_digest_using_userhash_and_password(digest: &Digest,
                                                    username: Username,
                                                    password: String)
                                                    -> bool {
-    if !validate_userhash(digest, username.clone()) {
+    if digest.userhash && !validate_userhash(digest, username.clone()) {
         return false;
     }
     validate_digest_using_username_and_password(digest, method, entity_body, username, password)

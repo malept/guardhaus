@@ -647,6 +647,15 @@ fn test_validate_digest_using_userhash_and_password() {
                                                         password.clone()));
 
     let mut digest = header.0.clone();
+    digest.userhash = false;
+    digest.username = rfc7616_username();
+    assert!(validate_digest_using_userhash_and_password(&digest,
+                                                        Method::Get,
+                                                        "".to_owned(),
+                                                        rfc7616_username(),
+                                                        password.clone()));
+
+    digest.userhash = true;
     digest.username = Username::Plain("invalid".to_owned());
 
     assert!(!validate_digest_using_userhash_and_password(&digest,

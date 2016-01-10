@@ -42,10 +42,13 @@ fn get_password() -> String {
 }
 
 fn append_to_passwdfile(file: &mut File, username: String, realm: String, password: String) {
-    let hashed = generate_simple_hashed_a1(&HashAlgorithm::MD5, Username::Plain(username.clone()), realm.clone(), password);
+    let hashed = generate_simple_hashed_a1(&HashAlgorithm::MD5,
+                                           Username::Plain(username.clone()),
+                                           realm.clone(),
+                                           password);
     match write!(file, "{}:{}:{}\n", username, realm, hashed) {
         Err(failure) => panic!(failure.to_string()),
-        _            => ()
+        _ => (),
     }
 }
 
@@ -55,16 +58,18 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
-    opts.optflag("c", "", "Create the passwdfile. If passwdfile already exists, it is deleted first.");
+    opts.optflag("c",
+                 "",
+                 "Create the passwdfile. If passwdfile already exists, it is deleted first.");
 
     let matches = match opts.parse(&args[1..]) {
-        Ok(opt)      => opt,
+        Ok(opt) => opt,
         Err(failure) => panic!(failure.to_string()),
     };
 
     if matches.opt_present("h") {
         print_usage(&program, opts);
-        return
+        return;
     }
 
     let create_passwdfile = matches.opt_present("c");
@@ -74,11 +79,13 @@ fn main() {
         let realm = matches.free[1].clone();
         let username = matches.free[2].clone();
         match open_passwdfile(passwdfile_path, create_passwdfile) {
-            Ok(mut passwdfile) => append_to_passwdfile(&mut passwdfile, username, realm, get_password()),
-            Err(failure)   => panic!(failure.to_string()),
+            Ok(mut passwdfile) => {
+                append_to_passwdfile(&mut passwdfile, username, realm, get_password())
+            }
+            Err(failure) => panic!(failure.to_string()),
         }
     } else {
         print_usage(&program, opts);
-        return
+        return;
     };
 }

@@ -15,8 +15,7 @@ lint = ["clippy"]
 
 [dependencies]
 getopts = "0.2"
-# TODO remove git reference when > 0.7.1 is released
-hyper = { git = "https://github.com/hyperium/hyper", version = "0.7, >= 0.7.1" }
+hyper = "0.7, >= 0.7.2"
 rpassword = "0.1"
 rust-crypto = "0.2"
 rustc-serialize = "0.3"

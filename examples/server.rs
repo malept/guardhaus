@@ -30,7 +30,7 @@ use std::io::Read;
 const LISTEN: &'static str = "127.0.0.1:1337";
 const USERNAME: &'static str = "Spy";
 const PASSWORD: &'static str = "vs. Spy";
-const REALM: &'static str = "MadMag";
+// const REALM: &'static str = "MadMag";
 
 fn needs_auth(mut req: Request, mut resp: Response) {
     let mut entity_body = String::new();

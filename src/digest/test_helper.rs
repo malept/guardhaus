@@ -22,12 +22,11 @@
 
 use hyper::header::{Authorization, Header, Headers};
 use hyper::header::parsing::parse_extended_value;
+use parsing::test_helper;
 use super::{Digest, HashAlgorithm, Qop, Username};
 
 pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
-    let bytestring = data.to_owned().into_bytes();
-    let actual = Header::parse_header(&[bytestring][..]);
-    assert_eq!(actual.ok(), Some(expected))
+    test_helper::assert_parsed_header_equal(expected, data)
 }
 
 pub fn assert_header_parsing_error(data: &str) {

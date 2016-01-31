@@ -18,17 +18,13 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! Guardhaus is an HTTP authentication/authorization library.
+#![allow(dead_code)]
 
-extern crate crypto;
-extern crate hyper;
-extern crate rustc_serialize;
-extern crate unicase;
-extern crate url;
+use hyper::header::Header;
+use std::fmt;
 
-#[warn(missing_docs)]
-pub mod authentication_info;
-#[warn(missing_docs)]
-pub mod digest;
-#[warn(missing_docs)]
-mod parsing;
+pub fn assert_parsed_header_equal<H: Header + PartialEq + fmt::Debug>(expected: H, data: &str) {
+    let bytestring = data.to_owned().into_bytes();
+    let actual: Result<H, _> = H::parse_header(&[bytestring][..]);
+    assert_eq!(actual.ok(), Some(expected))
+}

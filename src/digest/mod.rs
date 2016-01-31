@@ -22,14 +22,14 @@
 
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};
-use hyper::header::parsing::{ExtendedValue, from_comma_delimited, parse_extended_value};
+use hyper::header::parsing::{ExtendedValue, parse_extended_value};
 use hyper::method::Method;
+use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use rustc_serialize::hex::FromHex;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 use unicase::UniCase;
-use url::percent_encoding::percent_decode;
 
 mod test;
 mod test_helper;
@@ -53,6 +53,7 @@ pub enum HashAlgorithm {
 
 impl FromStr for HashAlgorithm {
     type Err = Error;
+
     fn from_str(s: &str) -> Result<HashAlgorithm, Error> {
         match s {
             "MD5" => Ok(HashAlgorithm::MD5),
@@ -161,21 +162,6 @@ pub struct Digest {
     pub userhash: bool,
 }
 
-fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted: bool) {
-    if !serialized.is_empty() {
-        serialized.push_str(", ")
-    }
-    serialized.push_str(key);
-    serialized.push_str("=");
-    if quoted {
-        serialized.push_str("\"");
-    }
-    serialized.push_str(value);
-    if quoted {
-        serialized.push_str("\"");
-    }
-}
-
 impl Scheme for Digest {
     fn scheme() -> Option<&'static str> {
         Some("Digest")
@@ -221,17 +207,6 @@ impl Scheme for Digest {
             append_parameter(&mut serialized, "userhash", &"true", false);
         }
         write!(f, "{}", serialized)
-    }
-}
-
-fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) -> Option<String> {
-    let value = match map.get(&UniCase(key.to_owned())) {
-        Some(v) => v,
-        None => return None,
-    };
-    match String::from_utf8(percent_decode(value.as_bytes())) {
-        Ok(string) => Some(string),
-        Err(_) => None,
     }
 }
 
@@ -281,16 +256,7 @@ fn parse_nonce_count(hex: &str) -> Result<u32, Error> {
 impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
-        let bytearr = &[String::from(s).into_bytes()];
-        let parameters: Vec<String> = from_comma_delimited(bytearr)
-                                          .expect("Could not parse header parameters");
-        let mut param_map: HashMap<UniCase<String>, String> =
-            HashMap::with_capacity(parameters.len());
-        for parameter in parameters {
-            let parts: Vec<&str> = parameter.splitn(2, '=').collect();
-            param_map.insert(UniCase(parts[0].trim().to_owned()),
-                             parts[1].trim().trim_matches('"').to_owned());
-        }
+        let param_map = parse_parameters(s);
         let username: Username;
         let realm: String;
         let nonce: String;

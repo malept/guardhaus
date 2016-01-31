@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2016 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,17 +18,35 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! Guardhaus is an HTTP authentication/authorization library.
+#![cfg(test)]
 
-extern crate crypto;
-extern crate hyper;
-extern crate rustc_serialize;
-extern crate unicase;
-extern crate url;
+use hyper::header::Header;
+use parsing::test_helper::assert_parsed_header_equal;
+use super::AuthenticationInfo;
 
-#[warn(missing_docs)]
-pub mod authentication_info;
-#[warn(missing_docs)]
-pub mod digest;
-#[warn(missing_docs)]
-mod parsing;
+#[test]
+fn test_parse_authentication_info_with_digest_and_nextnonce() {
+    let expected = AuthenticationInfo {
+        digest: Some("abcdef".to_owned()),
+        next_nonce: Some("fedcba".to_owned()),
+    };
+    assert_parsed_header_equal(expected, "nextnonce=\"fedcba\", digest=\"abcdef\"");
+}
+
+#[test]
+fn test_parse_authentication_info_with_digest() {
+    let expected = AuthenticationInfo {
+        digest: Some("abcdef".to_owned()),
+        next_nonce: None,
+    };
+    assert_parsed_header_equal(expected, "digest=\"abcdef\"");
+}
+
+#[test]
+fn test_parse_authentication_info_with_nextnonce() {
+    let expected = AuthenticationInfo {
+        digest: None,
+        next_nonce: Some("fedcba".to_owned()),
+    };
+    assert_parsed_header_equal(expected, "nextnonce=\"fedcba\"");
+}

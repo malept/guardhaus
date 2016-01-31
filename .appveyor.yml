@@ -29,7 +29,7 @@ cache:
   - '%USERPROFILE%\.cargo'
 install:
   - ps: |
-        $env:PATH = "$env:PATH;C:\rust\bin";
+        $env:PATH += ";C:\rust\bin";
         if ($env:RUST_VERSION -eq 'stable') {
           $env:RUST_VERSION = "1.6.0";
         }
@@ -43,7 +43,7 @@ install:
           $env:bits ="64";
         }
         if ($env:TARGET -eq 'gnu') {
-          $env:PATH = "$env:PATH;C:\msys64\mingw${env:bits}\bin";
+          $env:PATH += ";C:\msys64\mingw${env:bits}\bin";
           gcc --version;
         }
   - curl --show-error --location --retry 5 --output openssl-installer.exe https://slproweb.com/download/Win%bits%OpenSSL-1_0_2e.exe

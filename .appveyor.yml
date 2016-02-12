@@ -56,7 +56,7 @@ install:
 
           $env:rust_installer = $match.line;
         } else {
-          $env:rust_installer = "rust-${RUST_VERSION}-${arch_expanded}.exe";
+          $env:rust_installer = "rust-${env:RUST_VERSION}-${arch_expanded}.exe";
         }
   - curl --show-error --location --retry 5 --output openssl-installer.exe https://slproweb.com/download/Win%bits%OpenSSL-1_0_2f.exe
   - .\openssl-installer.exe /SILENT /VERYSILENT /SP- /DIR="C:\OpenSSL"

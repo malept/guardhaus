@@ -25,7 +25,7 @@ use hyper::header::{Charset, Scheme};
 use hyper::header::parsing::{ExtendedValue, parse_extended_value};
 use hyper::method::Method;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
-use rustc_serialize::hex::FromHex;
+use rustc_serialize::hex::{FromHex, ToHex};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
@@ -467,34 +467,26 @@ fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
 }
 
 fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
-    use crypto::digest::Digest;
-    use crypto::md5::Md5;
-    use crypto::sha2::{Sha256, Sha512};
+    use openssl::crypto::hash::{hash, Type};
 
     let to_hash = &value[..];
 
-    match *algorithm {
+    let hash_type = match *algorithm {
         HashAlgorithm::MD5 |
-        HashAlgorithm::MD5Session => {
-            let mut md5 = Md5::new();
-            md5.input(to_hash);
-            md5.result_str()
-        }
+        HashAlgorithm::MD5Session => Type::MD5,
         HashAlgorithm::SHA256 |
-        HashAlgorithm::SHA256Session => {
-            let mut sha256 = Sha256::new();
-            sha256.input(to_hash);
-            sha256.result_str()
-        }
+        HashAlgorithm::SHA256Session => Type::SHA256,
         HashAlgorithm::SHA512256 |
-        HashAlgorithm::SHA512256Session => {
-            let mut sha512 = Sha512::new();
-            sha512.input(to_hash);
-            let mut hex_digest = sha512.result_str();
-            hex_digest.truncate(64);
-            hex_digest
-        }
+        HashAlgorithm::SHA512256Session => Type::SHA512,
+    };
+
+    let digest = hash(hash_type, to_hash);
+    let mut hex_digest = digest.to_hex();
+    if *algorithm == HashAlgorithm::SHA512256 || *algorithm == HashAlgorithm::SHA512256Session {
+        hex_digest.truncate(64);
     }
+
+    hex_digest
 }
 
 fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {

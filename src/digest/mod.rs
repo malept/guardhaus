@@ -211,31 +211,26 @@ impl Scheme for Digest {
 }
 
 fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Error> {
-    match unraveled_map_value(&map, "username") {
-        Some(value) => {
-            if unraveled_map_value(&map, "username*").is_some() {
-                return Err(Error::Header);
-            }
-
+    if let Some(value) = unraveled_map_value(&map, "username") {
+        if unraveled_map_value(&map, "username*").is_some() {
+            Err(Error::Header)
+        } else {
             Ok(Username::Plain(value))
         }
-        None => {
-            if let Some(encoded) = unraveled_map_value(&map, "username*") {
-                if let Some(userhash) = unraveled_map_value(&map, "userhash") {
-                    if userhash == "true" {
-                        return Err(Error::Header);
-                    }
-                }
-
-                if let Ok(extended_value) = parse_extended_value(&encoded) {
-                    Ok(Username::Encoded(extended_value))
-                } else {
-                    Err(Error::Header)
-                }
-            } else {
-                Err(Error::Header)
+    } else if let Some(encoded) = unraveled_map_value(&map, "username*") {
+        if let Some(userhash) = unraveled_map_value(&map, "userhash") {
+            if userhash == "true" {
+                return Err(Error::Header);
             }
         }
+
+        if let Ok(extended_value) = parse_extended_value(&encoded) {
+            Ok(Username::Encoded(extended_value))
+        } else {
+            Err(Error::Header)
+        }
+    } else {
+        Err(Error::Header)
     }
 }
 
@@ -469,8 +464,6 @@ fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
 fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
     use openssl::crypto::hash::{hash, Type};
 
-    let to_hash = &value[..];
-
     let hash_type = match *algorithm {
         HashAlgorithm::MD5 |
         HashAlgorithm::MD5Session => Type::MD5,
@@ -480,7 +473,7 @@ fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
         HashAlgorithm::SHA512256Session => Type::SHA512,
     };
 
-    let digest = hash(hash_type, to_hash);
+    let digest = hash(hash_type, &value[..]);
     let mut hex_digest = digest.to_hex();
     if *algorithm == HashAlgorithm::SHA512256 || *algorithm == HashAlgorithm::SHA512256Session {
         hex_digest.truncate(64);
@@ -544,7 +537,7 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
                     return Err(Error::Header);
                 }
                 let nonce = digest.nonce.clone();
-                let nonce_count = digest.nonce_count.clone().expect("No nonce count found");
+                let nonce_count = digest.nonce_count.expect("No nonce count found");
                 let client_nonce = digest.client_nonce.clone().expect("No client nonce found");
                 data = format!("{}:{:08x}:{}:{}:{}",
                                nonce,

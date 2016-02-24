@@ -174,7 +174,7 @@ impl Scheme for Digest {
                 append_parameter(&mut serialized, "username", &username, true)
             }
             Username::Encoded(ref encoded) => {
-                append_parameter(&mut serialized, "username*", &format!("{}", encoded), false)
+                append_parameter(&mut serialized, "username*", &encoded.to_string(), false)
             }
         }
         append_parameter(&mut serialized, "realm", &self.realm, true);
@@ -189,10 +189,10 @@ impl Scheme for Digest {
         append_parameter(&mut serialized, "uri", &self.request_uri, true);
         append_parameter(&mut serialized,
                          "algorithm",
-                         &format!("{}", self.algorithm),
+                         &self.algorithm.to_string(),
                          false);
         if let Some(ref qop) = self.qop {
-            append_parameter(&mut serialized, "qop", &format!("{}", qop), false);
+            append_parameter(&mut serialized, "qop", &qop.to_string(), false);
         }
         if let Some(ref client_nonce) = self.client_nonce {
             append_parameter(&mut serialized, "cnonce", client_nonce, true);
@@ -201,7 +201,7 @@ impl Scheme for Digest {
             append_parameter(&mut serialized, "opaque", opaque, true);
         }
         if let Some(ref charset) = self.charset {
-            append_parameter(&mut serialized, "charset", &format!("{}", charset), false);
+            append_parameter(&mut serialized, "charset", &charset.to_string(), false);
         }
         if self.userhash {
             append_parameter(&mut serialized, "userhash", &"true", false);

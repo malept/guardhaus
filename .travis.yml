@@ -5,63 +5,112 @@ language: rust
 addons:
   apt:
     packages:
-      - libcurl4-openssl-dev
-      - libelf-dev
-      - libdw-dev
-      - binutils-dev # needed for --verify
+    - libcurl4-openssl-dev
+    - libelf-dev
+    - libdw-dev
+    - binutils-dev # needed for --verify
 
 os:
-  - linux
-  - osx
+- linux
+- osx
 
 cache:
   apt: true
   directories:
-    - target/debug/build
-    - target/debug/deps
-    - $HOME/.cargo
+  - target/debug/build
+  - target/debug/deps
+  - $HOME/.cargo
 
 rust:
-  - nightly
-  - beta
-  - stable
+- nightly
+- beta
+- stable
 
-# load travis-cargo
-before_script:
-  - |
-      pip install 'travis-cargo<0.2' --user &&
-      export PATH=$HOME/Library/Python/2.7/bin:$HOME/.local/bin:$PATH
-      if test "$TRAVIS_RUST_VERSION" = "nightly"; then
-        if ! cargo --list | grep -q clippy; then
-          cargo install --git=https://github.com/arcnmx/cargo-clippy
-        fi
-      fi
-
-# the main build
-script:
-  - |
-      travis-cargo build &&
-      travis-cargo test &&
-      (if test "$TRAVIS_OS_NAME" = "linux"; then travis-cargo --only stable doc; fi)
-  - |
-      if test "$TRAVIS_RUST_VERSION" = "nightly"; then
-        cargo clippy --features=$TRAVIS_CARGO_NIGHTLY_FEATURE -- -Wclippy_pedantic
-      fi
-after_success:
-  # upload the documentation from the build with stable (automatically only actually
-  # runs on the master branch, not individual PRs)
-  - if test "$TRAVIS_OS_NAME" = "linux"; then travis-cargo --only stable doc-upload; fi
-  # measure code coverage and upload to coveralls.io (the verify
-  # argument mitigates kcov crashes due to malformed debuginfo, at the
-  # cost of some speed <https://github.com/huonw/travis-cargo/issues/12>)
-  - travis-cargo coveralls --no-sudo --verify
-
+# From https://github.com/japaric/rust-everywhere
 matrix:
+  # Clear the whole matrix
+  exclude:
+  - os: linux
+  - os: osx
+  - rust: nightly
+  - rust: beta
+  - rust: stable
+  include:
+  - os: linux # 32-bit Linux (glibc)
+    rust: stable
+    env: TARGET=i686-unknown-linux-gnu
+    addons:
+      apt:
+        packages:
+          - libcurl4-gnutls-dev # different curl to not conflict with i386 openssl
+          - libelf-dev
+          - libdw-dev
+          - binutils-dev # needed for --verify
+          - gcc-multilib # Cross compiler and cross compiled C libraries
+          - libssl-dev:i386
+  - os: linux # 32-bit Linux (glibc)
+    env: TARGET=i686-unknown-linux-gnu
+    rust: beta
+    addons:
+      apt:
+        packages:
+          - libcurl4-gnutls-dev # different curl to not conflict with i386 openssl
+          - libelf-dev
+          - libdw-dev
+          - binutils-dev # needed for --verify
+          - gcc-multilib # Cross compiler and cross compiled C libraries
+          - libssl-dev:i386
+  - os: linux # 32-bit Linux (glibc)
+    rust: nightly
+    env: TARGET=i686-unknown-linux-gnu
+    addons:
+      apt:
+        packages:
+          - libcurl4-gnutls-dev # different curl to not conflict with i386 openssl
+          - libelf-dev
+          - libdw-dev
+          - binutils-dev # needed for --verify
+          - gcc-multilib # Cross compiler and cross compiled C libraries
+          - libssl-dev:i386
+  - os: linux # 64-bit Linux (glibc)
+    rust: stable
+    env: TARGET=x86_64-unknown-linux-gnu
+  - os: linux # 64-bit Linux (glibc)
+    rust: beta
+    env: TARGET=x86_64-unknown-linux-gnu
+  - os: linux # 64-bit Linux (glibc)
+    rust: nightly
+    env: TARGET=x86_64-unknown-linux-gnu
+  # 64-bit Linux (musl) doesn't work with openssl
+  - os: osx # 32-bit OSX
+    rust: stable
+    env: TARGET=i686-apple-darwin
+  - os: osx # 32-bit OSX
+    rust: beta
+    env: TARGET=i686-apple-darwin
+  - os: osx # 32-bit OSX
+    rust: nightly
+    env: TARGET=i686-apple-darwin
+  - os: osx # 64-bit OSX
+    rust: stable
+    env: TARGET=x86_64-apple-darwin
+  - os: osx # 64-bit OSX
+    rust: beta
+    env: TARGET=x86_64-apple-darwin
+  - os: osx # 64-bit OSX
+    rust: nightly
+    env: TARGET=x86_64-apple-darwin
   allow_failures:
-    - rust: nightly
+  - rust: nightly
+
+before_install: ci/before_install.sh
+before_script: ci/before_script.sh
+script: ci/script.sh
+after_success: ci/after_success.sh
 
 env:
   global:
-    - TRAVIS_CARGO_NIGHTLY_FEATURE='lint'
-    # encrypted github token for doc upload
-    - secure: "MP9oviNLDqK73nD3al+rGnrFnyhgSLFK9OhzCLNxzOhNieE9LDW4VJ+crIiUI62TPimx/nrMPYQssVQW9yivM+YWBiSjK/IDmGJrX1+xUN9XlQemKIlv+Ms1eTfzoRMcraiPILCBNc0OhqwCferHQhxEjzXpmUAjFmt8Qgb4vpdGxhvLU1f3dRk6fwIQgLsfKIqXzHczfQmGJ2eF76PLgaUtL4IYP3ogmtmOid7UD/4FEAsDcr+UNSza4u0ABRz8lEe6JCPEARQvETaKMuih21qxFnQubWiJGnH8r6p5Zvo+MDz/I5L9bLia1MCH1gUXtjzaV2naB5ozcMANZYsjvUkrSvCRn9bcccNUXNizNRWR8aQgFmytif+2uTQ8F8nDb3hg0/Et6mzroXmBPzm0B0AlV3SiAvW1odS/9WBXOATM7KRrxRgfD/R+65vWrYAgPFupvmPYXCR4mr96AgZMoU3lHjf8dIk5EyVK1rJJMtvIBQovgPDCjVhVoNh5Wyp5dG2uAH7LC18iokKt4mxfI5IEcPw94y4wodHgwn1Z0hTgBvxnwmZm1QZkOZpqAVJgSt2soZXw2n1WbEwskV39l+XNJOZ3lxKcdIxW2xY+NXLJy9sQ7nXekYHizXZb7EeD5TQWENIN9Cf6NLf8J7Z3IU4wG66gi0/HlJdfsvmAujQ="
+  - TRAVIS_CARGO_NIGHTLY_FEATURE='lint'
+  - PATH=$HOME/Library/Python/2.7/bin:$HOME/.local/bin:$PATH
+  # encrypted github token for doc upload
+  - secure: "MP9oviNLDqK73nD3al+rGnrFnyhgSLFK9OhzCLNxzOhNieE9LDW4VJ+crIiUI62TPimx/nrMPYQssVQW9yivM+YWBiSjK/IDmGJrX1+xUN9XlQemKIlv+Ms1eTfzoRMcraiPILCBNc0OhqwCferHQhxEjzXpmUAjFmt8Qgb4vpdGxhvLU1f3dRk6fwIQgLsfKIqXzHczfQmGJ2eF76PLgaUtL4IYP3ogmtmOid7UD/4FEAsDcr+UNSza4u0ABRz8lEe6JCPEARQvETaKMuih21qxFnQubWiJGnH8r6p5Zvo+MDz/I5L9bLia1MCH1gUXtjzaV2naB5ozcMANZYsjvUkrSvCRn9bcccNUXNizNRWR8aQgFmytif+2uTQ8F8nDb3hg0/Et6mzroXmBPzm0B0AlV3SiAvW1odS/9WBXOATM7KRrxRgfD/R+65vWrYAgPFupvmPYXCR4mr96AgZMoU3lHjf8dIk5EyVK1rJJMtvIBQovgPDCjVhVoNh5Wyp5dG2uAH7LC18iokKt4mxfI5IEcPw94y4wodHgwn1Z0hTgBvxnwmZm1QZkOZpqAVJgSt2soZXw2n1WbEwskV39l+XNJOZ3lxKcdIxW2xY+NXLJy9sQ7nXekYHizXZb7EeD5TQWENIN9Cf6NLf8J7Z3IU4wG66gi0/HlJdfsvmAujQ="

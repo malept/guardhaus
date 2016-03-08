@@ -20,11 +20,17 @@
 
 #![allow(dead_code)]
 
-use hyper::header::Header;
+use hyper::header::{Header, HeaderFormat, Headers};
 use std::fmt;
 
 pub fn assert_parsed_header_equal<H: Header + PartialEq + fmt::Debug>(expected: H, data: &str) {
     let bytestring = data.to_owned().into_bytes();
     let actual: Result<H, _> = H::parse_header(&[bytestring][..]);
     assert_eq!(actual.ok(), Some(expected))
+}
+
+pub fn assert_serialized_header_equal<H: Header + HeaderFormat>(header: H, actual: &str) {
+    let mut headers = Headers::new();
+    headers.set(header);
+    assert_eq!(headers.to_string(), format!("{}\r\n", actual))
 }

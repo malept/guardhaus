@@ -20,8 +20,7 @@
 
 #![cfg(test)]
 
-use hyper::header::Header;
-use parsing::test_helper::assert_parsed_header_equal;
+use parsing::test_helper::{assert_parsed_header_equal, assert_serialized_header_equal};
 use super::AuthenticationInfo;
 
 #[test]
@@ -49,4 +48,32 @@ fn test_parse_authentication_info_with_nextnonce() {
         next_nonce: Some("fedcba".to_owned()),
     };
     assert_parsed_header_equal(expected, "nextnonce=\"fedcba\"");
+}
+
+#[test]
+fn test_fmt_authentication_info_with_digest_and_nextnonce() {
+    let header = AuthenticationInfo {
+        digest: Some("abcdef".to_owned()),
+        next_nonce: Some("fedcba".to_owned()),
+    };
+    assert_serialized_header_equal(header,
+                                   "Authentication-info: digest=\"abcdef\", nextnonce=\"fedcba\"");
+}
+
+#[test]
+fn test_fmt_authentication_info_with_digest() {
+    let header = AuthenticationInfo {
+        digest: Some("abcdef".to_owned()),
+        next_nonce: None,
+    };
+    assert_serialized_header_equal(header, "Authentication-info: digest=\"abcdef\"");
+}
+
+#[test]
+fn test_fmt_authentication_info_with_nextnonce() {
+    let header = AuthenticationInfo {
+        digest: None,
+        next_nonce: Some("fedcba".to_owned()),
+    };
+    assert_serialized_header_equal(header, "Authentication-info: nextnonce=\"fedcba\"");
 }

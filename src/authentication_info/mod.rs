@@ -21,9 +21,10 @@
 //! An implementation of the Authentication-Info header.
 
 use hyper::{Error as HyperError, Result as HyperResult};
-use hyper::header::Header;
+use hyper::header::{Header, HeaderFormat};
 use hyper::header::parsing::from_one_raw_str;
 use parsing::{parse_parameters, unraveled_map_value};
+use std::fmt;
 use std::str::FromStr;
 
 mod test;
@@ -55,8 +56,28 @@ impl Header for AuthenticationInfo {
     }
 
     fn parse_header(raw: &[Vec<u8>]) -> HyperResult<AuthenticationInfo> {
-        from_one_raw_str(raw).and_then(|s: String| {
-            AuthenticationInfo::from_str(&s[..])
-        })
+        from_one_raw_str(raw).and_then(|s: String| AuthenticationInfo::from_str(&s[..]))
+    }
+}
+
+impl HeaderFormat for AuthenticationInfo {
+    fn fmt_header(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        let mut params = String::new();
+        if let Some(ref digest) = self.digest {
+            params.push_str("digest=\"");
+            params.push_str(&digest[..]);
+            params.push_str("\"");
+            if self.next_nonce.is_some() {
+                params.push_str(", ")
+            }
+        }
+
+        if let Some(ref next_nonce) = self.next_nonce {
+            params.push_str("nextnonce=\"");
+            params.push_str(&next_nonce[..]);
+            params.push_str("\"")
+        }
+
+        f.write_str(&params[..])
     }
 }

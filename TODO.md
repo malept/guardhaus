@@ -1,7 +1,6 @@
 ## Digest
 
 * `Authentication-Info`:
-  * [RFC 2069, section 2.1.3](https://tools.ietf.org/html/rfc2069#section-2.1.3)
   * [RFC 2617, section 3.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.3)
   * [RFC 7615](https://tools.ietf.org/html/rfc7615)
 * `WWW-Authenticate`:

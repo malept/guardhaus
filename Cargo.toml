@@ -15,9 +15,9 @@ lint = ["clippy"]
 
 [dependencies]
 getopts = "0.2"
-hyper = "0.7, >= 0.7.2"
+hyper = "0.8"
 openssl = "0.7"
-rpassword = "0.1"
+rpassword = "0.2"
 rustc-serialize = "0.3"
 unicase = "1.0"
 url = "0.5"

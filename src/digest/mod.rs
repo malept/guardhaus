@@ -20,12 +20,12 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
+use hex::{FromHex, ToHex};
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};
 use hyper::header::parsing::{ExtendedValue, parse_extended_value};
 use hyper::method::Method;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
-use rustc_serialize::hex::{FromHex, ToHex};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
@@ -235,7 +235,7 @@ fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Er
 }
 
 fn parse_nonce_count(hex: &str) -> Result<u32, Error> {
-    match hex.from_hex() {
+    match Vec::from_hex(hex) {
         Ok(bytes) => {
             let mut count: u32 = 0;
             count |= (bytes[0] as u32) << 24;

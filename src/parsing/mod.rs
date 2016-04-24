@@ -62,8 +62,8 @@ pub fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) ->
         Some(v) => v,
         None => return None,
     };
-    match String::from_utf8(percent_decode(value.as_bytes())) {
-        Ok(string) => Some(string),
+    match percent_decode(value.as_bytes()).decode_utf8() {
+        Ok(string) => Some(string.into_owned()),
         Err(_) => None,
     }
 }

@@ -16,10 +16,10 @@ lint = ["clippy"]
 [dependencies]
 getopts = "0.2"
 hex = "0.2"
-hyper = "0.8"
+hyper = "0.9"
 openssl = "0.7"
 rpassword = "0.2"
 unicase = "1.0"
-url = "0.5"
+url = "1.0"
 
 clippy = { version = "*", optional = true }

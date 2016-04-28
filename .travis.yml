@@ -16,10 +16,7 @@ os:
 
 cache:
   apt: true
-  directories:
-  - target/debug/build
-  - target/debug/deps
-  - $HOME/.cargo
+  cargo: true
 
 rust:
 - nightly

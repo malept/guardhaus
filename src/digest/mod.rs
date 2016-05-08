@@ -20,7 +20,7 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
-use hex::{FromHex, ToHex};
+use hex::ToHex;
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};
 use hyper::header::parsing::{ExtendedValue, parse_extended_value};
@@ -29,7 +29,7 @@ use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::Qop;
+use super::types::{NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;
@@ -115,7 +115,7 @@ pub struct Digest {
     /// Cryptographic nonce.
     pub nonce: String,
     /// Nonce count, parameter name `nc`. Optional only in RFC 2067 mode.
-    pub nonce_count: Option<u32>,
+    pub nonce_count: Option<NonceCount>,
     /// The hexadecimal digest of the payload as described by the RFCs.
     pub response: String,
     /// Either the absolute path or URI of the HTTP request, parameter name `uri`.
@@ -151,11 +151,8 @@ impl Scheme for Digest {
         }
         append_parameter(&mut serialized, "realm", &self.realm, true);
         append_parameter(&mut serialized, "nonce", &self.nonce, true);
-        if let Some(nonce_count) = self.nonce_count {
-            append_parameter(&mut serialized,
-                             "nc",
-                             &format!("{:08x}", nonce_count),
-                             false);
+        if let Some(ref nonce_count) = self.nonce_count {
+            append_parameter(&mut serialized, "nc", &nonce_count.to_string(), false);
         }
         append_parameter(&mut serialized, "response", &self.response, true);
         append_parameter(&mut serialized, "uri", &self.request_uri, true);
@@ -206,20 +203,6 @@ fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Er
     }
 }
 
-fn parse_nonce_count(hex: &str) -> Result<u32, Error> {
-    match Vec::from_hex(hex) {
-        Ok(bytes) => {
-            let mut count: u32 = 0;
-            count |= (bytes[0] as u32) << 24;
-            count |= (bytes[1] as u32) << 16;
-            count |= (bytes[2] as u32) << 8;
-            count |= bytes[3] as u32;
-            Ok(count)
-        }
-        _ => Err(Error::Header),
-    }
-}
-
 impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
@@ -227,7 +210,7 @@ impl FromStr for Digest {
         let username: Username;
         let realm: String;
         let nonce: String;
-        let nonce_count: Option<u32>;
+        let nonce_count: Option<NonceCount>;
         let response: String;
         let request_uri: String;
         let algorithm: HashAlgorithm;
@@ -246,7 +229,7 @@ impl FromStr for Digest {
             None => return Err(Error::Header),
         }
         if let Some(value) = unraveled_map_value(&param_map, "nc") {
-            match parse_nonce_count(&value[..]) {
+            match NonceCount::from_str(&value[..]) {
                 Ok(count) => nonce_count = Some(count),
                 _ => return Err(Error::Header),
             }
@@ -504,9 +487,9 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
                     return Err(Error::Header);
                 }
                 let nonce = digest.nonce.clone();
-                let nonce_count = digest.nonce_count.expect("No nonce count found");
+                let nonce_count = digest.nonce_count.clone().expect("No nonce count found");
                 let client_nonce = digest.client_nonce.clone().expect("No client nonce found");
-                data = format!("{}:{:08x}:{}:{}:{}",
+                data = format!("{}:{}:{}:{}:{}",
                                nonce,
                                nonce_count,
                                client_nonce,

@@ -20,6 +20,7 @@
 
 //! Common authentication types.
 
+use hex::FromHex;
 use hyper::error::Error;
 use std::collections::HashMap;
 use std::fmt;
@@ -68,5 +69,35 @@ impl Qop {
         } else {
             Ok(None)
         }
+    }
+}
+
+/// Convenience type for nonce counts.
+#[derive(Clone, Debug, PartialEq)]
+pub struct NonceCount {
+    /// The actual value
+    pub value: u32,
+}
+
+impl FromStr for NonceCount {
+    type Err = Error;
+    fn from_str(s: &str) -> Result<NonceCount, Error> {
+        match Vec::from_hex(s) {
+            Ok(bytes) => {
+                let mut count: u32 = 0;
+                count |= (bytes[0] as u32) << 24;
+                count |= (bytes[1] as u32) << 16;
+                count |= (bytes[2] as u32) << 8;
+                count |= bytes[3] as u32;
+                Ok(NonceCount {value: count})
+            }
+            _ => Err(Error::Header),
+        }
+    }
+}
+
+impl fmt::Display for NonceCount {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{:08x}", self.value)
     }
 }

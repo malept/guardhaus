@@ -30,10 +30,7 @@ pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
 }
 
 pub fn assert_header_parsing_error(data: &str) {
-    let bytestring = data.to_owned().into_bytes();
-    let header: Result<Authorization<Digest>, _>;
-    header = Header::parse_header(&[bytestring][..]);
-    assert!(header.is_err())
+    test_helper::assert_header_parsing_error::<Authorization<Digest>>(data)
 }
 
 pub fn assert_serialized_header_equal(digest: Digest, actual: &str) {

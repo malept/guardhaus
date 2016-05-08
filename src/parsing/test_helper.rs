@@ -29,6 +29,12 @@ pub fn assert_parsed_header_equal<H: Header + PartialEq + fmt::Debug>(expected: 
     assert_eq!(actual.ok(), Some(expected))
 }
 
+pub fn assert_header_parsing_error<H: Header>(data: &str) {
+    let bytestring = data.to_owned().into_bytes();
+    let header: Result<H, _> = H::parse_header(&[bytestring][..]);
+    assert!(header.is_err())
+}
+
 pub fn assert_serialized_header_equal<H: Header + HeaderFormat>(header: H, actual: &str) {
     let mut headers = Headers::new();
     headers.set(header);

@@ -29,6 +29,7 @@ use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
+use super::types::Qop;
 use unicase::UniCase;
 
 mod test;
@@ -95,35 +96,6 @@ impl fmt::Display for Username {
         match *self {
             Username::Plain(ref username) => write!(f, "{}", username),
             Username::Encoded(ref encoded) => write!(f, "{}", encoded),
-        }
-    }
-}
-
-/// Allowable values for the `qop`, or "quality of protection" parameter.
-#[derive(Clone, Debug, PartialEq)]
-pub enum Qop {
-    /// `auth`
-    Auth,
-    /// `auth-int`
-    AuthInt,
-}
-
-impl FromStr for Qop {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Qop, Error> {
-        match s {
-            "auth" => Ok(Qop::Auth),
-            "auth-int" => Ok(Qop::AuthInt),
-            _ => Err(Error::Header),
-        }
-    }
-}
-
-impl fmt::Display for Qop {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            Qop::Auth => write!(f, "{}", "auth"),
-            Qop::AuthInt => write!(f, "{}", "auth-int"),
         }
     }
 }
@@ -259,7 +231,6 @@ impl FromStr for Digest {
         let response: String;
         let request_uri: String;
         let algorithm: HashAlgorithm;
-        let qop: Option<Qop>;
         let charset: Option<Charset>;
         let userhash: bool;
         match parse_username(&param_map) {
@@ -298,14 +269,10 @@ impl FromStr for Digest {
         } else {
             algorithm = HashAlgorithm::MD5;
         }
-        if let Some(value) = unraveled_map_value(&param_map, "qop") {
-            match Qop::from_str(&value[..]) {
-                Ok(converted) => qop = Some(converted),
-                Err(_) => return Err(Error::Header),
-            }
-        } else {
-            qop = None;
-        }
+        let qop = match Qop::from_parameters(&param_map) {
+            Ok(value) => value,
+            Err(err) => return Err(err),
+        };
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
             let utf8 = UniCase("utf-8".to_owned());
             charset = if UniCase(value.clone()) == utf8 {

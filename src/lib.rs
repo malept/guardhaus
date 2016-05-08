@@ -32,3 +32,5 @@ pub mod authentication_info;
 pub mod digest;
 #[warn(missing_docs)]
 mod parsing;
+#[warn(missing_docs)]
+pub mod types;

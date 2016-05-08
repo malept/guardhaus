@@ -89,7 +89,7 @@ impl FromStr for NonceCount {
                 count |= (bytes[1] as u32) << 16;
                 count |= (bytes[2] as u32) << 8;
                 count |= bytes[3] as u32;
-                Ok(NonceCount {value: count})
+                Ok(NonceCount { value: count })
             }
             _ => Err(Error::Header),
         }

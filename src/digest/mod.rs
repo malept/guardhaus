@@ -489,12 +489,7 @@ pub fn generate_digest_using_hashed_a1(digest: &Digest,
                 let nonce = digest.nonce.clone();
                 let nonce_count = digest.nonce_count.clone().expect("No nonce count found");
                 let client_nonce = digest.client_nonce.clone().expect("No client nonce found");
-                data = format!("{}:{}:{}:{}:{}",
-                               nonce,
-                               nonce_count,
-                               client_nonce,
-                               qop,
-                               a2);
+                data = format!("{}:{}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
             }
         }
     } else {

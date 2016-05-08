@@ -131,7 +131,7 @@ impl fmt::Display for Qop {
 /// Parameters for the `Authorization` header when using the `Digest` scheme.
 ///
 /// The parameters are described in more detail in
-/// [RFC 2617](https://tools.ietf.org/html/rfc2617#section-3.2.2).
+/// [RFC 7616](https://tools.ietf.org/html/rfc7616#section-3.4).
 /// Unless otherwise noted, the parameter name maps to the struct variable name.
 #[derive(Clone, PartialEq, Debug)]
 pub struct Digest {
@@ -388,7 +388,7 @@ fn generate_simple_a1(username: Username, realm: String, password: String) -> Ve
 /// generation.
 ///
 /// To see how a simple A1 value is constructed, see
-/// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
+/// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
 /// This is the definition when the algorithm is "unspecified".
 pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
                                  username: Username,
@@ -398,7 +398,7 @@ pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
     hash_value(algorithm, generate_simple_a1(username, realm, password))
 }
 
-// RFC 2617, Section 3.2.2.2
+// RFC 7616, Section 3.4.2
 fn generate_a1(digest: &Digest, username: Username, password: String) -> Result<Vec<u8>, Error> {
     let realm = digest.realm.clone();
     match digest.algorithm {
@@ -428,7 +428,7 @@ fn generate_a1(digest: &Digest, username: Username, password: String) -> Result<
 /// Generates a hexadecimal digest from an A1 value.
 ///
 /// To see how an A1 value is constructed, see
-/// [RFC 2617, section 3.2.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.2.2).
+/// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
 fn generate_hashed_a1(digest: &Digest,
                       username: Username,
                       password: String)
@@ -440,7 +440,7 @@ fn generate_hashed_a1(digest: &Digest,
     }
 }
 
-// RFC 2617, Section 3.2.2.3
+// RFC 7616, Section 3.4.3
 fn generate_a2(digest: &Digest, method: Method, entity_body: String) -> String {
     match digest.qop {
         Some(Qop::AuthInt) => {

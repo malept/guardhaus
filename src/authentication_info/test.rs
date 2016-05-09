@@ -97,7 +97,9 @@ fn test_parse_authentication_info_with_digest_qop_cnonce_and_nc() {
         client_nonce: Some("client nonce".to_owned()),
         nonce_count: Some(NonceCount { value: 1 }),
     };
-    assert_parsed_header_equal(expected, "qop=\"auth\", rspauth=\"abcdef\", cnonce=\"client nonce\", nc=00000001");
+    assert_parsed_header_equal(expected,
+                               "qop=\"auth\", rspauth=\"abcdef\", cnonce=\"client nonce\", \
+                                nc=00000001");
 }
 
 #[test]

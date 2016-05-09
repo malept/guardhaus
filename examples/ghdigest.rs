@@ -23,7 +23,7 @@ extern crate guardhaus;
 extern crate rpassword;
 
 use getopts::Options;
-use guardhaus::digest::{generate_simple_hashed_a1, HashAlgorithm, Username};
+use guardhaus::digest::{Digest, HashAlgorithm, Username};
 use rpassword::read_password;
 use std::env;
 use std::io;
@@ -62,7 +62,7 @@ fn get_password() -> String {
 }
 
 fn append_to_passwdfile(file: &mut File, username: String, realm: String, password: String) {
-    let hashed = generate_simple_hashed_a1(&HashAlgorithm::MD5,
+    let hashed = Digest::simple_hashed_a1(&HashAlgorithm::MD5,
                                            Username::Plain(username.clone()),
                                            realm.clone(),
                                            password);

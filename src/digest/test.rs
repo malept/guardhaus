@@ -303,14 +303,12 @@ fn test_fmt_scheme_with_extended_username() {
 }
 
 #[test]
-fn test_generate_userhash() {
-    use super::generate_userhash;
-
+fn test_userhash() {
     let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
     if let Username::Encoded(username) = rfc7616_username() {
-        let actual = generate_userhash(&HashAlgorithm::SHA512256,
-                                       username.value,
-                                       "api@example.org".to_owned());
+        let actual = Digest::userhash(&HashAlgorithm::SHA512256,
+                                      username.value,
+                                      "api@example.org".to_owned());
         assert_eq!(expected, actual);
     } else {
         panic!("Bad username");
@@ -322,7 +320,7 @@ fn test_validate_userhash() {
     let userhash = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
     let digest = rfc7616_sha512_256_header(userhash, true);
 
-    assert!(super::validate_userhash(&digest, rfc7616_username()));
+    assert!(digest.validate_userhash(rfc7616_username()));
 }
 
 #[test]
@@ -331,7 +329,7 @@ fn test_validate_userhash_with_plain_username() {
     let mut digest = rfc2069_a1_digest_header();
     digest.username = Username::Plain(userhash);
 
-    assert!(super::validate_userhash(&digest, rfc2069_username()));
+    assert!(digest.validate_userhash(rfc2069_username()));
 }
 
 #[test]
@@ -340,41 +338,35 @@ fn test_validate_userhash_with_invalid_encoded_username() {
     let extended_value = parse_extended_value("UTF-8''hello").expect("Could not parse");
     digest.username = Username::Encoded(extended_value);
 
-    assert!(!super::validate_userhash(&digest, rfc7616_username()));
+    assert!(!digest.validate_userhash(rfc7616_username()));
 }
 
 #[test]
-fn test_generate_simple_hashed_a1() {
-    use super::generate_simple_hashed_a1;
-
+fn test_simple_hashed_a1() {
     let digest = rfc2069_a1_digest_header();
     let expected = "939e7578ed9e3c518a452acee763bce9";
-    let actual = generate_simple_hashed_a1(&digest.algorithm,
-                                           digest.username,
-                                           digest.realm,
-                                           "Circle Of Life".to_owned());
+    let actual = Digest::simple_hashed_a1(&digest.algorithm,
+                                          digest.username,
+                                          digest.realm,
+                                          "Circle Of Life".to_owned());
     assert_eq!(expected, actual)
 }
 
 #[test]
-fn test_generate_a1() {
-    use super::generate_a1;
-
+fn test_a1() {
     let digest = rfc2069_a1_digest_header();
     let password = "CircleOfLife".to_owned();
     let expected = "Mufasa:testrealm@host.com:CircleOfLife".to_owned().into_bytes();
-    let a1 = generate_a1(&digest, digest.username.clone(), password);
+    let a1 = digest.a1(digest.username.clone(), password);
     assert!(a1.is_ok());
     assert_eq!(expected, a1.unwrap())
 }
 
 #[test]
-fn test_generate_a1_for_md5_sess() {
-    use super::generate_a1;
-
+fn test_a1_for_md5_sess() {
     let digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     let password = "Circle Of Life".to_owned();
-    let a1 = generate_a1(&digest, digest.username.clone(), password);
+    let a1 = digest.a1(digest.username.clone(), password);
     assert!(a1.is_ok());
     let expected = format!("939e7578ed9e3c518a452acee763bce9:{}:{}",
                            digest.nonce,
@@ -384,64 +376,50 @@ fn test_generate_a1_for_md5_sess() {
 }
 
 #[test]
-fn test_generate_a1_for_md5_sess_without_client_nonce() {
-    use super::generate_a1;
-
+fn test_a1_for_md5_sess_without_client_nonce() {
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
     let password = "Circle Of Life".to_owned();
-    let a1 = generate_a1(&digest, digest.username.clone(), password);
+    let a1 = digest.a1(digest.username.clone(), password);
     assert!(a1.is_err())
 }
 
 #[test]
-fn test_generate_hashed_a1() {
-    use super::generate_hashed_a1;
-
+fn test_hashed_a1() {
     let digest = rfc2069_a1_digest_header();
     let expected = "939e7578ed9e3c518a452acee763bce9";
-    let hashed_a1 = generate_hashed_a1(&digest,
-                                       digest.username.clone(),
-                                       "Circle Of Life".to_owned());
+    let hashed_a1 = digest.hashed_a1(digest.username.clone(), "Circle Of Life".to_owned());
     assert!(hashed_a1.is_ok());
     assert_eq!(expected, hashed_a1.unwrap())
 }
 
 #[test]
-fn test_generate_hashed_a1_for_md5_sess_without_client_nonce() {
-    use super::generate_hashed_a1;
-
+fn test_hashed_a1_for_md5_sess_without_client_nonce() {
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
     let password = "Circle Of Life".to_owned();
-    let a1 = generate_hashed_a1(&digest, digest.username.clone(), password);
+    let a1 = digest.hashed_a1(digest.username.clone(), password);
     assert!(a1.is_err())
 }
 
 #[test]
-fn test_generate_a2() {
-    use super::generate_a2;
-
+fn test_a2() {
     let digest = rfc2069_a2_digest_header();
     let expected = "GET:/dir/index.html";
-    let actual = generate_a2(&digest, Method::Get, "".to_owned());
+    let actual = digest.a2(Method::Get, "".to_owned());
     assert_eq!(expected, actual)
 }
 
 #[test]
-fn test_generate_hashed_a2() {
-    use super::generate_hashed_a2;
-
+fn test_hashed_a2() {
     let digest = rfc2069_a2_digest_header();
     let expected = "39aff3a2bab6126f332b942af96d3366";
-    let actual = generate_hashed_a2(&digest, Method::Get, "".to_owned());
+    let actual = digest.hashed_a2(Method::Get, "".to_owned());
     assert_eq!(expected, actual)
 }
 
 #[test]
-fn test_generate_digest_from_header() {
-    use super::generate_digest_using_password;
-
+fn test_from_header() {
     let password = "CircleOfLife".to_owned();
     let header: Authorization<Digest> =
         Header::parse_header(&[b"Digest \
@@ -454,135 +432,96 @@ fn test_generate_digest_from_header() {
                                    .to_vec()][..])
             .unwrap();
 
-    let hex_digest = generate_digest_using_password(&header.0,
-                                                    Method::Get,
-                                                    "".to_owned(),
-                                                    password);
+    let hex_digest = header.0.using_password(Method::Get, "".to_owned(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(header.0.response, hex_digest.unwrap())
 }
 
 #[test]
-fn test_generate_digest_from_passport_http_header() {
-    use super::generate_digest_using_password;
-
+fn test_from_passport_http_header() {
     let password = "secret".to_owned();
     let header = parse_digest_header("Digest username=\"bob\", realm=\"Users\", \
                                       nonce=\"NOIEDJ3hJtqSKaty8KF8xlkaYbItAkiS\", uri=\"/\", \
                                       response=\"22e3e0a9bbefeb9d229905230cb9ddc8\"");
 
-    let hex_digest = generate_digest_using_password(&header.0,
-                                                    Method::Head,
-                                                    "".to_owned(),
-                                                    password);
+    let hex_digest = header.0.using_password(Method::Head, "".to_owned(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(header.0.response, hex_digest.unwrap())
 }
 
 #[test]
-fn test_generate_digest_using_password_and_md5_session_sans_client_nonce() {
-    use super::generate_digest_using_password;
-
+fn test_using_password_and_md5_session_sans_client_nonce() {
     let password = "Circle Of Life".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5Session);
     digest.client_nonce = None;
-    let hex_digest = generate_digest_using_password(&digest, Method::Get, "".to_owned(), password);
+    let hex_digest = digest.using_password(Method::Get, "".to_owned(), password);
     assert!(hex_digest.is_err())
 }
 
 #[test]
-fn test_generate_digest_using_password_and_sha256() {
-    use super::generate_digest_using_password;
-
+fn test_using_password_and_sha256() {
     let password = "Circle of Life".to_owned();
     let digest = rfc7616_digest_header(HashAlgorithm::SHA256,
                                        "753927fa0e85d155564e2e272a28d1802ca10daf4496794697cf8db58\
                                         56cb6c1");
-    let hex_digest = generate_digest_using_password(&digest, Method::Get, "".to_owned(), password);
+    let hex_digest = digest.using_password(Method::Get, "".to_owned(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(digest.response, hex_digest.unwrap())
 }
 
 #[test]
-fn test_generate_digest_using_hashed_a1() {
-    use super::generate_digest_using_hashed_a1;
-
+fn test_using_hashed_a1() {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let digest = rfc2617_digest_header(HashAlgorithm::MD5);
-    let hex_digest = generate_digest_using_hashed_a1(&digest,
-                                                     Method::Get,
-                                                     "".to_owned(),
-                                                     hashed_a1);
+    let hex_digest = digest.using_hashed_a1(Method::Get, "".to_owned(), hashed_a1);
     assert!(hex_digest.is_ok());
     assert_eq!(digest.response, hex_digest.unwrap())
 }
 
 #[test]
-fn test_generate_digest_using_hashed_a1_with_auth_int_qop() {
-    use super::generate_digest_using_hashed_a1;
-
+fn test_using_hashed_a1_with_auth_int_qop() {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let expected = "7b9be1c2def9d4ad657b26ac8bc651a0".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = Some(Qop::AuthInt);
-    let hex_digest = generate_digest_using_hashed_a1(&digest,
-                                                     Method::Get,
-                                                     "foo=bar".to_owned(),
-                                                     hashed_a1);
+    let hex_digest = digest.using_hashed_a1(Method::Get, "foo=bar".to_owned(), hashed_a1);
     assert!(hex_digest.is_ok());
     assert_eq!(expected, hex_digest.unwrap())
 }
 
 #[test]
-fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_nonce_count() {
-    use super::generate_digest_using_hashed_a1;
-
+fn test_using_hashed_a1_with_auth_int_qop_sans_nonce_count() {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = Some(Qop::AuthInt);
     digest.nonce_count = None;
-    let hex_digest = generate_digest_using_hashed_a1(&digest,
-                                                     Method::Get,
-                                                     "foo=bar".to_owned(),
-                                                     hashed_a1);
+    let hex_digest = digest.using_hashed_a1(Method::Get, "foo=bar".to_owned(), hashed_a1);
     assert!(hex_digest.is_err())
 }
 
 #[test]
-fn test_generate_digest_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
-    use super::generate_digest_using_hashed_a1;
-
+fn test_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = Some(Qop::AuthInt);
     digest.client_nonce = None;
-    let hex_digest = generate_digest_using_hashed_a1(&digest,
-                                                     Method::Get,
-                                                     "foo=bar".to_owned(),
-                                                     hashed_a1);
+    let hex_digest = digest.using_hashed_a1(Method::Get, "foo=bar".to_owned(), hashed_a1);
     assert!(hex_digest.is_err())
 }
 
 #[test]
-fn test_generate_digest_using_hashed_a1_sans_qop() {
-    use super::generate_digest_using_hashed_a1;
-
+fn test_using_hashed_a1_sans_qop() {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let expected = "670fd8c2df070c60b045671b8b24ff02".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::MD5);
     digest.qop = None;
-    let hex_digest = generate_digest_using_hashed_a1(&digest,
-                                                     Method::Get,
-                                                     "".to_owned(),
-                                                     hashed_a1);
+    let hex_digest = digest.using_hashed_a1(Method::Get, "".to_owned(), hashed_a1);
     assert!(hex_digest.is_ok());
     assert_eq!(expected, hex_digest.unwrap())
 }
 
 #[test]
-fn test_validate_digest_using_password() {
-    use super::validate_digest_using_password;
-
+fn test_validate_using_password() {
     let password = "Circle of Life".to_owned();
     // From RFC 7616 and the result from Firefox
     let header = parse_digest_header("Digest username=\"Mufasa\", \
@@ -592,19 +531,14 @@ fn test_validate_digest_using_password() {
                                       response=\"65e4930cfb0b33cb53405ecea0705cec\", \
                                       opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\", \
                                       qop=auth, nc=00000001, cnonce=\"b24ce2519b8cdb10\"");
-    assert!(validate_digest_using_password(&header.0,
-                                           Method::Get,
-                                           "".to_owned(),
-                                           password.clone()));
+    assert!(header.0.validate_using_password(Method::Get, "".to_owned(), password.clone()));
     let mut digest = header.0.clone();
     digest.client_nonce = Some("somethingelse".to_owned());
-    assert!(!validate_digest_using_password(&digest, Method::Get, "".to_owned(), password));
+    assert!(!digest.validate_using_password(Method::Get, "".to_owned(), password));
 }
 
 #[test]
-fn test_validate_digest_using_encoded_username_and_password() {
-    use super::validate_digest_using_password;
-
+fn test_validate_using_encoded_username_and_password() {
     // From RFC 7616
     let password = "Secret, or not?".to_owned();
     let header = parse_digest_header("Digest username*=UTF-8''J%C3%A4s%C3%B8n%20Doe, \
@@ -618,16 +552,11 @@ fn test_validate_digest_using_encoded_username_and_password() {
                                       1229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false");
-    assert!(validate_digest_using_password(&header.0,
-                                           Method::Get,
-                                           "".to_owned(),
-                                           password.clone()));
+    assert!(header.0.validate_using_password(Method::Get, "".to_owned(), password.clone()));
 }
 
 #[test]
-fn test_validate_digest_using_userhash_and_password() {
-    use super::validate_digest_using_userhash_and_password;
-
+fn test_validate_using_userhash_and_password() {
     // From RFC 7616
     let password = "Secret, or not?".to_owned();
     let header = parse_digest_header("Digest username=\"488869477bf257147b804c45308cd62ac4e25eb71\
@@ -641,17 +570,15 @@ fn test_validate_digest_using_userhash_and_password() {
                                       1229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true");
-    assert!(validate_digest_using_userhash_and_password(&header.0,
-                                                        Method::Get,
-                                                        "".to_owned(),
-                                                        rfc7616_username(),
-                                                        password.clone()));
+    assert!(header.0.validate_using_userhash_and_password(Method::Get,
+                                                          "".to_owned(),
+                                                          rfc7616_username(),
+                                                          password.clone()));
 
     let mut digest = header.0.clone();
     digest.userhash = false;
     digest.username = rfc7616_username();
-    assert!(validate_digest_using_userhash_and_password(&digest,
-                                                        Method::Get,
+    assert!(digest.validate_using_userhash_and_password(Method::Get,
                                                         "".to_owned(),
                                                         rfc7616_username(),
                                                         password.clone()));
@@ -659,24 +586,18 @@ fn test_validate_digest_using_userhash_and_password() {
     digest.userhash = true;
     digest.username = Username::Plain("invalid".to_owned());
 
-    assert!(!validate_digest_using_userhash_and_password(&digest,
-                                                         Method::Get,
+    assert!(!digest.validate_using_userhash_and_password(Method::Get,
                                                          "".to_owned(),
                                                          rfc7616_username(),
                                                          password.clone()));
 }
 
 #[test]
-fn test_validate_digest_using_hashed_a1() {
-    use super::validate_digest_using_hashed_a1;
-
+fn test_validate_using_hashed_a1() {
     let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_owned();
     let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
-    assert!(validate_digest_using_hashed_a1(&digest,
-                                            Method::Get,
-                                            "".to_owned(),
-                                            hashed_a1.clone()));
+    assert!(digest.validate_using_hashed_a1(Method::Get, "".to_owned(), hashed_a1.clone()));
 
     digest.client_nonce = Some("different".to_owned());
-    assert!(!validate_digest_using_hashed_a1(&digest, Method::Get, "".to_owned(), hashed_a1));
+    assert!(!digest.validate_using_hashed_a1(Method::Get, "".to_owned(), hashed_a1));
 }

@@ -21,7 +21,7 @@
 extern crate guardhaus;
 extern crate hyper;
 
-use guardhaus::digest::{Digest, Username, validate_digest_using_userhash_and_password};
+use guardhaus::digest::{Digest, Username};
 use hyper::header::Authorization;
 use hyper::server::{Request, Response, Server};
 use hyper::status::StatusCode;
@@ -41,7 +41,7 @@ fn needs_auth(mut req: Request, mut resp: Response) {
     if let Some(ref auth) = req.headers.get::<Authorization<Digest>>() {
         let username = Username::Plain(USERNAME.to_owned());
         let password = PASSWORD.to_owned();
-        if validate_digest_using_userhash_and_password(&auth.0,
+        if auth.0.validate_using_userhash_and_password(
                                                        req.method,
                                                        entity_body,
                                                        username,

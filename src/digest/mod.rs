@@ -287,277 +287,277 @@ impl FromStr for Digest {
     }
 }
 
-/// Generates a userhash, as defined in
-/// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
-pub fn generate_userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
-    let mut to_hash = username.clone();
-    to_hash.push(b':');
-    to_hash.append(&mut realm.into_bytes());
-    hash_value(algorithm, to_hash)
-}
-
-/// Validates a userhash (as defined in
-/// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4)), given a
-/// `Digest` header.
-///
-/// If userhash is `false`, returns `false`.
-pub fn validate_userhash(digest: &Digest, username: Username) -> bool {
-    match digest.username {
-        Username::Plain(ref userhash) => {
-            let name = match username {
-                Username::Plain(value) => value.into_bytes(),
-                Username::Encoded(encoded) => encoded.value,
-            };
-            *userhash == generate_userhash(&digest.algorithm, name, digest.realm.clone())
-        }
-        Username::Encoded(_) => false,
+impl Digest {
+    /// Generates a userhash, as defined in
+    /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
+    pub fn userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
+        let mut to_hash = username.clone();
+        to_hash.push(b':');
+        to_hash.append(&mut realm.into_bytes());
+        Digest::hash_value(algorithm, to_hash)
     }
-}
 
-fn generate_simple_a1(username: Username, realm: String, password: String) -> Vec<u8> {
-    let mut a1: Vec<u8> = match username {
-        Username::Plain(name) => name.clone().into_bytes(),
-        Username::Encoded(encoded) => encoded.value.clone(),
-    };
-    a1.push(b':');
-    a1.append(&mut realm.into_bytes());
-    a1.push(b':');
-    a1.append(&mut password.into_bytes());
-
-    a1
-}
-
-/// Generates a simple hexadecimal digest from an A1 value and given algorithm.
-///
-/// This is intended to be used in applications that use the `htdigest` style of secret hash
-/// generation.
-///
-/// To see how a simple A1 value is constructed, see
-/// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
-/// This is the definition when the algorithm is "unspecified".
-pub fn generate_simple_hashed_a1(algorithm: &HashAlgorithm,
-                                 username: Username,
-                                 realm: String,
-                                 password: String)
-                                 -> String {
-    hash_value(algorithm, generate_simple_a1(username, realm, password))
-}
-
-// RFC 7616, Section 3.4.2
-fn generate_a1(digest: &Digest, username: Username, password: String) -> Result<Vec<u8>, Error> {
-    let realm = digest.realm.clone();
-    match digest.algorithm {
-        HashAlgorithm::MD5 |
-        HashAlgorithm::SHA256 |
-        HashAlgorithm::SHA512256 => Ok(generate_simple_a1(username, realm, password)),
-
-        HashAlgorithm::MD5Session |
-        HashAlgorithm::SHA256Session |
-        HashAlgorithm::SHA512256Session => {
-            if let Some(ref client_nonce) = digest.client_nonce {
-                let simple_hashed_a1 = hash_value(&digest.algorithm,
-                                                  generate_simple_a1(username, realm, password));
-                let mut a1 = simple_hashed_a1.into_bytes();
-                a1.push(b':');
-                a1.append(&mut digest.nonce.clone().into_bytes());
-                a1.push(b':');
-                a1.append(&mut client_nonce.clone().into_bytes());
-                Ok(a1)
-            } else {
-                Err(Error::Header)
+    /// Validates a userhash (as defined in
+    /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4)), given a
+    /// `Digest` header.
+    ///
+    /// If userhash is `false`, returns `false`.
+    pub fn validate_userhash(&self, username: Username) -> bool {
+        match self.username {
+            Username::Plain(ref userhash) => {
+                let name = match username {
+                    Username::Plain(value) => value.into_bytes(),
+                    Username::Encoded(encoded) => encoded.value,
+                };
+                *userhash == Digest::userhash(&self.algorithm, name, self.realm.clone())
             }
+            Username::Encoded(_) => false,
         }
     }
-}
 
-/// Generates a hexadecimal digest from an A1 value.
-///
-/// To see how an A1 value is constructed, see
-/// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
-fn generate_hashed_a1(digest: &Digest,
-                      username: Username,
-                      password: String)
-                      -> Result<String, Error> {
-    if let Ok(a1) = generate_a1(digest, username, password) {
-        Ok(hash_value(&digest.algorithm, a1))
-    } else {
-        Err(Error::Header)
-    }
-}
+    fn simple_a1(username: Username, realm: String, password: String) -> Vec<u8> {
+        let mut a1: Vec<u8> = match username {
+            Username::Plain(name) => name.clone().into_bytes(),
+            Username::Encoded(encoded) => encoded.value.clone(),
+        };
+        a1.push(b':');
+        a1.append(&mut realm.into_bytes());
+        a1.push(b':');
+        a1.append(&mut password.into_bytes());
 
-// RFC 7616, Section 3.4.3
-fn generate_a2(digest: &Digest, method: Method, entity_body: String) -> String {
-    match digest.qop {
-        Some(Qop::AuthInt) => {
-            format!("{}:{}:{}",
-                    method,
-                    digest.request_uri,
-                    hash_value_from_string(&digest.algorithm, entity_body))
-        }
-        _ => format!("{}:{}", method, digest.request_uri),
-    }
-}
-
-fn generate_hashed_a2(digest: &Digest, method: Method, entity_body: String) -> String {
-    hash_value_from_string(&digest.algorithm, generate_a2(digest, method, entity_body))
-}
-
-fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
-    hash_value(algorithm, value.into_bytes())
-}
-
-fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
-    use openssl::crypto::hash::{hash, Type};
-
-    let hash_type = match *algorithm {
-        HashAlgorithm::MD5 |
-        HashAlgorithm::MD5Session => Type::MD5,
-        HashAlgorithm::SHA256 |
-        HashAlgorithm::SHA256Session => Type::SHA256,
-        HashAlgorithm::SHA512256 |
-        HashAlgorithm::SHA512256Session => Type::SHA512,
-    };
-
-    let digest = hash(hash_type, &value[..]);
-    let mut hex_digest = digest.to_hex();
-    if *algorithm == HashAlgorithm::SHA512256 || *algorithm == HashAlgorithm::SHA512256Session {
-        hex_digest.truncate(64);
+        a1
     }
 
-    hex_digest
-}
-
-fn generate_kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
-    let value = format!("{}:{}", secret, data);
-    hash_value_from_string(algorithm, value)
-}
-
-fn generate_digest_using_username_and_password(digest: &Digest,
-                                               method: Method,
-                                               entity_body: String,
-                                               username: Username,
-                                               password: String)
-                                               -> Result<String, Error> {
-    if let Ok(a1) = generate_hashed_a1(digest, username, password) {
-        generate_digest_using_hashed_a1(digest, method, entity_body, a1)
-    } else {
-        Err(Error::Header)
+    /// Generates a simple hexadecimal digest from an A1 value and given algorithm.
+    ///
+    /// This is intended to be used in applications that use the `htdigest` style of secret hash
+    /// generation.
+    ///
+    /// To see how a simple A1 value is constructed, see
+    /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
+    /// This is the definition when the algorithm is "unspecified".
+    pub fn simple_hashed_a1(algorithm: &HashAlgorithm,
+                            username: Username,
+                            realm: String,
+                            password: String)
+                            -> String {
+        Digest::hash_value(algorithm, Digest::simple_a1(username, realm, password))
     }
-}
 
-/// Generates a digest, given an HTTP request and a password.
-///
-/// `entity_body` is defined in
-/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-pub fn generate_digest_using_password(digest: &Digest,
-                                      method: Method,
-                                      entity_body: String,
-                                      password: String)
-                                      -> Result<String, Error> {
-    if let Ok(a1) = generate_hashed_a1(digest, digest.username.clone(), password) {
-        generate_digest_using_hashed_a1(digest, method, entity_body, a1)
-    } else {
-        Err(Error::Header)
-    }
-}
+    // RFC 7616, Section 3.4.2
+    fn a1(&self, username: Username, password: String) -> Result<Vec<u8>, Error> {
+        let realm = self.realm.clone();
+        match self.algorithm {
+            HashAlgorithm::MD5 |
+            HashAlgorithm::SHA256 |
+            HashAlgorithm::SHA512256 => Ok(Digest::simple_a1(username, realm, password)),
 
-/// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.
-///
-/// `entity_body` is defined in
-/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-///
-/// This is intended to be used in applications that use the `htdigest` style of secret hash
-/// generation.
-pub fn generate_digest_using_hashed_a1(digest: &Digest,
-                                       method: Method,
-                                       entity_body: String,
-                                       a1: String)
-                                       -> Result<String, Error> {
-    let a2 = generate_hashed_a2(digest, method, entity_body);
-    let data: String;
-    if let Some(ref qop) = digest.qop {
-        match *qop {
-            Qop::Auth | Qop::AuthInt => {
-                if digest.client_nonce.is_none() || digest.nonce_count.is_none() {
-                    return Err(Error::Header);
+            HashAlgorithm::MD5Session |
+            HashAlgorithm::SHA256Session |
+            HashAlgorithm::SHA512256Session => {
+                if let Some(ref client_nonce) = self.client_nonce {
+                    let simple_hashed_a1 = Digest::hash_value(&self.algorithm,
+                                                              Digest::simple_a1(username,
+                                                                                realm,
+                                                                                password));
+                    let mut a1 = simple_hashed_a1.into_bytes();
+                    a1.push(b':');
+                    a1.append(&mut self.nonce.clone().into_bytes());
+                    a1.push(b':');
+                    a1.append(&mut client_nonce.clone().into_bytes());
+                    Ok(a1)
+                } else {
+                    Err(Error::Header)
                 }
-                let nonce = digest.nonce.clone();
-                let nonce_count = digest.nonce_count.clone().expect("No nonce count found");
-                let client_nonce = digest.client_nonce.clone().expect("No client nonce found");
-                data = format!("{}:{}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
             }
         }
-    } else {
-        data = format!("{}:{}", digest.nonce, a2);
     }
-    Ok(generate_kd(&digest.algorithm, a1, data))
-}
 
-fn validate_digest_using_username_and_password(digest: &Digest,
-                                               method: Method,
-                                               entity_body: String,
-                                               username: Username,
-                                               password: String)
-                                               -> bool {
-    if let Ok(hex_digest) = generate_digest_using_username_and_password(digest,
-                                                                        method,
-                                                                        entity_body,
-                                                                        username,
-                                                                        password) {
-        hex_digest == digest.response
-    } else {
-        false
+    /// Generates a hexadecimal digest from an A1 value.
+    ///
+    /// To see how an A1 value is constructed, see
+    /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
+    fn hashed_a1(&self, username: Username, password: String) -> Result<String, Error> {
+        if let Ok(a1) = self.a1(username, password) {
+            Ok(Digest::hash_value(&self.algorithm, a1))
+        } else {
+            Err(Error::Header)
+        }
     }
-}
 
-/// Validates a `Digest.response`, given an HTTP request and a password.
-///
-/// `entity_body` is defined in
-/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-pub fn validate_digest_using_password(digest: &Digest,
-                                      method: Method,
-                                      entity_body: String,
-                                      password: String)
-                                      -> bool {
-    validate_digest_using_username_and_password(digest,
-                                                method,
-                                                entity_body,
-                                                digest.username.clone(),
-                                                password)
-}
-
-/// Validates a `Digest.username` and `Digest.response`, given an HTTP request, a username,
-/// and a password. If a userhash is specified, that is validated first.
-///
-/// `entity_body` is defined in
-/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-pub fn validate_digest_using_userhash_and_password(digest: &Digest,
-                                                   method: Method,
-                                                   entity_body: String,
-                                                   username: Username,
-                                                   password: String)
-                                                   -> bool {
-    if digest.userhash && !validate_userhash(digest, username.clone()) {
-        return false;
+    // RFC 7616, Section 3.4.3
+    fn a2(&self, method: Method, entity_body: String) -> String {
+        match self.qop {
+            Some(Qop::AuthInt) => {
+                format!("{}:{}:{}",
+                        method,
+                        self.request_uri,
+                        Digest::hash_value_from_string(&self.algorithm, entity_body))
+            }
+            _ => format!("{}:{}", method, self.request_uri),
+        }
     }
-    validate_digest_using_username_and_password(digest, method, entity_body, username, password)
-}
 
-/// Validates a `Digest.response`, given an HTTP request and a hexadecimal digest of an A1 string.
-///
-/// `entity_body` is defined in
-/// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-///
-/// This is intended to be used in applications that use the `htdigest` style of secret hash
-/// generation.
-pub fn validate_digest_using_hashed_a1(digest: &Digest,
-                                       method: Method,
-                                       entity_body: String,
-                                       a1: String)
-                                       -> bool {
-    if let Ok(hex_digest) = generate_digest_using_hashed_a1(digest, method, entity_body, a1) {
-        hex_digest == digest.response
-    } else {
-        false
+    fn hashed_a2(&self, method: Method, entity_body: String) -> String {
+        Digest::hash_value_from_string(&self.algorithm, self.a2(method, entity_body))
+    }
+
+    fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
+        Digest::hash_value(algorithm, value.into_bytes())
+    }
+
+    fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
+        use openssl::crypto::hash::{hash, Type};
+
+        let hash_type = match *algorithm {
+            HashAlgorithm::MD5 |
+            HashAlgorithm::MD5Session => Type::MD5,
+            HashAlgorithm::SHA256 |
+            HashAlgorithm::SHA256Session => Type::SHA256,
+            HashAlgorithm::SHA512256 |
+            HashAlgorithm::SHA512256Session => Type::SHA512,
+        };
+
+        let digest = hash(hash_type, &value[..]);
+        let mut hex_digest = digest.to_hex();
+        if *algorithm == HashAlgorithm::SHA512256 || *algorithm == HashAlgorithm::SHA512256Session {
+            hex_digest.truncate(64);
+        }
+
+        hex_digest
+    }
+
+    fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
+        let value = format!("{}:{}", secret, data);
+        Digest::hash_value_from_string(algorithm, value)
+    }
+
+    fn using_username_and_password(&self,
+                                   method: Method,
+                                   entity_body: String,
+                                   username: Username,
+                                   password: String)
+                                   -> Result<String, Error> {
+        if let Ok(a1) = self.hashed_a1(username, password) {
+            self.using_hashed_a1(method, entity_body, a1)
+        } else {
+            Err(Error::Header)
+        }
+    }
+
+    /// Generates a digest, given an HTTP request and a password.
+    ///
+    /// `entity_body` is defined in
+    /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+    pub fn using_password(&self,
+                          method: Method,
+                          entity_body: String,
+                          password: String)
+                          -> Result<String, Error> {
+        if let Ok(a1) = self.hashed_a1(self.username.clone(), password) {
+            self.using_hashed_a1(method, entity_body, a1)
+        } else {
+            Err(Error::Header)
+        }
+    }
+
+    /// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.
+    ///
+    /// `entity_body` is defined in
+    /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+    ///
+    /// This is intended to be used in applications that use the `htdigest` style of secret hash
+    /// generation.
+    pub fn using_hashed_a1(&self,
+                           method: Method,
+                           entity_body: String,
+                           a1: String)
+                           -> Result<String, Error> {
+        let a2 = self.hashed_a2(method, entity_body);
+        let data: String;
+        if let Some(ref qop) = self.qop {
+            match *qop {
+                Qop::Auth | Qop::AuthInt => {
+                    if self.client_nonce.is_none() || self.nonce_count.is_none() {
+                        return Err(Error::Header);
+                    }
+                    let nonce = self.nonce.clone();
+                    let nonce_count = self.nonce_count.clone().expect("No nonce count found");
+                    let client_nonce = self.client_nonce.clone().expect("No client nonce found");
+                    data = format!("{}:{}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
+                }
+            }
+        } else {
+            data = format!("{}:{}", self.nonce, a2);
+        }
+        Ok(Digest::kd(&self.algorithm, a1, data))
+    }
+
+    fn validate_using_username_and_password(&self,
+                                            method: Method,
+                                            entity_body: String,
+                                            username: Username,
+                                            password: String)
+                                            -> bool {
+        if let Ok(hex_digest) = self.using_username_and_password(method,
+                                                                 entity_body,
+                                                                 username,
+                                                                 password) {
+            hex_digest == self.response
+        } else {
+            false
+        }
+    }
+
+    /// Validates a `Digest.response`, given an HTTP request and a password.
+    ///
+    /// `entity_body` is defined in
+    /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+    pub fn validate_using_password(&self,
+                                   method: Method,
+                                   entity_body: String,
+                                   password: String)
+                                   -> bool {
+        self.validate_using_username_and_password(method,
+                                                  entity_body,
+                                                  self.username.clone(),
+                                                  password)
+    }
+
+    /// Validates a `Digest.username` and `Digest.response`, given an HTTP request, a username,
+    /// and a password. If a userhash is specified, that is validated first.
+    ///
+    /// `entity_body` is defined in
+    /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+    pub fn validate_using_userhash_and_password(&self,
+                                                method: Method,
+                                                entity_body: String,
+                                                username: Username,
+                                                password: String)
+                                                -> bool {
+        if self.userhash && !self.validate_userhash(username.clone()) {
+            return false;
+        }
+        self.validate_using_username_and_password(method, entity_body, username, password)
+    }
+
+    /// Validates a `Digest.response`, given an HTTP request and a hexadecimal digest of an
+    /// A1 string.
+    ///
+    /// `entity_body` is defined in
+    /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
+    ///
+    /// This is intended to be used in applications that use the `htdigest` style of secret hash
+    /// generation.
+    pub fn validate_using_hashed_a1(&self,
+                                    method: Method,
+                                    entity_body: String,
+                                    a1: String)
+                                    -> bool {
+        if let Ok(hex_digest) = self.using_hashed_a1(method, entity_body, a1) {
+            hex_digest == self.response
+        } else {
+            false
+        }
     }
 }

@@ -109,7 +109,7 @@ impl HeaderFormat for AuthenticationInfo {
         }
 
         if let Some(ref qop) = self.qop {
-            append_parameter(&mut serialized, "qop", &qop.to_string(), true);
+            append_parameter(&mut serialized, "qop", &qop.to_string(), false);
         }
 
         if let Some(ref client_nonce) = self.client_nonce {

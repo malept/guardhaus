@@ -148,7 +148,7 @@ fn test_fmt_authentication_info_with_qop() {
         client_nonce: None,
         nonce_count: None,
     };
-    assert_serialized_header_equal(header, "Authentication-Info: qop=\"auth-int\"");
+    assert_serialized_header_equal(header, "Authentication-Info: qop=auth-int");
 }
 
 #[test]
@@ -170,7 +170,7 @@ fn test_fmt_authentication_info_with_nonce_count() {
         next_nonce: None,
         qop: None,
         client_nonce: None,
-        nonce_count: Some(NonceCount { value: 1 }),
+        nonce_count: Some(NonceCount { value: 0xff }),
     };
-    assert_serialized_header_equal(header, "Authentication-Info: nc=00000001");
+    assert_serialized_header_equal(header, "Authentication-Info: nc=000000ff");
 }

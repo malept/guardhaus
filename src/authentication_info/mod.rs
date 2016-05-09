@@ -37,7 +37,7 @@ mod test;
 pub struct AuthenticationInfo {
     /// The digest of the entity body, parameter name `digest` in RFC 2069, `rspauth` otherwise
     pub digest: Option<String>,
-    /// `nextnonce` - per RFC 2617, "the nonce the server wishes the client to use for a future
+    /// `nextnonce` - per RFC 7616, "the nonce the server wishes the client to use for a future
     /// authentication response."
     pub next_nonce: Option<String>,
     /// Quality of protection
@@ -67,21 +67,30 @@ impl FromStr for AuthenticationInfo {
 
     fn from_str(s: &str) -> Result<AuthenticationInfo, HyperError> {
         let parameters = parse_parameters(s);
+        let digest = match parse_digest(&parameters) {
+            Ok(value) => value,
+            Err(err) => return Err(err),
+        };
+        let qop = match Qop::from_parameters(&parameters) {
+            Ok(value) => value,
+            Err(err) => return Err(err),
+        };
+        let client_nonce = unraveled_map_value(&parameters, "cnonce");
+        let nonce_count = match NonceCount::from_parameters(&parameters) {
+            Ok(value) => value,
+            Err(err) => return Err(err),
+        };
+
+        if qop.is_some() && (digest.is_none() || client_nonce.is_none() || nonce_count.is_none()) {
+            return Err(HyperError::Header);
+        }
+
         Ok(AuthenticationInfo {
-            digest: match parse_digest(&parameters) {
-                Ok(value) => value,
-                Err(err) => return Err(err),
-            },
+            digest: digest,
             next_nonce: unraveled_map_value(&parameters, "nextnonce"),
-            qop: match Qop::from_parameters(&parameters) {
-                Ok(value) => value,
-                Err(err) => return Err(err),
-            },
-            client_nonce: unraveled_map_value(&parameters, "cnonce"),
-            nonce_count: match NonceCount::from_parameters(&parameters) {
-                Ok(value) => value,
-                Err(err) => return Err(err),
-            },
+            qop: qop,
+            client_nonce: client_nonce,
+            nonce_count: nonce_count,
         })
     }
 }

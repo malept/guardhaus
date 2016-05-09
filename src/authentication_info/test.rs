@@ -57,18 +57,25 @@ fn test_parse_authentication_info_with_digest_and_rspauth() {
 #[test]
 fn test_parse_authentication_info_with_qop() {
     let expected = AuthenticationInfo {
-        digest: None,
+        digest: Some("abcdef".to_owned()),
         next_nonce: None,
         qop: Some(Qop::Auth),
-        client_nonce: None,
-        nonce_count: None,
+        client_nonce: Some("1234".to_owned()),
+        nonce_count: Some(NonceCount { value: 2 }),
     };
-    assert_parsed_header_equal(expected, "qop=\"auth\"");
+    assert_parsed_header_equal(expected,
+                               "qop=auth, rspauth=\"abcdef\", cnonce=\"1234\", nc=00000002");
+}
+
+#[test]
+fn test_parse_authentication_info_with_qop_but_not_all_required_params() {
+    // missing nc (nonce_count)
+    assert_header_parsing_error::<AuthenticationInfo>("qop=auth, digest=\"abcd\", cnonce=\"1234\"");
 }
 
 #[test]
 fn test_parse_authentication_info_with_bad_qop() {
-    assert_header_parsing_error::<AuthenticationInfo>("qop=\"invalid\"");
+    assert_header_parsing_error::<AuthenticationInfo>("qop=invalid");
 }
 
 #[test]
@@ -98,7 +105,7 @@ fn test_parse_authentication_info_with_digest_qop_cnonce_and_nc() {
         nonce_count: Some(NonceCount { value: 1 }),
     };
     assert_parsed_header_equal(expected,
-                               "qop=\"auth\", rspauth=\"abcdef\", cnonce=\"client nonce\", \
+                               "qop=auth, rspauth=\"abcdef\", cnonce=\"client nonce\", \
                                 nc=00000001");
 }
 

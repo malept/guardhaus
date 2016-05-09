@@ -11,7 +11,7 @@ Guardhaus is an HTTP authentication/authorization library, written in Rust.
 * Support for HTTP digest authentication via the `Authorization` header (as specified in
   [RFC 7616](https://tools.ietf.org/html/rfc7616)) for [Hyper](http://hyper.rs)
 * Support for the HTTP `Authentication-Info` header (as specified in
-  [RFC 2617, section 3.2.2](https://tools.ietf.org/html/rfc2617#section-3.2.3)) for Hyper
+  [RFC 7616, section 3.5](https://tools.ietf.org/html/rfc7616#section-3.5)) for Hyper
 
 ## Usage
 

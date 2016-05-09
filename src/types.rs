@@ -101,3 +101,18 @@ impl fmt::Display for NonceCount {
         write!(f, "{:08x}", self.value)
     }
 }
+
+impl NonceCount {
+    /// Extracts an `NonceCount` object from a map of header parameters.
+    /// Returns an error if the value is not a valid nonce count.
+    pub fn from_parameters(map: &HashMap<UniCase<String>, String>) -> Result<Option<NonceCount>, Error> {
+        if let Some(value) = unraveled_map_value(&map, "nc") {
+            match NonceCount::from_str(&value[..]) {
+                Ok(count) => Ok(Some(count)),
+                _ => Err(Error::Header),
+            }
+        } else {
+            Ok(None)
+        }
+    }
+}

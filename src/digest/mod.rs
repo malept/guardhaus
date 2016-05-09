@@ -210,7 +210,6 @@ impl FromStr for Digest {
         let username: Username;
         let realm: String;
         let nonce: String;
-        let nonce_count: Option<NonceCount>;
         let response: String;
         let request_uri: String;
         let algorithm: HashAlgorithm;
@@ -228,14 +227,10 @@ impl FromStr for Digest {
             Some(value) => nonce = value,
             None => return Err(Error::Header),
         }
-        if let Some(value) = unraveled_map_value(&param_map, "nc") {
-            match NonceCount::from_str(&value[..]) {
-                Ok(count) => nonce_count = Some(count),
-                _ => return Err(Error::Header),
-            }
-        } else {
-            nonce_count = None;
-        }
+        let nonce_count = match NonceCount::from_parameters(&param_map) {
+            Ok(value) => value,
+            Err(err) => return Err(err),
+        };
         match unraveled_map_value(&param_map, "response") {
             Some(value) => response = value,
             None => return Err(Error::Header),

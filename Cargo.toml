@@ -1,6 +1,6 @@
 [package]
 name = "guardhaus"
-version = "0.0.10"
+version = "0.0.11"
 authors = ["Mark Lee"]
 description = "An HTTP authentication/authorization library."
 documentation = "https://malept.github.io/guardhaus/"

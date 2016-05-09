@@ -23,19 +23,43 @@
 use hyper::{Error as HyperError, Result as HyperResult};
 use hyper::header::{Header, HeaderFormat};
 use hyper::header::parsing::from_one_raw_str;
-use parsing::{parse_parameters, unraveled_map_value};
+use parsing::{append_parameter, parse_parameters, unraveled_map_value};
+use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
+use super::types::{NonceCount, Qop};
+use unicase::UniCase;
 
 mod test;
 
+/// Parameters for the `Authentication-Info` header.
 #[derive(Clone, PartialEq, Debug)]
-struct AuthenticationInfo {
-    /// The digest of the entity body.
-    digest: Option<String>,
-    /// `nextnonce` - per RFC 2069, "the nonce the server wishes the client to use for the next
+pub struct AuthenticationInfo {
+    /// The digest of the entity body, parameter name `digest` in RFC 2069, `rspauth` otherwise
+    pub digest: Option<String>,
+    /// `nextnonce` - per RFC 2617, "the nonce the server wishes the client to use for a future
     /// authentication response."
-    next_nonce: Option<String>,
+    pub next_nonce: Option<String>,
+    /// Quality of protection
+    pub qop: Option<Qop>,
+    /// Cryptographic nonce from the client
+    pub client_nonce: Option<String>,
+    /// Nonce count, parameter name `nc`
+    pub nonce_count: Option<NonceCount>,
+}
+
+fn parse_digest(map: &HashMap<UniCase<String>, String>) -> Result<Option<String>, HyperError> {
+    if let Some(rspauth) = unraveled_map_value(&map, "rspauth") {
+        if unraveled_map_value(&map, "digest").is_some() {
+            Err(HyperError::Header)
+        } else {
+            Ok(Some(rspauth))
+        }
+    } else if let Some(digest) = unraveled_map_value(&map, "digest") {
+        Ok(Some(digest))
+    } else {
+        Ok(None)
+    }
 }
 
 impl FromStr for AuthenticationInfo {
@@ -44,15 +68,27 @@ impl FromStr for AuthenticationInfo {
     fn from_str(s: &str) -> Result<AuthenticationInfo, HyperError> {
         let parameters = parse_parameters(s);
         Ok(AuthenticationInfo {
-            digest: unraveled_map_value(&parameters, "digest"),
+            digest: match parse_digest(&parameters) {
+                Ok(value) => value,
+                Err(err) => return Err(err),
+            },
             next_nonce: unraveled_map_value(&parameters, "nextnonce"),
+            qop: match Qop::from_parameters(&parameters) {
+                Ok(value) => value,
+                Err(err) => return Err(err),
+            },
+            client_nonce: unraveled_map_value(&parameters, "cnonce"),
+            nonce_count: match NonceCount::from_parameters(&parameters) {
+                Ok(value) => value,
+                Err(err) => return Err(err),
+            },
         })
     }
 }
 
 impl Header for AuthenticationInfo {
     fn header_name() -> &'static str {
-        "Authentication-info"
+        "Authentication-Info"
     }
 
     fn parse_header(raw: &[Vec<u8>]) -> HyperResult<AuthenticationInfo> {
@@ -62,22 +98,28 @@ impl Header for AuthenticationInfo {
 
 impl HeaderFormat for AuthenticationInfo {
     fn fmt_header(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut params = String::new();
+        let mut serialized = String::new();
+
         if let Some(ref digest) = self.digest {
-            params.push_str("digest=\"");
-            params.push_str(&digest[..]);
-            params.push_str("\"");
-            if self.next_nonce.is_some() {
-                params.push_str(", ")
-            }
+            append_parameter(&mut serialized, "rspauth", &digest, true);
         }
 
         if let Some(ref next_nonce) = self.next_nonce {
-            params.push_str("nextnonce=\"");
-            params.push_str(&next_nonce[..]);
-            params.push_str("\"")
+            append_parameter(&mut serialized, "nextnonce", &next_nonce, true);
         }
 
-        f.write_str(&params[..])
+        if let Some(ref qop) = self.qop {
+            append_parameter(&mut serialized, "qop", &qop.to_string(), true);
+        }
+
+        if let Some(ref client_nonce) = self.client_nonce {
+            append_parameter(&mut serialized, "cnonce", client_nonce, true);
+        }
+
+        if let Some(ref nonce_count) = self.nonce_count {
+            append_parameter(&mut serialized, "nc", &nonce_count.to_string(), false);
+        }
+
+        write!(f, "{}", serialized)
     }
 }

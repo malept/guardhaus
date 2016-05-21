@@ -18,7 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! An implementation of the Authentication-Info header.
+//! An implementation of the `Authentication-Info` header.
 
 use hyper::{Error as HyperError, Result as HyperResult};
 use hyper::header::{Header, HeaderFormat};

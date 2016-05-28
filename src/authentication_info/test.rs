@@ -61,7 +61,7 @@ fn test_parse_authentication_info_with_qop() {
         next_nonce: None,
         qop: Some(Qop::Auth),
         client_nonce: Some("1234".to_owned()),
-        nonce_count: Some(NonceCount { value: 2 }),
+        nonce_count: Some(NonceCount(2)),
     };
     assert_parsed_header_equal(expected,
                                "qop=auth, rspauth=\"abcdef\", cnonce=\"1234\", nc=00000002");
@@ -102,7 +102,7 @@ fn test_parse_authentication_info_with_digest_qop_cnonce_and_nc() {
         next_nonce: None,
         qop: Some(Qop::Auth),
         client_nonce: Some("client nonce".to_owned()),
-        nonce_count: Some(NonceCount { value: 1 }),
+        nonce_count: Some(NonceCount(1)),
     };
     assert_parsed_header_equal(expected,
                                "qop=auth, rspauth=\"abcdef\", cnonce=\"client nonce\", \
@@ -177,7 +177,7 @@ fn test_fmt_authentication_info_with_nonce_count() {
         next_nonce: None,
         qop: None,
         client_nonce: None,
-        nonce_count: Some(NonceCount { value: 0xff }),
+        nonce_count: Some(NonceCount(0xff)),
     };
     assert_serialized_header_equal(header, "Authentication-Info: nc=000000ff");
 }

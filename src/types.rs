@@ -74,10 +74,7 @@ impl Qop {
 
 /// Convenience type for nonce counts.
 #[derive(Clone, Debug, PartialEq)]
-pub struct NonceCount {
-    /// The actual value
-    pub value: u32,
-}
+pub struct NonceCount(pub u32);
 
 impl FromStr for NonceCount {
     type Err = Error;
@@ -89,7 +86,7 @@ impl FromStr for NonceCount {
                 count |= (bytes[1] as u32) << 16;
                 count |= (bytes[2] as u32) << 8;
                 count |= bytes[3] as u32;
-                Ok(NonceCount { value: count })
+                Ok(NonceCount(count))
             }
             _ => Err(Error::Header),
         }
@@ -98,7 +95,8 @@ impl FromStr for NonceCount {
 
 impl fmt::Display for NonceCount {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:08x}", self.value)
+        let NonceCount(value) = *self;
+        write!(f, "{:08x}", value)
     }
 }
 

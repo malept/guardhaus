@@ -49,13 +49,13 @@ pub struct AuthenticationInfo {
 }
 
 fn parse_digest(map: &HashMap<UniCase<String>, String>) -> Result<Option<String>, HyperError> {
-    if let Some(rspauth) = unraveled_map_value(&map, "rspauth") {
-        if unraveled_map_value(&map, "digest").is_some() {
+    if let Some(rspauth) = unraveled_map_value(map, "rspauth") {
+        if unraveled_map_value(map, "digest").is_some() {
             Err(HyperError::Header)
         } else {
             Ok(Some(rspauth))
         }
-    } else if let Some(digest) = unraveled_map_value(&map, "digest") {
+    } else if let Some(digest) = unraveled_map_value(map, "digest") {
         Ok(Some(digest))
     } else {
         Ok(None)
@@ -110,11 +110,11 @@ impl HeaderFormat for AuthenticationInfo {
         let mut serialized = String::new();
 
         if let Some(ref digest) = self.digest {
-            append_parameter(&mut serialized, "rspauth", &digest, true);
+            append_parameter(&mut serialized, "rspauth", digest, true);
         }
 
         if let Some(ref next_nonce) = self.next_nonce {
-            append_parameter(&mut serialized, "nextnonce", &next_nonce, true);
+            append_parameter(&mut serialized, "nextnonce", next_nonce, true);
         }
 
         if let Some(ref qop) = self.qop {

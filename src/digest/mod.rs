@@ -143,7 +143,7 @@ impl Scheme for Digest {
         let mut serialized = String::new();
         match self.username {
             Username::Plain(ref username) => {
-                append_parameter(&mut serialized, "username", &username, true)
+                append_parameter(&mut serialized, "username", username, true)
             }
             Username::Encoded(ref encoded) => {
                 append_parameter(&mut serialized, "username*", &encoded.to_string(), false)
@@ -173,21 +173,21 @@ impl Scheme for Digest {
             append_parameter(&mut serialized, "charset", &charset.to_string(), false);
         }
         if self.userhash {
-            append_parameter(&mut serialized, "userhash", &"true", false);
+            append_parameter(&mut serialized, "userhash", "true", false);
         }
         write!(f, "{}", serialized)
     }
 }
 
 fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Error> {
-    if let Some(value) = unraveled_map_value(&map, "username") {
-        if unraveled_map_value(&map, "username*").is_some() {
+    if let Some(value) = unraveled_map_value(map, "username") {
+        if unraveled_map_value(map, "username*").is_some() {
             Err(Error::Header)
         } else {
             Ok(Username::Plain(value))
         }
-    } else if let Some(encoded) = unraveled_map_value(&map, "username*") {
-        if let Some(userhash) = unraveled_map_value(&map, "userhash") {
+    } else if let Some(encoded) = unraveled_map_value(map, "username*") {
+        if let Some(userhash) = unraveled_map_value(map, "userhash") {
             if userhash == "true" {
                 return Err(Error::Header);
             }

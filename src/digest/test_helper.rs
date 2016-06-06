@@ -23,8 +23,8 @@
 use hyper::header::{Authorization, Header, Headers};
 use hyper::header::parsing::parse_extended_value;
 use parsing::test_helper;
-use super::{Digest, HashAlgorithm, Username};
-use super::super::types::{NonceCount, Qop};
+use super::{Digest, Username};
+use super::super::types::{HashAlgorithm, NonceCount, Qop};
 
 pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
     test_helper::assert_parsed_header_equal(expected, data)

@@ -29,57 +29,11 @@ use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::{NonceCount, Qop};
+use super::types::{HashAlgorithm, NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;
 mod test_helper;
-
-/// Allowable hash algorithms for the `algorithm` parameter.
-#[derive(Clone, Debug, PartialEq)]
-pub enum HashAlgorithm {
-    /// `MD5`
-    MD5,
-    /// `MD5-sess`
-    MD5Session,
-    /// `SHA-256`
-    SHA256,
-    /// `SHA-256-sess`
-    SHA256Session,
-    /// `SHA-512-256`
-    SHA512256,
-    /// `SHA-512-256-sess`
-    SHA512256Session,
-}
-
-impl FromStr for HashAlgorithm {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<HashAlgorithm, Error> {
-        match s {
-            "MD5" => Ok(HashAlgorithm::MD5),
-            "MD5-sess" => Ok(HashAlgorithm::MD5Session),
-            "SHA-256" => Ok(HashAlgorithm::SHA256),
-            "SHA-256-sess" => Ok(HashAlgorithm::SHA256Session),
-            "SHA-512-256" => Ok(HashAlgorithm::SHA512256),
-            "SHA-512-256-sess" => Ok(HashAlgorithm::SHA512256Session),
-            _ => Err(Error::Header),
-        }
-    }
-}
-
-impl fmt::Display for HashAlgorithm {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        match *self {
-            HashAlgorithm::MD5 => write!(f, "{}", "MD5"),
-            HashAlgorithm::MD5Session => write!(f, "{}", "MD5-sess"),
-            HashAlgorithm::SHA256 => write!(f, "{}", "SHA-256"),
-            HashAlgorithm::SHA256Session => write!(f, "{}", "SHA-256-sess"),
-            HashAlgorithm::SHA512256 => write!(f, "{}", "SHA-512-256"),
-            HashAlgorithm::SHA512256Session => write!(f, "{}", "SHA-512-256-sess"),
-        }
-    }
-}
 
 /// Represents a `username` (or user hash, if the header's `userhash` parameter is `true`).
 #[derive(Clone, Debug, PartialEq)]

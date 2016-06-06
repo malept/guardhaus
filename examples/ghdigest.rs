@@ -23,7 +23,8 @@ extern crate guardhaus;
 extern crate rpassword;
 
 use getopts::Options;
-use guardhaus::digest::{Digest, HashAlgorithm, Username};
+use guardhaus::digest::{Digest, Username};
+use guardhaus::types::HashAlgorithm;
 use rpassword::read_password;
 use std::env;
 use std::io;

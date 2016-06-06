@@ -22,8 +22,8 @@
 use hyper::header::{Authorization, Header, Scheme};
 use hyper::header::parsing::parse_extended_value;
 use hyper::method::Method;
-use super::{Digest, HashAlgorithm, Username};
-use super::super::types::Qop;
+use super::{Digest, Username};
+use super::super::types::{HashAlgorithm, Qop};
 use super::test_helper::{assert_header_parsing_error, assert_parsed_header_equal,
                          assert_serialized_header_equal, parse_digest_header,
                          rfc2069_a1_digest_header, rfc2069_a2_digest_header, rfc2069_username,

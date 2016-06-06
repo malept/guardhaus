@@ -371,7 +371,7 @@ fn test_a1_for_md5_sess() {
     let expected = format!("939e7578ed9e3c518a452acee763bce9:{}:{}",
                            digest.nonce,
                            digest.client_nonce.unwrap())
-                       .into_bytes();
+        .into_bytes();
     assert_eq!(expected, a1.unwrap())
 }
 
@@ -548,8 +548,7 @@ fn test_validate_using_encoded_username_and_password() {
                                       nc=00000001, \
                                       cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
                                       qop=auth, \
-                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c86\
-                                      1229025f607a79dd\", \
+                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false");
     assert!(header.0.validate_using_password(Method::Get, "".to_owned(), password.clone()));
@@ -559,15 +558,14 @@ fn test_validate_using_encoded_username_and_password() {
 fn test_validate_using_userhash_and_password() {
     // From RFC 7616
     let password = "Secret, or not?".to_owned();
-    let header = parse_digest_header("Digest username=\"488869477bf257147b804c45308cd62ac4e25eb71\
-                                      7b12b298c79e62dcea254ec\", realm=\"api@example.org\", \
-                                      uri=\"/doe.json\", algorithm=SHA-512-256, \
+    let header = parse_digest_header("Digest username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\", \
+                                      realm=\"api@example.org\", uri=\"/doe.json\", \
+                                      algorithm=SHA-512-256, \
                                       nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", \
                                       nc=00000001, \
                                       cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
                                       qop=auth, \
-                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c86\
-                                      1229025f607a79dd\", \
+                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true");
     assert!(header.0.validate_using_userhash_and_password(Method::Get,

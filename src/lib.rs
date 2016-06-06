@@ -20,9 +20,9 @@
 
 //! Guardhaus is an HTTP authentication/authorization library.
 
+extern crate crypto_hash;
 extern crate hex;
 extern crate hyper;
-extern crate openssl;
 extern crate unicase;
 extern crate url;
 

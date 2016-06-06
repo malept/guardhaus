@@ -8,5 +8,5 @@ if test "$TARGET" = "x86_64-unknown-linux-gnu"; then
     # measure code coverage and upload to coveralls.io (the verify
     # argument mitigates kcov crashes due to malformed debuginfo, at the
     # cost of some speed <https://github.com/huonw/travis-cargo/issues/12>)
-    travis-cargo --only stable coveralls --no-sudo --verify --exclude-pattern=/test.rs,*.c,openssl
+    travis-cargo --only stable coveralls --no-sudo --verify --exclude-pattern=/test.rs,*.c,openssl-sys
 fi

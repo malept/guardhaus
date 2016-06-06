@@ -1,6 +1,6 @@
 [package]
 name = "guardhaus"
-version = "0.0.14"
+version = "0.0.15"
 authors = ["Mark Lee"]
 description = "An HTTP authentication/authorization library."
 documentation = "https://malept.github.io/guardhaus/"
@@ -14,12 +14,12 @@ license = "MIT"
 lint = ["clippy"]
 
 [dependencies]
+crypto-hash = "0.1"
 getopts = "0.2"
 hex = "0.2"
 hyper = "0.9"
-openssl = "0.7"
 rpassword = "0.2"
 unicase = "1.0"
 url = "1.0"
 
-clippy = { version = "*", optional = true }
+clippy = { version = "0.0", optional = true }

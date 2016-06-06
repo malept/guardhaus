@@ -20,7 +20,6 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
-use hex::ToHex;
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};
 use hyper::header::parsing::{ExtendedValue, parse_extended_value};
@@ -248,7 +247,7 @@ impl Digest {
         let mut to_hash = username.clone();
         to_hash.push(b':');
         to_hash.append(&mut realm.into_bytes());
-        Digest::hash_value(algorithm, to_hash)
+        algorithm.hex_digest(to_hash)
     }
 
     /// Validates a userhash (as defined in
@@ -295,7 +294,7 @@ impl Digest {
                             realm: String,
                             password: String)
                             -> String {
-        Digest::hash_value(algorithm, Digest::simple_a1(username, realm, password))
+        algorithm.hex_digest(Digest::simple_a1(username, realm, password))
     }
 
     // RFC 7616, Section 3.4.2
@@ -310,9 +309,8 @@ impl Digest {
             HashAlgorithm::SHA256Session |
             HashAlgorithm::SHA512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
-                    let simple_hashed_a1 =
-                        Digest::hash_value(&self.algorithm,
-                                           Digest::simple_a1(username, realm, password));
+                    let simple_hashed_a1 = self.algorithm
+                        .hex_digest(Digest::simple_a1(username, realm, password));
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -332,7 +330,7 @@ impl Digest {
     /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
     fn hashed_a1(&self, username: Username, password: String) -> Result<String, Error> {
         if let Ok(a1) = self.a1(username, password) {
-            Ok(Digest::hash_value(&self.algorithm, a1))
+            Ok(self.algorithm.hex_digest(a1))
         } else {
             Err(Error::Header)
         }
@@ -345,44 +343,19 @@ impl Digest {
                 format!("{}:{}:{}",
                         method,
                         self.request_uri,
-                        Digest::hash_value_from_string(&self.algorithm, entity_body))
+                        self.algorithm.hex_digest(entity_body.into_bytes()))
             }
             _ => format!("{}:{}", method, self.request_uri),
         }
     }
 
     fn hashed_a2(&self, method: Method, entity_body: String) -> String {
-        Digest::hash_value_from_string(&self.algorithm, self.a2(method, entity_body))
-    }
-
-    fn hash_value_from_string(algorithm: &HashAlgorithm, value: String) -> String {
-        Digest::hash_value(algorithm, value.into_bytes())
-    }
-
-    fn hash_value(algorithm: &HashAlgorithm, value: Vec<u8>) -> String {
-        use openssl::crypto::hash::{hash, Type};
-
-        let hash_type = match *algorithm {
-            HashAlgorithm::MD5 |
-            HashAlgorithm::MD5Session => Type::MD5,
-            HashAlgorithm::SHA256 |
-            HashAlgorithm::SHA256Session => Type::SHA256,
-            HashAlgorithm::SHA512256 |
-            HashAlgorithm::SHA512256Session => Type::SHA512,
-        };
-
-        let digest = hash(hash_type, &value[..]);
-        let mut hex_digest = digest.to_hex();
-        if *algorithm == HashAlgorithm::SHA512256 || *algorithm == HashAlgorithm::SHA512256Session {
-            hex_digest.truncate(64);
-        }
-
-        hex_digest
+        self.algorithm.hex_digest(self.a2(method, entity_body).into_bytes())
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
         let value = format!("{}:{}", secret, data);
-        Digest::hash_value_from_string(algorithm, value)
+        algorithm.hex_digest(value.into_bytes())
     }
 
     fn using_username_and_password(&self,

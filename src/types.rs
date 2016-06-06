@@ -20,6 +20,7 @@
 
 //! Common authentication types.
 
+use crypto_hash;
 use hex::FromHex;
 use hyper::error::Error;
 use std::collections::HashMap;
@@ -71,6 +72,30 @@ impl fmt::Display for HashAlgorithm {
             HashAlgorithm::SHA512256 => write!(f, "{}", "SHA-512-256"),
             HashAlgorithm::SHA512256Session => write!(f, "{}", "SHA-512-256-sess"),
         }
+    }
+}
+
+impl HashAlgorithm {
+    fn to_algorithm(&self) -> crypto_hash::Algorithm {
+        match *self {
+            HashAlgorithm::MD5 |
+            HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
+            HashAlgorithm::SHA256 |
+            HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
+            HashAlgorithm::SHA512256 |
+            HashAlgorithm::SHA512256Session => crypto_hash::Algorithm::SHA512,
+        }
+    }
+
+    /// Generate a hexadecimal representation of the output of a cryptographic hash function, given
+    /// `data` and the algorithm.
+    pub fn hex_digest(&self, data: Vec<u8>) -> String {
+        let mut digest = crypto_hash::hex_digest(self.to_algorithm(), data);
+        if *self == HashAlgorithm::SHA512256 || *self == HashAlgorithm::SHA256Session {
+            digest.truncate(64);
+        }
+
+        digest
     }
 }
 

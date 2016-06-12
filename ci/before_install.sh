@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -e
+set -xe
 
 # Mostly from https://github.com/japaric/rust-everywhere
 # Load the correct rust if it's not already there
@@ -19,7 +19,8 @@ case $TARGET in
     fi
     tarball=rust-std-${version}-${TARGET}
 
-    curl -Os http://static.rust-lang.org/dist/${tarball}.tar.gz
+    # Cannot use wget due to https://github.com/travis-ci/travis-ci/issues/5156
+    curl -O https://static.rust-lang.org/dist/${tarball}.tar.gz
 
     tar xzf ${tarball}.tar.gz
 

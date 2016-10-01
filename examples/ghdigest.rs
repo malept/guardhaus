@@ -25,7 +25,7 @@ extern crate rpassword;
 use getopts::Options;
 use guardhaus::digest::{Digest, Username};
 use guardhaus::types::HashAlgorithm;
-use rpassword::read_password;
+use rpassword::prompt_password_stdout;
 use std::env;
 use std::io;
 use std::io::Write;
@@ -45,16 +45,15 @@ fn open_passwdfile(path: String, create_passwdfile: bool) -> io::Result<File> {
 }
 
 fn getpass(prompt: &str) -> String {
-    println!("{}", prompt);
-    match read_password() {
+    match prompt_password_stdout(prompt) {
         Ok(password) => password,
         Err(failure) => panic!(failure.to_string()),
     }
 }
 
 fn get_password() -> String {
-    let password = getpass("Enter password:");
-    let confirmation = getpass("Re-enter password:");
+    let password = getpass("Enter password: ");
+    let confirmation = getpass("Re-enter password: ");
     if password == confirmation {
         password
     } else {

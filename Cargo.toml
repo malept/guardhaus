@@ -18,7 +18,7 @@ crypto-hash = "0.1"
 getopts = "0.2"
 hex = "0.2"
 hyper = "0.9"
-rpassword = "0.2"
+rpassword = "0.3"
 unicase = "1.0"
 url = "1.0"
 

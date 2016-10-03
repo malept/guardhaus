@@ -38,7 +38,7 @@ fn needs_auth(mut req: Request, mut resp: Response) {
         *resp.status_mut() = StatusCode::BadRequest;
         return;
     }
-    if let Some(ref auth) = req.headers.get::<Authorization<Digest>>() {
+    if let Some(auth) = req.headers.get::<Authorization<Digest>>() {
         let username = Username::Plain(USERNAME.to_owned());
         let password = PASSWORD.to_owned();
         if auth.0.validate_using_userhash_and_password(

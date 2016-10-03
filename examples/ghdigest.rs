@@ -66,9 +66,8 @@ fn append_to_passwdfile(file: &mut File, username: String, realm: String, passwo
                                            Username::Plain(username.clone()),
                                            realm.clone(),
                                            password);
-    match write!(file, "{}:{}:{}\n", username, realm, hashed) {
-        Err(failure) => panic!(failure.to_string()),
-        _ => (),
+    if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
+        panic!(failure.to_string())
     }
 }
 

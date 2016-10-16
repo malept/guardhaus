@@ -40,3 +40,6 @@ Additionally, please make sure any code changes pass
 ```shell
 cargo clippy --verbose --features=lint -- -Wclippy_pedantic
 ```
+
+Please **do not** bump the version number in your pull requests, the maintainers will do that.
+Feel free to indicate whether the changes require a major, minor, or patch version bump.

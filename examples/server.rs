@@ -34,7 +34,7 @@ const PASSWORD: &'static str = "vs. Spy";
 
 fn needs_auth(mut req: Request, mut resp: Response) {
     let mut entity_body = String::new();
-    if let Err(_) = req.read_to_string(&mut entity_body) {
+    if req.read_to_string(&mut entity_body).is_err() {
         *resp.status_mut() = StatusCode::BadRequest;
         return;
     }

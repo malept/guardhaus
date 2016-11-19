@@ -15,6 +15,8 @@ Guardhaus is an HTTP authentication/authorization library, written in Rust.
 
 ## Usage
 
+Requires Rust ≥ 1.13.0.
+
 Add `guardhaus` to your project's `Cargo.toml`. For more details, consult the
 [Cargo guide](http://doc.crates.io/guide.html#adding-dependencies).
 

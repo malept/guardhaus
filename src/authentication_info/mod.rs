@@ -67,19 +67,10 @@ impl FromStr for AuthenticationInfo {
 
     fn from_str(s: &str) -> Result<AuthenticationInfo, HyperError> {
         let parameters = parse_parameters(s);
-        let digest = match parse_digest(&parameters) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
-        let qop = match Qop::from_parameters(&parameters) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
+        let digest = parse_digest(&parameters)?;
+        let qop = Qop::from_parameters(&parameters)?;
         let client_nonce = unraveled_map_value(&parameters, "cnonce");
-        let nonce_count = match NonceCount::from_parameters(&parameters) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
+        let nonce_count = NonceCount::from_parameters(&parameters)?;
 
         if qop.is_some() && (digest.is_none() || client_nonce.is_none() || nonce_count.is_none()) {
             return Err(HyperError::Header);

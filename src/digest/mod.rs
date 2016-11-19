@@ -200,10 +200,7 @@ impl FromStr for Digest {
         } else {
             algorithm = HashAlgorithm::MD5;
         }
-        let qop = match Qop::from_parameters(&param_map) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
+        let qop = Qop::from_parameters(&param_map)?;
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
             let utf8 = UniCase("utf-8".to_owned());
             charset = if UniCase(value.clone()) == utf8 {

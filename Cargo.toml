@@ -14,7 +14,7 @@ license = "MIT"
 lint = ["clippy"]
 
 [dependencies]
-crypto-hash = "0.1"
+crypto-hash = "0.2"
 getopts = "0.2"
 hex = "0.2"
 rpassword = "0.3"

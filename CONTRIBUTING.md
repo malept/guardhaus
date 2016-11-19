@@ -30,16 +30,44 @@ Want to contribute? Find an issue that fits your skillset.
 
 ## Filing Pull Requests
 
-Please make sure your pull requests pass the continuous integration suite, by running `cargo test`
-before creating your submission. The CI suite is also automatically run for every pull request.
+Here are some things to keep in mind as you file a pull request to fix a bug, add a new feature,
+etc.:
 
-Additionally, please make sure any code changes pass
-[clippy](https://github.com/Manishearth/rust-clippy)'s linting and
-[rustfmt](https://github.com/rust-lang-nursery/rustfmt)'s formatting rules. To run clippy:
+* Travis CI (for Linux and OS X) and AppVeyor (for Windows) are used to make sure that the project
+  builds as expected on the supported platforms, using the current stable and beta versions of Rust.
+  Make sure the testsuite passes locally by running `cargo test`.
+* Unless it's impractical, please write tests for your changes. This will help spot regressions
+  much easier.
+* If your PR changes the behavior of an existing feature, or adds a new feature, please add/edit
+  the `rustdoc` inline documentation.
+* Please ensure that your changes follow the [rustfmt](https://github.com/rust-lang-nursery/rustfmt)
+  coding standard, and do not produce any warnings when running the
+  [clippy](https://github.com/Manishearth/rust-clippy) linter.
+* If you are contributing a nontrivial change, please add an entry to `NEWS.md`. The format is
+  similar to the one described at [Keep a Changelog](http://keepachangelog.com/).
+* Please **do not** bump the version number in your pull requests, the maintainers will do that.
+  Feel free to indicate whether the changes require a major, minor, or patch version bump, as
+  prescribed by the [semantic versioning specification](http://semver.org/).
+* Please make sure your commits are rebased onto the latest commit in the master branch, and that
+  you limit/squash the number of commits created to a "feature"-level. For instance:
 
-```shell
-cargo clippy --verbose --features=lint -- -Wclippy_pedantic
+bad:
+
+```
+commit 1: add foo algorithm
+commit 2: run rustfmt
+commit 3: add test
+commit 4: add docs
+commit 5: add bar
+commit 6: add test + docs
 ```
 
-Please **do not** bump the version number in your pull requests, the maintainers will do that.
-Feel free to indicate whether the changes require a major, minor, or patch version bump.
+good:
+
+```
+commit 1: add foo algorithm
+commit 2: add bar
+```
+
+If you are continuing the work of another person's PR and need to rebase/squash, please retain the
+attribution of the original author(s) and continue the work in subsequent commits.

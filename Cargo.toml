@@ -17,9 +17,13 @@ lint = ["clippy"]
 crypto-hash = "0.1"
 getopts = "0.2"
 hex = "0.2"
-hyper = "0.9"
 rpassword = "0.3"
 unicase = "1.0"
 url = "1.0"
 
 clippy = { version = "0.0", optional = true }
+
+[dependencies.hyper]
+version = "0.9"
+# SSL is not needed, so minimize the number of dependencies
+default-features = false

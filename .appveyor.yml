@@ -2,7 +2,6 @@ platform:
   - x86
   - x64
 environment:
-  OPENSSL_LIBS: ssleay32:libeay32
   matrix:
     - RUST_VERSION: stable
       TARGET: msvc
@@ -37,8 +36,6 @@ install:
           $env:ARCH = "amd64";
           $env:bits ="64";
         }
-        $env:OPENSSL_INCLUDE_DIR = "C:\OpenSSL-Win${env:bits}\include";
-        $env:OPENSSL_LIB_DIR = "C:\OpenSSL-Win${env:bits}\lib";
         if ($env:TARGET -eq 'gnu') {
           $env:PATH += ";C:\msys64\mingw${env:bits}\bin";
           gcc --version;

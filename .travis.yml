@@ -107,7 +107,6 @@ after_success: ci/after_success.sh
 
 env:
   global:
-  - TRAVIS_CARGO_NIGHTLY_FEATURE='lint'
   - PATH=$HOME/Library/Python/2.7/bin:$HOME/.local/bin:$PATH
   # encrypted github token for doc upload
   - secure: "MP9oviNLDqK73nD3al+rGnrFnyhgSLFK9OhzCLNxzOhNieE9LDW4VJ+crIiUI62TPimx/nrMPYQssVQW9yivM+YWBiSjK/IDmGJrX1+xUN9XlQemKIlv+Ms1eTfzoRMcraiPILCBNc0OhqwCferHQhxEjzXpmUAjFmt8Qgb4vpdGxhvLU1f3dRk6fwIQgLsfKIqXzHczfQmGJ2eF76PLgaUtL4IYP3ogmtmOid7UD/4FEAsDcr+UNSza4u0ABRz8lEe6JCPEARQvETaKMuih21qxFnQubWiJGnH8r6p5Zvo+MDz/I5L9bLia1MCH1gUXtjzaV2naB5ozcMANZYsjvUkrSvCRn9bcccNUXNizNRWR8aQgFmytif+2uTQ8F8nDb3hg0/Et6mzroXmBPzm0B0AlV3SiAvW1odS/9WBXOATM7KRrxRgfD/R+65vWrYAgPFupvmPYXCR4mr96AgZMoU3lHjf8dIk5EyVK1rJJMtvIBQovgPDCjVhVoNh5Wyp5dG2uAH7LC18iokKt4mxfI5IEcPw94y4wodHgwn1Z0hTgBvxnwmZm1QZkOZpqAVJgSt2soZXw2n1WbEwskV39l+XNJOZ3lxKcdIxW2xY+NXLJy9sQ7nXekYHizXZb7EeD5TQWENIN9Cf6NLf8J7Z3IU4wG66gi0/HlJdfsvmAujQ="

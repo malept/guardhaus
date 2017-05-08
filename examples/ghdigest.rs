@@ -63,9 +63,9 @@ fn get_password() -> String {
 
 fn append_to_passwdfile(file: &mut File, username: String, realm: String, password: String) {
     let hashed = Digest::simple_hashed_a1(&HashAlgorithm::MD5,
-                                           Username::Plain(username.clone()),
-                                           realm.clone(),
-                                           password);
+                                          Username::Plain(username.clone()),
+                                          realm.clone(),
+                                          password);
     if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
         panic!(failure.to_string())
     }

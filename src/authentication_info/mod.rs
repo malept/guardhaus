@@ -77,12 +77,12 @@ impl FromStr for AuthenticationInfo {
         }
 
         Ok(AuthenticationInfo {
-            digest: digest,
-            next_nonce: unraveled_map_value(&parameters, "nextnonce"),
-            qop: qop,
-            client_nonce: client_nonce,
-            nonce_count: nonce_count,
-        })
+               digest: digest,
+               next_nonce: unraveled_map_value(&parameters, "nextnonce"),
+               qop: qop,
+               client_nonce: client_nonce,
+               nonce_count: nonce_count,
+           })
     }
 }
 

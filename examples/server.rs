@@ -41,11 +41,11 @@ fn needs_auth(mut req: Request, mut resp: Response) {
     if let Some(auth) = req.headers.get::<Authorization<Digest>>() {
         let username = Username::Plain(USERNAME.to_owned());
         let password = PASSWORD.to_owned();
-        if auth.0.validate_using_userhash_and_password(
-                                                       req.method,
-                                                       entity_body,
-                                                       username,
-                                                       password) {
+        if auth.0
+               .validate_using_userhash_and_password(req.method,
+                                                     entity_body,
+                                                     username,
+                                                     password) {
             *resp.status_mut() = StatusCode::Ok;
         } else {
             *resp.status_mut() = StatusCode::Forbidden;

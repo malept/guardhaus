@@ -221,19 +221,19 @@ impl FromStr for Digest {
             userhash = false;
         }
         Ok(Digest {
-            username: username,
-            realm: realm,
-            nonce: nonce,
-            nonce_count: nonce_count,
-            response: response,
-            request_uri: request_uri,
-            algorithm: algorithm,
-            qop: qop,
-            client_nonce: unraveled_map_value(&param_map, "cnonce"),
-            opaque: unraveled_map_value(&param_map, "opaque"),
-            charset: charset,
-            userhash: userhash,
-        })
+               username: username,
+               realm: realm,
+               nonce: nonce,
+               nonce_count: nonce_count,
+               response: response,
+               request_uri: request_uri,
+               algorithm: algorithm,
+               qop: qop,
+               client_nonce: unraveled_map_value(&param_map, "cnonce"),
+               opaque: unraveled_map_value(&param_map, "opaque"),
+               charset: charset,
+               userhash: userhash,
+           })
     }
 }
 
@@ -306,8 +306,9 @@ impl Digest {
             HashAlgorithm::SHA256Session |
             HashAlgorithm::SHA512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
-                    let simple_hashed_a1 = self.algorithm
-                        .hex_digest(Digest::simple_a1(username, realm, password));
+                    let simple_hashed_a1 =
+                        self.algorithm
+                            .hex_digest(Digest::simple_a1(username, realm, password));
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -347,7 +348,8 @@ impl Digest {
     }
 
     fn hashed_a2(&self, method: Method, entity_body: String) -> String {
-        self.algorithm.hex_digest(self.a2(method, entity_body).into_bytes())
+        self.algorithm
+            .hex_digest(self.a2(method, entity_body).into_bytes())
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
@@ -406,7 +408,9 @@ impl Digest {
                     }
                     let nonce = self.nonce.clone();
                     let nonce_count = self.nonce_count.clone().expect("No nonce count found");
-                    let client_nonce = self.client_nonce.clone().expect("No client nonce found");
+                    let client_nonce = self.client_nonce
+                        .clone()
+                        .expect("No client nonce found");
                     data = format!("{}:{}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
                 }
             }
@@ -422,8 +426,10 @@ impl Digest {
                                             username: Username,
                                             password: String)
                                             -> bool {
-        if let Ok(hex_digest) =
-               self.using_username_and_password(method, entity_body, username, password) {
+        if let Ok(hex_digest) = self.using_username_and_password(method,
+                                                                 entity_body,
+                                                                 username,
+                                                                 password) {
             hex_digest == self.response
         } else {
             false

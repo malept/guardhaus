@@ -45,8 +45,8 @@ pub fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted:
 
 pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
     let bytearr = &[String::from(s).into_bytes()];
-    let parameters: Vec<String> = from_comma_delimited(bytearr)
-        .expect("Could not parse header parameters");
+    let parameters: Vec<String> =
+        from_comma_delimited(bytearr).expect("Could not parse header parameters");
     let mut param_map: HashMap<UniCase<String>, String> = HashMap::with_capacity(parameters.len());
     for parameter in parameters {
         let parts: Vec<&str> = parameter.splitn(2, '=').collect();

@@ -69,7 +69,8 @@ fn test_basic_parse_header() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                            .to_vec()][..]);
+                                                .to_vec()]
+                                           [..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -164,7 +165,8 @@ fn test_parse_header_with_md5_algorithm() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                            .to_vec()][..]);
+                                                .to_vec()]
+                                           [..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -182,7 +184,8 @@ fn test_parse_header_with_md5_sess_algorithm() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                            .to_vec()][..]);
+                                                .to_vec()]
+                                           [..]);
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -356,7 +359,9 @@ fn test_simple_hashed_a1() {
 fn test_a1() {
     let digest = rfc2069_a1_digest_header();
     let password = "CircleOfLife".to_owned();
-    let expected = "Mufasa:testrealm@host.com:CircleOfLife".to_owned().into_bytes();
+    let expected = "Mufasa:testrealm@host.com:CircleOfLife"
+        .to_owned()
+        .into_bytes();
     let a1 = digest.a1(digest.username.clone(), password);
     assert!(a1.is_ok());
     assert_eq!(expected, a1.unwrap())
@@ -371,7 +376,7 @@ fn test_a1_for_md5_sess() {
     let expected = format!("939e7578ed9e3c518a452acee763bce9:{}:{}",
                            digest.nonce,
                            digest.client_nonce.unwrap())
-        .into_bytes();
+            .into_bytes();
     assert_eq!(expected, a1.unwrap())
 }
 
@@ -421,18 +426,20 @@ fn test_hashed_a2() {
 #[test]
 fn test_from_header() {
     let password = "CircleOfLife".to_owned();
-    let header: Authorization<Digest> =
-        Header::parse_header(&[b"Digest \
+    let header: Authorization<Digest> = Header::parse_header(&[b"Digest \
             username=\"Mufasa\", \
             realm=\"testrealm@host.com\", \
             nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
             uri=\"/dir/index.html\", \
             response=\"1949323746fe6a43ef61f9606e7febea\", \
             opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                   .to_vec()][..])
+                                                                       .to_vec()]
+                                                                  [..])
             .unwrap();
 
-    let hex_digest = header.0.using_password(Method::Get, "".to_owned(), password);
+    let hex_digest = header
+        .0
+        .using_password(Method::Get, "".to_owned(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(header.0.response, hex_digest.unwrap())
 }
@@ -444,7 +451,9 @@ fn test_from_passport_http_header() {
                                       nonce=\"NOIEDJ3hJtqSKaty8KF8xlkaYbItAkiS\", uri=\"/\", \
                                       response=\"22e3e0a9bbefeb9d229905230cb9ddc8\"");
 
-    let hex_digest = header.0.using_password(Method::Head, "".to_owned(), password);
+    let hex_digest = header
+        .0
+        .using_password(Method::Head, "".to_owned(), password);
     assert!(hex_digest.is_ok());
     assert_eq!(header.0.response, hex_digest.unwrap())
 }
@@ -531,7 +540,9 @@ fn test_validate_using_password() {
                                       response=\"65e4930cfb0b33cb53405ecea0705cec\", \
                                       opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\", \
                                       qop=auth, nc=00000001, cnonce=\"b24ce2519b8cdb10\"");
-    assert!(header.0.validate_using_password(Method::Get, "".to_owned(), password.clone()));
+    assert!(header
+                .0
+                .validate_using_password(Method::Get, "".to_owned(), password.clone()));
     let mut digest = header.0.clone();
     digest.client_nonce = Some("somethingelse".to_owned());
     assert!(!digest.validate_using_password(Method::Get, "".to_owned(), password));
@@ -551,7 +562,9 @@ fn test_validate_using_encoded_username_and_password() {
                                       response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false");
-    assert!(header.0.validate_using_password(Method::Get, "".to_owned(), password.clone()));
+    assert!(header
+                .0
+                .validate_using_password(Method::Get, "".to_owned(), password.clone()));
 }
 
 #[test]
@@ -568,10 +581,12 @@ fn test_validate_using_userhash_and_password() {
                                       response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true");
-    assert!(header.0.validate_using_userhash_and_password(Method::Get,
-                                                          "".to_owned(),
-                                                          rfc7616_username(),
-                                                          password.clone()));
+    assert!(header
+                .0
+                .validate_using_userhash_and_password(Method::Get,
+                                                      "".to_owned(),
+                                                      rfc7616_username(),
+                                                      password.clone()));
 
     let mut digest = header.0.clone();
     digest.userhash = false;

@@ -31,7 +31,7 @@ use std::io;
 use std::io::Write;
 use std::fs::{File, OpenOptions};
 
-fn print_usage(program: &str, opts: Options) {
+fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [options] passwdfile realm username", program);
     print!("{}", opts.usage(&brief));
 }
@@ -61,10 +61,10 @@ fn get_password() -> String {
     }
 }
 
-fn append_to_passwdfile(file: &mut File, username: String, realm: String, password: String) {
+fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: String) {
     let hashed = Digest::simple_hashed_a1(&HashAlgorithm::MD5,
-                                          Username::Plain(username.clone()),
-                                          realm.clone(),
+                                          Username::Plain(username.to_string()),
+                                          realm.to_string(),
                                           password);
     if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
         panic!(failure.to_string())
@@ -87,7 +87,7 @@ fn main() {
     };
 
     if matches.opt_present("h") {
-        print_usage(&program, opts);
+        print_usage(&program, &opts);
         return;
     }
 
@@ -95,8 +95,8 @@ fn main() {
 
     if matches.free.len() >= 3 {
         let passwdfile_path = matches.free[0].clone();
-        let realm = matches.free[1].clone();
-        let username = matches.free[2].clone();
+        let realm = matches.free[1].as_ref();
+        let username = matches.free[2].as_ref();
         match open_passwdfile(passwdfile_path, create_passwdfile) {
             Ok(mut passwdfile) => {
                 append_to_passwdfile(&mut passwdfile, username, realm, get_password())
@@ -104,7 +104,7 @@ fn main() {
             Err(failure) => panic!(failure.to_string()),
         }
     } else {
-        print_usage(&program, opts);
+        print_usage(&program, &opts);
         return;
     };
 }

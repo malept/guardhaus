@@ -202,8 +202,8 @@ impl FromStr for Digest {
         }
         let qop = Qop::from_parameters(&param_map)?;
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
-            let utf8 = UniCase("utf-8".to_owned());
-            charset = if UniCase(value.clone()) == utf8 {
+            let utf8 = UniCase::new("utf-8".to_owned());
+            charset = if UniCase::new(value.clone()) == utf8 {
                 Some(Charset::Ext("UTF-8".to_owned()))
             } else {
                 return Err(Error::Header);

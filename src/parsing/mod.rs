@@ -50,7 +50,7 @@ pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
     let mut param_map: HashMap<UniCase<String>, String> = HashMap::with_capacity(parameters.len());
     for parameter in parameters {
         let parts: Vec<&str> = parameter.splitn(2, '=').collect();
-        param_map.insert(UniCase(parts[0].trim().to_owned()),
+        param_map.insert(UniCase::new(parts[0].trim().to_owned()),
                          parts[1].trim().trim_matches('"').to_owned());
     }
 
@@ -58,7 +58,7 @@ pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
 }
 
 pub fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) -> Option<String> {
-    let value = match map.get(&UniCase(key.to_owned())) {
+    let value = match map.get(&UniCase::new(key.to_owned())) {
         Some(v) => v,
         None => return None,
     };

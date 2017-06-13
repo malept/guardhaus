@@ -59,7 +59,8 @@ fn test_scheme() {
 #[test]
 fn test_basic_parse_header() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
-    let actual = Header::parse_header(&[b"Digest \
+    let actual = Header::parse_header(
+        &[b"Digest \
         username=\"Mufasa\", \
         realm=\"testrealm@host.com\", \
         nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
@@ -69,8 +70,9 @@ fn test_basic_parse_header() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                                .to_vec()]
-                                           [..]);
+              .to_vec()]
+            [..],
+    );
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -154,7 +156,8 @@ fn test_parse_header_with_invalid_charset() {
 #[test]
 fn test_parse_header_with_md5_algorithm() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5));
-    let actual = Header::parse_header(&[b"Digest \
+    let actual = Header::parse_header(
+        &[b"Digest \
         username=\"Mufasa\", \
         realm=\"testrealm@host.com\", \
         nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
@@ -165,15 +168,17 @@ fn test_parse_header_with_md5_algorithm() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                                .to_vec()]
-                                           [..]);
+              .to_vec()]
+            [..],
+    );
     assert_eq!(actual.ok(), Some(expected))
 }
 
 #[test]
 fn test_parse_header_with_md5_sess_algorithm() {
     let expected = Authorization(rfc2617_digest_header(HashAlgorithm::MD5Session));
-    let actual = Header::parse_header(&[b"Digest \
+    let actual = Header::parse_header(
+        &[b"Digest \
         username=\"Mufasa\", \
         realm=\"testrealm@host.com\", \
         nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
@@ -184,8 +189,9 @@ fn test_parse_header_with_md5_sess_algorithm() {
         cnonce=\"0a4f113b\", \
         response=\"6629fae49393a05397450978507c4ef1\", \
         opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                                .to_vec()]
-                                           [..]);
+              .to_vec()]
+            [..],
+    );
     assert_eq!(actual.ok(), Some(expected))
 }
 
@@ -376,7 +382,7 @@ fn test_a1_for_md5_sess() {
     let expected = format!("939e7578ed9e3c518a452acee763bce9:{}:{}",
                            digest.nonce,
                            digest.client_nonce.unwrap())
-            .into_bytes();
+        .into_bytes();
     assert_eq!(expected, a1.unwrap())
 }
 
@@ -426,16 +432,17 @@ fn test_hashed_a2() {
 #[test]
 fn test_from_header() {
     let password = "CircleOfLife".to_owned();
-    let header: Authorization<Digest> = Header::parse_header(&[b"Digest \
+    let header: Authorization<Digest> = Header::parse_header(
+        &[b"Digest \
             username=\"Mufasa\", \
             realm=\"testrealm@host.com\", \
             nonce=\"dcd98b7102dd2f0e8b11d0f600bfb0c093\", \
             uri=\"/dir/index.html\", \
             response=\"1949323746fe6a43ef61f9606e7febea\", \
             opaque=\"5ccc069c403ebaf9f0171e9517f40e41\""
-                                                                       .to_vec()]
-                                                                  [..])
-            .unwrap();
+              .to_vec()]
+            [..],
+    ).unwrap();
 
     let hex_digest = header
         .0
@@ -581,12 +588,10 @@ fn test_validate_using_userhash_and_password() {
                                       response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true");
-    assert!(header
-                .0
-                .validate_using_userhash_and_password(Method::Get,
-                                                      "".to_owned(),
-                                                      rfc7616_username(),
-                                                      password.clone()));
+    assert!(header.0.validate_using_userhash_and_password(Method::Get,
+                                                          "".to_owned(),
+                                                          rfc7616_username(),
+                                                          password.clone()));
 
     let mut digest = header.0.clone();
     digest.userhash = false;

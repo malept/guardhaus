@@ -408,9 +408,7 @@ impl Digest {
                     }
                     let nonce = self.nonce.clone();
                     let nonce_count = self.nonce_count.clone().expect("No nonce count found");
-                    let client_nonce = self.client_nonce
-                        .clone()
-                        .expect("No client nonce found");
+                    let client_nonce = self.client_nonce.clone().expect("No client nonce found");
                     data = format!("{}:{}:{}:{}:{}", nonce, nonce_count, client_nonce, qop, a2);
                 }
             }

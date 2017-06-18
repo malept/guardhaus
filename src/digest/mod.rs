@@ -244,7 +244,7 @@ impl Digest {
         let mut to_hash = username.clone();
         to_hash.push(b':');
         to_hash.append(&mut realm.into_bytes());
-        algorithm.hex_digest(to_hash)
+        algorithm.hex_digest(to_hash.as_slice())
     }
 
     /// Validates a userhash (as defined in
@@ -291,7 +291,7 @@ impl Digest {
                             realm: String,
                             password: String)
                             -> String {
-        algorithm.hex_digest(Digest::simple_a1(username, realm, password))
+        algorithm.hex_digest(Digest::simple_a1(username, realm, password).as_slice())
     }
 
     // RFC 7616, Section 3.4.2
@@ -308,7 +308,7 @@ impl Digest {
                 if let Some(ref client_nonce) = self.client_nonce {
                     let simple_hashed_a1 =
                         self.algorithm
-                            .hex_digest(Digest::simple_a1(username, realm, password));
+                            .hex_digest(Digest::simple_a1(username, realm, password).as_slice());
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -328,7 +328,7 @@ impl Digest {
     /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
     fn hashed_a1(&self, username: Username, password: String) -> Result<String, Error> {
         if let Ok(a1) = self.a1(username, password) {
-            Ok(self.algorithm.hex_digest(a1))
+            Ok(self.algorithm.hex_digest(a1.as_slice()))
         } else {
             Err(Error::Header)
         }
@@ -341,7 +341,7 @@ impl Digest {
                 format!("{}:{}:{}",
                         method,
                         self.request_uri,
-                        self.algorithm.hex_digest(entity_body.into_bytes()))
+                        self.algorithm.hex_digest(entity_body.as_bytes()))
             }
             _ => format!("{}:{}", method, self.request_uri),
         }
@@ -349,12 +349,12 @@ impl Digest {
 
     fn hashed_a2(&self, method: Method, entity_body: String) -> String {
         self.algorithm
-            .hex_digest(self.a2(method, entity_body).into_bytes())
+            .hex_digest(self.a2(method, entity_body).as_bytes())
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
         let value = format!("{}:{}", secret, data);
-        algorithm.hex_digest(value.into_bytes())
+        algorithm.hex_digest(value.as_bytes())
     }
 
     fn using_username_and_password(&self,

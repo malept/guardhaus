@@ -89,7 +89,7 @@ impl HashAlgorithm {
 
     /// Generate a hexadecimal representation of the output of a cryptographic hash function, given
     /// `data` and the algorithm.
-    pub fn hex_digest(&self, data: Vec<u8>) -> String {
+    pub fn hex_digest(&self, data: &[u8]) -> String {
         let mut digest = crypto_hash::hex_digest(self.to_algorithm(), data);
         if *self == HashAlgorithm::SHA512256 || *self == HashAlgorithm::SHA256Session {
             digest.truncate(64);

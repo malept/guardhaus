@@ -45,13 +45,15 @@ pub fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted:
 }
 
 pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
-    let parameters: Vec<String> = from_comma_delimited(&Raw::from(s))
-        .expect("Could not parse header parameters");
+    let parameters: Vec<String> =
+        from_comma_delimited(&Raw::from(s)).expect("Could not parse header parameters");
     let mut param_map: HashMap<UniCase<String>, String> = HashMap::with_capacity(parameters.len());
     for parameter in parameters {
         let parts: Vec<&str> = parameter.splitn(2, '=').collect();
-        param_map.insert(UniCase::new(parts[0].trim().to_owned()),
-                         parts[1].trim().trim_matches('"').to_owned());
+        param_map.insert(
+            UniCase::new(parts[0].trim().to_owned()),
+            parts[1].trim().trim_matches('"').to_owned(),
+        );
     }
 
     param_map

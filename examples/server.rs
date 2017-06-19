@@ -52,12 +52,17 @@ impl Service for AuthEndpoint {
             let password = PASSWORD.to_owned();
             let method = req.method().clone();
             let entity_body = req.body().concat2().wait().unwrap().to_vec().clone();
-            if auth.0
-                .validate_using_userhash_and_password(method, entity_body.as_slice(), username, password) {
-                    response.set_status(StatusCode::Ok);
-                } else {
-                    response.set_status(StatusCode::Forbidden);
-                }
+            if auth.0.validate_using_userhash_and_password(
+                method,
+                entity_body.as_slice(),
+                username,
+                password,
+            )
+            {
+                response.set_status(StatusCode::Ok);
+            } else {
+                response.set_status(StatusCode::Forbidden);
+            }
         } else {
             response.set_status(StatusCode::Unauthorized);
         }
@@ -66,7 +71,12 @@ impl Service for AuthEndpoint {
 }
 
 fn main() {
-    let server = Http::new().bind(&LISTEN.parse().expect("Could not parse listen address"), || Ok(AuthEndpoint)).expect("Could not create HTTP server");
+    let server = Http::new()
+        .bind(
+            &LISTEN.parse().expect("Could not parse listen address"),
+            || Ok(AuthEndpoint),
+        )
+        .expect("Could not create HTTP server");
     server.run().expect("Could not run HTTP server");
     println!("Listening on {}", LISTEN);
 }

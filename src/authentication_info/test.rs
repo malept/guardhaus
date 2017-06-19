@@ -63,8 +63,10 @@ fn test_parse_authentication_info_with_qop() {
         client_nonce: Some("1234".to_owned()),
         nonce_count: Some(NonceCount(2)),
     };
-    assert_parsed_header_equal(expected,
-                               "qop=auth, rspauth=\"abcdef\", cnonce=\"1234\", nc=00000002");
+    assert_parsed_header_equal(
+        expected,
+        "qop=auth, rspauth=\"abcdef\", cnonce=\"1234\", nc=00000002",
+    );
 }
 
 #[test]
@@ -104,9 +106,11 @@ fn test_parse_authentication_info_with_digest_qop_cnonce_and_nc() {
         client_nonce: Some("client nonce".to_owned()),
         nonce_count: Some(NonceCount(1)),
     };
-    assert_parsed_header_equal(expected,
-                               "qop=auth, rspauth=\"abcdef\", cnonce=\"client nonce\", \
-                                nc=00000001");
+    assert_parsed_header_equal(
+        expected,
+        "qop=auth, rspauth=\"abcdef\", cnonce=\"client nonce\", \
+                                nc=00000001",
+    );
 }
 
 #[test]
@@ -118,8 +122,10 @@ fn test_fmt_authentication_info_with_digest_and_nextnonce() {
         client_nonce: None,
         nonce_count: None,
     };
-    assert_serialized_header_equal(header,
-                                   "Authentication-Info: rspauth=\"abcdef\", nextnonce=\"fedcba\"");
+    assert_serialized_header_equal(
+        header,
+        "Authentication-Info: rspauth=\"abcdef\", nextnonce=\"fedcba\"",
+    );
 }
 
 #[test]

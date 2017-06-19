@@ -109,10 +109,12 @@ impl Scheme for Digest {
         }
         append_parameter(&mut serialized, "response", &self.response, true);
         append_parameter(&mut serialized, "uri", &self.request_uri, true);
-        append_parameter(&mut serialized,
-                         "algorithm",
-                         &self.algorithm.to_string(),
-                         false);
+        append_parameter(
+            &mut serialized,
+            "algorithm",
+            &self.algorithm.to_string(),
+            false,
+        );
         if let Some(ref qop) = self.qop {
             append_parameter(&mut serialized, "qop", &qop.to_string(), false);
         }
@@ -221,19 +223,19 @@ impl FromStr for Digest {
             userhash = false;
         }
         Ok(Digest {
-               username: username,
-               realm: realm,
-               nonce: nonce,
-               nonce_count: nonce_count,
-               response: response,
-               request_uri: request_uri,
-               algorithm: algorithm,
-               qop: qop,
-               client_nonce: unraveled_map_value(&param_map, "cnonce"),
-               opaque: unraveled_map_value(&param_map, "opaque"),
-               charset: charset,
-               userhash: userhash,
-           })
+            username: username,
+            realm: realm,
+            nonce: nonce,
+            nonce_count: nonce_count,
+            response: response,
+            request_uri: request_uri,
+            algorithm: algorithm,
+            qop: qop,
+            client_nonce: unraveled_map_value(&param_map, "cnonce"),
+            opaque: unraveled_map_value(&param_map, "opaque"),
+            charset: charset,
+            userhash: userhash,
+        })
     }
 }
 
@@ -286,11 +288,12 @@ impl Digest {
     /// To see how a simple A1 value is constructed, see
     /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
     /// This is the definition when the algorithm is "unspecified".
-    pub fn simple_hashed_a1(algorithm: &HashAlgorithm,
-                            username: Username,
-                            realm: String,
-                            password: String)
-                            -> String {
+    pub fn simple_hashed_a1(
+        algorithm: &HashAlgorithm,
+        username: Username,
+        realm: String,
+        password: String,
+    ) -> String {
         algorithm.hex_digest(Digest::simple_a1(username, realm, password).as_slice())
     }
 
@@ -307,8 +310,10 @@ impl Digest {
             HashAlgorithm::SHA512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
                     let simple_hashed_a1 =
-                        self.algorithm
-                            .hex_digest(Digest::simple_a1(username, realm, password).as_slice());
+                        self.algorithm.hex_digest(
+                            Digest::simple_a1(username, realm, password)
+                                .as_slice(),
+                        );
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -338,18 +343,21 @@ impl Digest {
     fn a2(&self, method: Method, entity_body: &[u8]) -> String {
         match self.qop {
             Some(Qop::AuthInt) => {
-                format!("{}:{}:{}",
-                        method,
-                        self.request_uri,
-                        self.algorithm.hex_digest(entity_body))
+                format!(
+                    "{}:{}:{}",
+                    method,
+                    self.request_uri,
+                    self.algorithm.hex_digest(entity_body)
+                )
             }
             _ => format!("{}:{}", method, self.request_uri),
         }
     }
 
     fn hashed_a2(&self, method: Method, entity_body: &[u8]) -> String {
-        self.algorithm
-            .hex_digest(self.a2(method, entity_body).as_bytes())
+        self.algorithm.hex_digest(
+            self.a2(method, entity_body).as_bytes(),
+        )
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
@@ -357,12 +365,13 @@ impl Digest {
         algorithm.hex_digest(value.as_bytes())
     }
 
-    fn using_username_and_password(&self,
-                                   method: Method,
-                                   entity_body: &[u8],
-                                   username: Username,
-                                   password: String)
-                                   -> Result<String, Error> {
+    fn using_username_and_password(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        username: Username,
+        password: String,
+    ) -> Result<String, Error> {
         if let Ok(a1) = self.hashed_a1(username, password) {
             self.using_hashed_a1(method, entity_body, a1)
         } else {
@@ -374,11 +383,12 @@ impl Digest {
     ///
     /// `entity_body` is defined in
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-    pub fn using_password(&self,
-                          method: Method,
-                          entity_body: &[u8],
-                          password: String)
-                          -> Result<String, Error> {
+    pub fn using_password(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        password: String,
+    ) -> Result<String, Error> {
         if let Ok(a1) = self.hashed_a1(self.username.clone(), password) {
             self.using_hashed_a1(method, entity_body, a1)
         } else {
@@ -393,11 +403,12 @@ impl Digest {
     ///
     /// This is intended to be used in applications that use the `htdigest` style of secret hash
     /// generation.
-    pub fn using_hashed_a1(&self,
-                           method: Method,
-                           entity_body: &[u8],
-                           a1: String)
-                           -> Result<String, Error> {
+    pub fn using_hashed_a1(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        a1: String,
+    ) -> Result<String, Error> {
         let a2 = self.hashed_a2(method, entity_body);
         let data: String;
         if let Some(ref qop) = self.qop {
@@ -418,16 +429,20 @@ impl Digest {
         Ok(Digest::kd(&self.algorithm, a1, data))
     }
 
-    fn validate_using_username_and_password(&self,
-                                            method: Method,
-                                            entity_body: &[u8],
-                                            username: Username,
-                                            password: String)
-                                            -> bool {
-        if let Ok(hex_digest) = self.using_username_and_password(method,
-                                                                 entity_body,
-                                                                 username,
-                                                                 password) {
+    fn validate_using_username_and_password(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        username: Username,
+        password: String,
+    ) -> bool {
+        if let Ok(hex_digest) = self.using_username_and_password(
+            method,
+            entity_body,
+            username,
+            password,
+        )
+        {
             hex_digest == self.response
         } else {
             false
@@ -438,15 +453,18 @@ impl Digest {
     ///
     /// `entity_body` is defined in
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-    pub fn validate_using_password(&self,
-                                   method: Method,
-                                   entity_body: &[u8],
-                                   password: String)
-                                   -> bool {
-        self.validate_using_username_and_password(method,
-                                                  entity_body,
-                                                  self.username.clone(),
-                                                  password)
+    pub fn validate_using_password(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        password: String,
+    ) -> bool {
+        self.validate_using_username_and_password(
+            method,
+            entity_body,
+            self.username.clone(),
+            password,
+        )
     }
 
     /// Validates a `Digest.username` and `Digest.response`, given an HTTP request, a username,
@@ -454,12 +472,13 @@ impl Digest {
     ///
     /// `entity_body` is defined in
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
-    pub fn validate_using_userhash_and_password(&self,
-                                                method: Method,
-                                                entity_body: &[u8],
-                                                username: Username,
-                                                password: String)
-                                                -> bool {
+    pub fn validate_using_userhash_and_password(
+        &self,
+        method: Method,
+        entity_body: &[u8],
+        username: Username,
+        password: String,
+    ) -> bool {
         if self.userhash && !self.validate_userhash(username.clone()) {
             return false;
         }
@@ -474,11 +493,7 @@ impl Digest {
     ///
     /// This is intended to be used in applications that use the `htdigest` style of secret hash
     /// generation.
-    pub fn validate_using_hashed_a1(&self,
-                                    method: Method,
-                                    entity_body: &[u8],
-                                    a1: String)
-                                    -> bool {
+    pub fn validate_using_hashed_a1(&self, method: Method, entity_body: &[u8], a1: String) -> bool {
         if let Ok(hex_digest) = self.using_hashed_a1(method, entity_body, a1) {
             hex_digest == self.response
         } else {

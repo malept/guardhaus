@@ -62,10 +62,12 @@ fn get_password() -> String {
 }
 
 fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: String) {
-    let hashed = Digest::simple_hashed_a1(&HashAlgorithm::MD5,
-                                          Username::Plain(username.to_string()),
-                                          realm.to_string(),
-                                          password);
+    let hashed = Digest::simple_hashed_a1(
+        &HashAlgorithm::MD5,
+        Username::Plain(username.to_string()),
+        realm.to_string(),
+        password,
+    );
     if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
         panic!(failure.to_string())
     }
@@ -77,9 +79,11 @@ fn main() {
 
     let mut opts = Options::new();
     opts.optflag("h", "help", "print this help menu");
-    opts.optflag("c",
-                 "",
-                 "Create the passwdfile. If passwdfile already exists, it is deleted first.");
+    opts.optflag(
+        "c",
+        "",
+        "Create the passwdfile. If passwdfile already exists, it is deleted first.",
+    );
 
     let matches = match opts.parse(&args[1..]) {
         Ok(opt) => opt,

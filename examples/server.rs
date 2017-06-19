@@ -28,7 +28,6 @@ use guardhaus::digest::{Digest, Username};
 use hyper::header::Authorization;
 use hyper::server::{Http, Request, Response, Service};
 use hyper::StatusCode;
-use std::io::Read;
 
 const LISTEN: &'static str = "127.0.0.1:1337";
 const USERNAME: &'static str = "Spy";
@@ -47,7 +46,7 @@ impl Service for AuthEndpoint {
     fn call(&self, req: Request) -> Self::Future {
         let mut response = Response::new();
         let headers = req.headers().clone();
-        if let Some(ref auth) = headers.get::<Authorization<Digest>>() {
+        if let Some(auth) = headers.get::<Authorization<Digest>>() {
             let username = Username::Plain(USERNAME.to_owned());
             let password = PASSWORD.to_owned();
             let method = req.method().clone();

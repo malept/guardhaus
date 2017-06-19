@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `Digest` struct in crate `guardhaus`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, Digest">
+
+    <title>guardhaus::digest::Digest - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../../normalize.css">
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../../main.css">
+    
+
+    
+    
+</head>
+<body class="rustdoc struct">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'>Struct Digest</p><div class="block items"><ul><li><a href="#fields">Fields</a></li><li><a href="#methods">Methods</a></li><li><a href="#implementations">Trait Implementations</a></li></ul></div><p class='location'><a href='../index.html'>guardhaus</a>::<wbr><a href='index.html'>digest</a></p><script>window.sidebarCurrent = {name: 'Digest', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content">
+<h1 class='fqn'><span class='in-band'>Struct <a href='../index.html'>guardhaus</a>::<wbr><a href='index.html'>digest</a>::<wbr><a class="struct" href=''>Digest</a></span><span class='out-of-band'><span id='render-detail'>
+                   <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                       [<span class='inner'>&#x2212;</span>]
+                   </a>
+               </span><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#62-88' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct Digest {
+    pub username: <a class="enum" href="../../guardhaus/digest/enum.Username.html" title="enum guardhaus::digest::Username">Username</a>,
+    pub realm: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>,
+    pub nonce: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>,
+    pub nonce_count: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../guardhaus/types/struct.NonceCount.html" title="struct guardhaus::types::NonceCount">NonceCount</a>&gt;,
+    pub response: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>,
+    pub request_uri: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>,
+    pub algorithm: <a class="enum" href="../../guardhaus/types/enum.HashAlgorithm.html" title="enum guardhaus::types::HashAlgorithm">HashAlgorithm</a>,
+    pub qop: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../guardhaus/types/enum.Qop.html" title="enum guardhaus::types::Qop">Qop</a>&gt;,
+    pub client_nonce: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;,
+    pub opaque: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;,
+    pub charset: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../hyper/header/shared/charset/enum.Charset.html" title="enum hyper::header::shared::charset::Charset">Charset</a>&gt;,
+    pub userhash: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a>,
+}</pre><div class='docblock'><p>Parameters for the <code>Authorization</code> header when using the <code>Digest</code> scheme.</p>
+
+<p>The parameters are described in more detail in
+<a href="https://tools.ietf.org/html/rfc7616#section-3.4">RFC 7616</a>.
+Unless otherwise noted, the parameter name maps to the struct variable name.</p>
+</div><h2 id='fields' class='fields'>Fields</h2><span id='structfield.username' class="structfield">
+                           <span id='username.v' class='invisible'>
+                           <code>username: <a class="enum" href="../../guardhaus/digest/enum.Username.html" title="enum guardhaus::digest::Username">Username</a></code>
+                           </span></span><div class='docblock'><p>Either the user name or the user hash (if <code>userhash</code> is <code>true</code> - see <a href="https://tools.ietf.org/html/rfc7616#section-3.4.4">RFC 7616, section
+3.4.4</a>).</p>
+</div><span id='structfield.realm' class="structfield">
+                           <span id='realm.v' class='invisible'>
+                           <code>realm: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code>
+                           </span></span><div class='docblock'><p>Authentication realm.</p>
+</div><span id='structfield.nonce' class="structfield">
+                           <span id='nonce.v' class='invisible'>
+                           <code>nonce: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code>
+                           </span></span><div class='docblock'><p>Cryptographic nonce.</p>
+</div><span id='structfield.nonce_count' class="structfield">
+                           <span id='nonce_count.v' class='invisible'>
+                           <code>nonce_count: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="../../guardhaus/types/struct.NonceCount.html" title="struct guardhaus::types::NonceCount">NonceCount</a>&gt;</code>
+                           </span></span><div class='docblock'><p>Nonce count, parameter name <code>nc</code>. Optional only in RFC 2067 mode.</p>
+</div><span id='structfield.response' class="structfield">
+                           <span id='response.v' class='invisible'>
+                           <code>response: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code>
+                           </span></span><div class='docblock'><p>The hexadecimal digest of the payload as described by the RFCs.</p>
+</div><span id='structfield.request_uri' class="structfield">
+                           <span id='request_uri.v' class='invisible'>
+                           <code>request_uri: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code>
+                           </span></span><div class='docblock'><p>Either the absolute path or URI of the HTTP request, parameter name <code>uri</code>.</p>
+</div><span id='structfield.algorithm' class="structfield">
+                           <span id='algorithm.v' class='invisible'>
+                           <code>algorithm: <a class="enum" href="../../guardhaus/types/enum.HashAlgorithm.html" title="enum guardhaus::types::HashAlgorithm">HashAlgorithm</a></code>
+                           </span></span><div class='docblock'><p>The hash algorithm to use when generating the <code>response</code>.</p>
+</div><span id='structfield.qop' class="structfield">
+                           <span id='qop.v' class='invisible'>
+                           <code>qop: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../guardhaus/types/enum.Qop.html" title="enum guardhaus::types::Qop">Qop</a>&gt;</code>
+                           </span></span><div class='docblock'><p>Quality of protection. Optional only in RFC 2067 mode.</p>
+</div><span id='structfield.client_nonce' class="structfield">
+                           <span id='client_nonce.v' class='invisible'>
+                           <code>client_nonce: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code>
+                           </span></span><div class='docblock'><p>Cryptographic nonce from the client. Optional only in RFC 2067 mode.</p>
+</div><span id='structfield.opaque' class="structfield">
+                           <span id='opaque.v' class='invisible'>
+                           <code>opaque: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>&gt;</code>
+                           </span></span><div class='docblock'><p>Optional opaque string.</p>
+</div><span id='structfield.charset' class="structfield">
+                           <span id='charset.v' class='invisible'>
+                           <code>charset: <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="enum" href="../../hyper/header/shared/charset/enum.Charset.html" title="enum hyper::header::shared::charset::Charset">Charset</a>&gt;</code>
+                           </span></span><div class='docblock'><p>The character set to use when generating the A1 value or the userhash. Added for RFC 7616.</p>
+</div><span id='structfield.userhash' class="structfield">
+                           <span id='userhash.v' class='invisible'>
+                           <code>userhash: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code>
+                           </span></span><div class='docblock'><p>Whether <code>username</code> is a userhash. Added for RFC 7616.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><span class='in-band'><code>impl <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#242-503' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.userhash' class="method"><span id='userhash.v-1' class='invisible'><code>fn <a href='#method.userhash' class='fnname'>userhash</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;algorithm: &amp;<a class="enum" href="../../guardhaus/types/enum.HashAlgorithm.html" title="enum guardhaus::types::HashAlgorithm">HashAlgorithm</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;username: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html" title="struct collections::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a>&gt;, <br>&nbsp;&nbsp;&nbsp;&nbsp;realm: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Generates a userhash, as defined in
+<a href="https://tools.ietf.org/html/rfc7616#section-3.4.4">RFC 7616, section 3.4.4</a>.</p>
+</div><h4 id='method.validate_userhash' class="method"><span id='validate_userhash.v' class='invisible'><code>fn <a href='#method.validate_userhash' class='fnname'>validate_userhash</a>(&amp;self, username: <a class="enum" href="../../guardhaus/digest/enum.Username.html" title="enum guardhaus::digest::Username">Username</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Validates a userhash (as defined in
+<a href="https://tools.ietf.org/html/rfc7616#section-3.4.4">RFC 7616, section 3.4.4</a>), given a
+<code>Digest</code> header.</p>
+
+<p>If userhash is <code>false</code>, returns <code>false</code>.</p>
+</div><h4 id='method.simple_hashed_a1' class="method"><span id='simple_hashed_a1.v' class='invisible'><code>fn <a href='#method.simple_hashed_a1' class='fnname'>simple_hashed_a1</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;algorithm: &amp;<a class="enum" href="../../guardhaus/types/enum.HashAlgorithm.html" title="enum guardhaus::types::HashAlgorithm">HashAlgorithm</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;username: <a class="enum" href="../../guardhaus/digest/enum.Username.html" title="enum guardhaus::digest::Username">Username</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;realm: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;password: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a></code></span></h4>
+<div class='docblock'><p>Generates a simple hexadecimal digest from an A1 value and given algorithm.</p>
+
+<p>This is intended to be used in applications that use the <code>htdigest</code> style of secret hash
+generation.</p>
+
+<p>To see how a simple A1 value is constructed, see
+<a href="https://tools.ietf.org/html/rfc7616#section-3.4.2">RFC 7616, section 3.4.2</a>.
+This is the definition when the algorithm is &quot;unspecified&quot;.</p>
+</div><h4 id='method.using_password' class="method"><span id='using_password.v' class='invisible'><code>fn <a href='#method.using_password' class='fnname'>using_password</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;method: <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;entity_body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;password: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, <a class="enum" href="../../hyper/error/enum.Error.html" title="enum hyper::error::Error">Error</a>&gt;</code></span></h4>
+<div class='docblock'><p>Generates a digest, given an HTTP request and a password.</p>
+
+<p><code>entity_body</code> is defined in
+<a href="https://tools.ietf.org/html/rfc2616#section-7.2">RFC 2616, secion 7.2</a>.</p>
+</div><h4 id='method.using_hashed_a1' class="method"><span id='using_hashed_a1.v' class='invisible'><code>fn <a href='#method.using_hashed_a1' class='fnname'>using_hashed_a1</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;method: <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;entity_body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;a1: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a>, <a class="enum" href="../../hyper/error/enum.Error.html" title="enum hyper::error::Error">Error</a>&gt;</code></span></h4>
+<div class='docblock'><p>Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.</p>
+
+<p><code>entity_body</code> is defined in
+<a href="https://tools.ietf.org/html/rfc2616#section-7.2">RFC 2616, secion 7.2</a>.</p>
+
+<p>This is intended to be used in applications that use the <code>htdigest</code> style of secret hash
+generation.</p>
+</div><h4 id='method.validate_using_password' class="method"><span id='validate_using_password.v' class='invisible'><code>fn <a href='#method.validate_using_password' class='fnname'>validate_using_password</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;method: <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;entity_body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;password: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Validates a <code>Digest.response</code>, given an HTTP request and a password.</p>
+
+<p><code>entity_body</code> is defined in
+<a href="https://tools.ietf.org/html/rfc2616#section-7.2">RFC 2616, secion 7.2</a>.</p>
+</div><h4 id='method.validate_using_userhash_and_password' class="method"><span id='validate_using_userhash_and_password.v' class='invisible'><code>fn <a href='#method.validate_using_userhash_and_password' class='fnname'>validate_using_userhash_and_password</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;method: <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;entity_body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;username: <a class="enum" href="../../guardhaus/digest/enum.Username.html" title="enum guardhaus::digest::Username">Username</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;password: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Validates a <code>Digest.username</code> and <code>Digest.response</code>, given an HTTP request, a username,
+and a password. If a userhash is specified, that is validated first.</p>
+
+<p><code>entity_body</code> is defined in
+<a href="https://tools.ietf.org/html/rfc2616#section-7.2">RFC 2616, secion 7.2</a>.</p>
+</div><h4 id='method.validate_using_hashed_a1' class="method"><span id='validate_using_hashed_a1.v' class='invisible'><code>fn <a href='#method.validate_using_hashed_a1' class='fnname'>validate_using_hashed_a1</a>(<br>&nbsp;&nbsp;&nbsp;&nbsp;&amp;self, <br>&nbsp;&nbsp;&nbsp;&nbsp;method: <a class="enum" href="../../hyper/method/enum.Method.html" title="enum hyper::method::Method">Method</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;entity_body: <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">&amp;[</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.u8.html">u8</a><a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.slice.html">]</a>, <br>&nbsp;&nbsp;&nbsp;&nbsp;a1: <a class="struct" href="https://doc.rust-lang.org/nightly/collections/string/struct.String.html" title="struct collections::string::String">String</a><br>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>Validates a <code>Digest.response</code>, given an HTTP request and a hexadecimal digest of an
+A1 string.</p>
+
+<p><code>entity_body</code> is defined in
+<a href="https://tools.ietf.org/html/rfc2616#section-7.2">RFC 2616, secion 7.2</a>.</p>
+
+<p>This is intended to be used in applications that use the <code>htdigest</code> style of secret hash
+generation.</p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html" title="trait core::clone::Clone">Clone</a> for <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#61' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.clone' class="method"><span id='clone.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span></h4>
+<div class='docblock'><p>Returns a copy of the value. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#tymethod.clone">Read more</a></p>
+</div><h4 id='method.clone_from' class="method"><span id='clone_from.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from' class='fnname'>clone_from</a>(&amp;mut self, source: &amp;Self)</code><div class='since' title='Stable since Rust version 1.0.0'>1.0.0</div></span></h4>
+<div class='docblock'><p>Performs copy-assignment from <code>source</code>. <a href="https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone_from">Read more</a></p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html" title="trait core::cmp::PartialEq">PartialEq</a> for <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#61' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.eq' class="method"><span id='eq.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>self</code> and <code>other</code> values to be equal, and is used by <code>==</code>. <a href="https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#tymethod.eq">Read more</a></p>
+</div><h4 id='method.ne' class="method"><span id='ne.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a>) -&gt; <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.bool.html">bool</a></code></span></h4>
+<div class='docblock'><p>This method tests for <code>!=</code>.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html" title="trait core::fmt::Debug">Debug</a> for <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#61' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.fmt' class="method"><span id='fmt.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#tymethod.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
+<div class='docblock'><p>Formats the value using the given formatter.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="../../hyper/header/common/authorization/trait.Scheme.html" title="trait hyper::header::common::authorization::Scheme">Scheme</a> for <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#90-135' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='method.scheme' class="method"><span id='scheme.v' class='invisible'><code>fn <a href='../../hyper/header/common/authorization/trait.Scheme.html#tymethod.scheme' class='fnname'>scheme</a>() -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;'static <a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>&gt;</code></span></h4>
+<div class='docblock'><p>An optional Scheme name. <a href="../../hyper/header/common/authorization/trait.Scheme.html#tymethod.scheme">Read more</a></p>
+</div><h4 id='method.fmt_scheme' class="method"><span id='fmt_scheme.v' class='invisible'><code>fn <a href='../../hyper/header/common/authorization/trait.Scheme.html#tymethod.fmt_scheme' class='fnname'>fmt_scheme</a>(&amp;self, f: &amp;mut <a class="struct" href="https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html" title="struct core::fmt::Formatter">Formatter</a>) -&gt; <a class="type" href="https://doc.rust-lang.org/nightly/core/fmt/type.Result.html" title="type core::fmt::Result">Result</a></code></span></h4>
+<div class='docblock'><p>Format the Scheme data into a header value.</p>
+</div></div><h3 class='impl'><span class='in-band'><code>impl <a class="trait" href="https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html" title="trait core::str::FromStr">FromStr</a> for <a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a></code></span><span class='out-of-band'><div class='ghost'></div><a class='srclink' href='../../src/guardhaus/digest/mod.rs.html#161-240' title='goto source code'>[src]</a></span></h3>
+<div class='impl-items'><h4 id='associatedtype.Err' class="type"><span id='Err.t' class='invisible'><code>type <a href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#associatedtype.Err' class="type">Err</a> = <a class="enum" href="../../hyper/error/enum.Error.html" title="enum hyper::error::Error">Error</a></code></span></h4>
+<div class='docblock'><p>The associated error which can be returned from parsing.</p>
+</div><h4 id='method.from_str' class="method"><span id='from_str.v' class='invisible'><code>fn <a href='https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#tymethod.from_str' class='fnname'>from_str</a>(s: &amp;<a class="primitive" href="https://doc.rust-lang.org/nightly/std/primitive.str.html">str</a>) -&gt; <a class="enum" href="https://doc.rust-lang.org/nightly/core/result/enum.Result.html" title="enum core::result::Result">Result</a>&lt;<a class="struct" href="../../guardhaus/digest/struct.Digest.html" title="struct guardhaus::digest::Digest">Digest</a>, <a class="enum" href="../../hyper/error/enum.Error.html" title="enum hyper::error::Error">Error</a>&gt;</code></span></h4>
+<div class='docblock'><p>Parses a string <code>s</code> to return a value of this type. <a href="https://doc.rust-lang.org/nightly/core/str/trait.FromStr.html#tymethod.from_str">Read more</a></p>
+</div></div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                    <dt>+</dt>
+                    <dd>Collapse/expand all sections</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code> or <code>* -> vec</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../../";
+        window.currentCrate = "guardhaus";
+    </script>
+    <script src="../../jquery.js"></script>
+    <script src="../../main.js"></script>
+    <script defer src="../../search-index.js"></script>
+</body>
+</html>

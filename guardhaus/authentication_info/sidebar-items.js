@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["AuthenticationInfo","Parameters for the `Authentication-Info` header."]]});

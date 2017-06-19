@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,7 +20,7 @@
 
 #![allow(dead_code)]
 
-use hyper::header::{Authorization, Header, Headers};
+use hyper::header::{Authorization, Header, Headers, Raw};
 use hyper::header::parsing::parse_extended_value;
 use parsing::test_helper;
 use super::{Digest, Username};
@@ -41,8 +41,7 @@ pub fn assert_serialized_header_equal(digest: Digest, actual: &str) {
 }
 
 pub fn parse_digest_header(data: &str) -> Authorization<Digest> {
-    let bytestring = data.to_owned().into_bytes();
-    Header::parse_header(&[bytestring][..]).expect("Could not parse digest header")
+    Header::parse_header(&Raw::from(data)).expect("Could not parse digest header")
 }
 
 pub fn rfc2069_username() -> Username {

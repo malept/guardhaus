@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,10 +20,10 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
+use hyper::Method;
 use hyper::error::Error;
 use hyper::header::{Charset, Scheme};
 use hyper::header::parsing::{ExtendedValue, parse_extended_value};
-use hyper::method::Method;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
@@ -335,19 +335,19 @@ impl Digest {
     }
 
     // RFC 7616, Section 3.4.3
-    fn a2(&self, method: Method, entity_body: String) -> String {
+    fn a2(&self, method: Method, entity_body: &[u8]) -> String {
         match self.qop {
             Some(Qop::AuthInt) => {
                 format!("{}:{}:{}",
                         method,
                         self.request_uri,
-                        self.algorithm.hex_digest(entity_body.as_bytes()))
+                        self.algorithm.hex_digest(entity_body))
             }
             _ => format!("{}:{}", method, self.request_uri),
         }
     }
 
-    fn hashed_a2(&self, method: Method, entity_body: String) -> String {
+    fn hashed_a2(&self, method: Method, entity_body: &[u8]) -> String {
         self.algorithm
             .hex_digest(self.a2(method, entity_body).as_bytes())
     }
@@ -359,7 +359,7 @@ impl Digest {
 
     fn using_username_and_password(&self,
                                    method: Method,
-                                   entity_body: String,
+                                   entity_body: &[u8],
                                    username: Username,
                                    password: String)
                                    -> Result<String, Error> {
@@ -376,7 +376,7 @@ impl Digest {
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
     pub fn using_password(&self,
                           method: Method,
-                          entity_body: String,
+                          entity_body: &[u8],
                           password: String)
                           -> Result<String, Error> {
         if let Ok(a1) = self.hashed_a1(self.username.clone(), password) {
@@ -395,7 +395,7 @@ impl Digest {
     /// generation.
     pub fn using_hashed_a1(&self,
                            method: Method,
-                           entity_body: String,
+                           entity_body: &[u8],
                            a1: String)
                            -> Result<String, Error> {
         let a2 = self.hashed_a2(method, entity_body);
@@ -420,7 +420,7 @@ impl Digest {
 
     fn validate_using_username_and_password(&self,
                                             method: Method,
-                                            entity_body: String,
+                                            entity_body: &[u8],
                                             username: Username,
                                             password: String)
                                             -> bool {
@@ -440,7 +440,7 @@ impl Digest {
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
     pub fn validate_using_password(&self,
                                    method: Method,
-                                   entity_body: String,
+                                   entity_body: &[u8],
                                    password: String)
                                    -> bool {
         self.validate_using_username_and_password(method,
@@ -456,7 +456,7 @@ impl Digest {
     /// [RFC 2616, secion 7.2](https://tools.ietf.org/html/rfc2616#section-7.2).
     pub fn validate_using_userhash_and_password(&self,
                                                 method: Method,
-                                                entity_body: String,
+                                                entity_body: &[u8],
                                                 username: Username,
                                                 password: String)
                                                 -> bool {
@@ -476,7 +476,7 @@ impl Digest {
     /// generation.
     pub fn validate_using_hashed_a1(&self,
                                     method: Method,
-                                    entity_body: String,
+                                    entity_body: &[u8],
                                     a1: String)
                                     -> bool {
         if let Ok(hex_digest) = self.using_hashed_a1(method, entity_body, a1) {

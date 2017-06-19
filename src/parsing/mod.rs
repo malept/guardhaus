@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,6 +20,7 @@
 
 //! Utility functions to parse headers.
 
+use hyper::header::Raw;
 use hyper::header::parsing::from_comma_delimited;
 use std::collections::HashMap;
 use unicase::UniCase;
@@ -44,8 +45,7 @@ pub fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted:
 }
 
 pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
-    let bytearr = &[String::from(s).into_bytes()];
-    let parameters: Vec<String> = from_comma_delimited(bytearr)
+    let parameters: Vec<String> = from_comma_delimited(&Raw::from(s))
         .expect("Could not parse header parameters");
     let mut param_map: HashMap<UniCase<String>, String> = HashMap::with_capacity(parameters.len());
     for parameter in parameters {

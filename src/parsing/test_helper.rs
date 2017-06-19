@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,22 +20,20 @@
 
 #![allow(dead_code)]
 
-use hyper::header::{Header, HeaderFormat, Headers};
+use hyper::header::{Header, Headers, Raw};
 use std::fmt;
 
 pub fn assert_parsed_header_equal<H: Header + PartialEq + fmt::Debug>(expected: H, data: &str) {
-    let bytestring = data.to_owned().into_bytes();
-    let actual: Result<H, _> = H::parse_header(&[bytestring][..]);
+    let actual: Result<H, _> = H::parse_header(&Raw::from(data));
     assert_eq!(actual.ok(), Some(expected))
 }
 
 pub fn assert_header_parsing_error<H: Header>(data: &str) {
-    let bytestring = data.to_owned().into_bytes();
-    let header: Result<H, _> = H::parse_header(&[bytestring][..]);
+    let header: Result<H, _> = H::parse_header(&Raw::from(data));
     assert!(header.is_err())
 }
 
-pub fn assert_serialized_header_equal<H: Header + HeaderFormat>(header: H, actual: &str) {
+pub fn assert_serialized_header_equal<H: Header>(header: H, actual: &str) {
     let mut headers = Headers::new();
     headers.set(header);
     assert_eq!(headers.to_string(), format!("{}\r\n", actual))

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Mark Lee
+// Copyright (c) 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,13 +18,16 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+extern crate futures;
 extern crate guardhaus;
 extern crate hyper;
 
+use futures::{Future, Stream};
+use futures::future::FutureResult;
 use guardhaus::digest::{Digest, Username};
 use hyper::header::Authorization;
-use hyper::server::{Request, Response, Server};
-use hyper::status::StatusCode;
+use hyper::server::{Http, Request, Response, Service};
+use hyper::StatusCode;
 use std::io::Read;
 
 const LISTEN: &'static str = "127.0.0.1:1337";
@@ -32,28 +35,38 @@ const USERNAME: &'static str = "Spy";
 const PASSWORD: &'static str = "vs. Spy";
 // const REALM: &'static str = "MadMag";
 
-fn needs_auth(mut req: Request, mut resp: Response) {
-    let mut entity_body = String::new();
-    if req.read_to_string(&mut entity_body).is_err() {
-        *resp.status_mut() = StatusCode::BadRequest;
-        return;
-    }
-    if let Some(auth) = req.headers.get::<Authorization<Digest>>() {
-        let username = Username::Plain(USERNAME.to_owned());
-        let password = PASSWORD.to_owned();
-        if auth.0
-               .validate_using_userhash_and_password(req.method, entity_body, username, password) {
-            *resp.status_mut() = StatusCode::Ok;
+#[derive(Clone, Copy)]
+struct AuthEndpoint;
+
+impl Service for AuthEndpoint {
+    type Request = Request;
+    type Response = Response;
+    type Error = hyper::Error;
+    type Future = FutureResult<Response, hyper::Error>;
+
+    fn call(&self, req: Request) -> Self::Future {
+        let mut response = Response::new();
+        let headers = req.headers().clone();
+        if let Some(ref auth) = headers.get::<Authorization<Digest>>() {
+            let username = Username::Plain(USERNAME.to_owned());
+            let password = PASSWORD.to_owned();
+            let method = req.method().clone();
+            let entity_body = req.body().concat2().wait().unwrap().to_vec().clone();
+            if auth.0
+                .validate_using_userhash_and_password(method, entity_body.as_slice(), username, password) {
+                    response.set_status(StatusCode::Ok);
+                } else {
+                    response.set_status(StatusCode::Forbidden);
+                }
         } else {
-            *resp.status_mut() = StatusCode::Forbidden;
+            response.set_status(StatusCode::Unauthorized);
         }
-    } else {
-        *resp.status_mut() = StatusCode::Unauthorized;
+        futures::future::ok(response)
     }
 }
 
 fn main() {
-    let server = Server::http(LISTEN).expect("Could not create HTTP server");
-    let _guard = server.handle(needs_auth);
+    let server = Http::new().bind(&LISTEN.parse().expect("Could not parse listen address"), || Ok(AuthEndpoint)).expect("Could not create HTTP server");
+    server.run().expect("Could not run HTTP server");
     println!("Listening on {}", LISTEN);
 }

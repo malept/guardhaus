@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Mark Lee
+// Copyright (c) 2016, 2017 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,7 +21,7 @@
 //! An implementation of the `Authentication-Info` header.
 
 use hyper::{Error as HyperError, Result as HyperResult};
-use hyper::header::{Header, HeaderFormat};
+use hyper::header::{Formatter, Header, Raw};
 use hyper::header::parsing::from_one_raw_str;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
@@ -91,13 +91,17 @@ impl Header for AuthenticationInfo {
         "Authentication-Info"
     }
 
-    fn parse_header(raw: &[Vec<u8>]) -> HyperResult<AuthenticationInfo> {
+    fn parse_header(raw: &Raw) -> HyperResult<AuthenticationInfo> {
         from_one_raw_str(raw).and_then(|s: String| AuthenticationInfo::from_str(&s[..]))
+    }
+
+    fn fmt_header(&self, f: &mut Formatter) -> fmt::Result {
+        f.fmt_line(self)
     }
 }
 
-impl HeaderFormat for AuthenticationInfo {
-    fn fmt_header(&self, f: &mut fmt::Formatter) -> fmt::Result {
+impl fmt::Display for AuthenticationInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         let mut serialized = String::new();
 
         if let Some(ref digest) = self.digest {

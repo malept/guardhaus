@@ -86,16 +86,15 @@ jobs:
           override: true
           components: rustfmt, clippy
 
-      - name: Run cargo fmt
-        uses: actions-rs/cargo@v1
+      - name: rustfmt
+        uses: mbrobbel/rustfmt-check@2d0978f
         with:
-          command: fmt
-          args: --all -- --check
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run cargo clippy
-        uses: actions-rs/cargo@v1
+      - name: Clippy
+        uses: actions-rs/clippy-check@v1
         with:
-          command: clippy
-          args: -- -D warnings
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features -- -D warnings
 
   # TODO: docs

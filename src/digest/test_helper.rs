@@ -20,11 +20,11 @@
 
 #![allow(dead_code)]
 
-use hyper::header::{Authorization, Header, Headers, Raw};
-use hyper::header::parsing::parse_extended_value;
-use parsing::test_helper;
-use super::{Digest, Username};
 use super::super::types::{HashAlgorithm, NonceCount, Qop};
+use super::{Digest, Username};
+use hyper::header::parsing::parse_extended_value;
+use hyper::header::{Authorization, Header, Headers, Raw};
+use parsing::test_helper;
 
 pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
     test_helper::assert_parsed_header_equal(expected, data)

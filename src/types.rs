@@ -20,13 +20,13 @@
 
 //! Common authentication types.
 
+use super::parsing::unraveled_map_value;
 use crypto_hash;
 use hex::FromHex;
 use hyper::error::Error;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::parsing::unraveled_map_value;
 use unicase::UniCase;
 
 /// Allowable hash algorithms for the `algorithm` parameter.
@@ -78,12 +78,11 @@ impl fmt::Display for HashAlgorithm {
 impl HashAlgorithm {
     fn to_algorithm(&self) -> crypto_hash::Algorithm {
         match *self {
-            HashAlgorithm::MD5 |
-            HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
-            HashAlgorithm::SHA256 |
-            HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
-            HashAlgorithm::SHA512256 |
-            HashAlgorithm::SHA512256Session => crypto_hash::Algorithm::SHA512,
+            HashAlgorithm::MD5 | HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
+            HashAlgorithm::SHA256 | HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
+            HashAlgorithm::SHA512256 | HashAlgorithm::SHA512256Session => {
+                crypto_hash::Algorithm::SHA512
+            }
         }
     }
 

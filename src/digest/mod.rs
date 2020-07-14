@@ -20,15 +20,15 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
-use hyper::Method;
+use super::types::{HashAlgorithm, NonceCount, Qop};
 use hyper::error::Error;
+use hyper::header::parsing::{parse_extended_value, ExtendedValue};
 use hyper::header::{Charset, Scheme};
-use hyper::header::parsing::{ExtendedValue, parse_extended_value};
+use hyper::Method;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::{HashAlgorithm, NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;
@@ -301,19 +301,17 @@ impl Digest {
     fn a1(&self, username: Username, password: String) -> Result<Vec<u8>, Error> {
         let realm = self.realm.clone();
         match self.algorithm {
-            HashAlgorithm::MD5 |
-            HashAlgorithm::SHA256 |
-            HashAlgorithm::SHA512256 => Ok(Digest::simple_a1(username, realm, password)),
+            HashAlgorithm::MD5 | HashAlgorithm::SHA256 | HashAlgorithm::SHA512256 => {
+                Ok(Digest::simple_a1(username, realm, password))
+            }
 
-            HashAlgorithm::MD5Session |
-            HashAlgorithm::SHA256Session |
-            HashAlgorithm::SHA512256Session => {
+            HashAlgorithm::MD5Session
+            | HashAlgorithm::SHA256Session
+            | HashAlgorithm::SHA512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
-                    let simple_hashed_a1 =
-                        self.algorithm.hex_digest(
-                            Digest::simple_a1(username, realm, password)
-                                .as_slice(),
-                        );
+                    let simple_hashed_a1 = self
+                        .algorithm
+                        .hex_digest(Digest::simple_a1(username, realm, password).as_slice());
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -342,22 +340,19 @@ impl Digest {
     // RFC 7616, Section 3.4.3
     fn a2(&self, method: Method, entity_body: &[u8]) -> String {
         match self.qop {
-            Some(Qop::AuthInt) => {
-                format!(
-                    "{}:{}:{}",
-                    method,
-                    self.request_uri,
-                    self.algorithm.hex_digest(entity_body)
-                )
-            }
+            Some(Qop::AuthInt) => format!(
+                "{}:{}:{}",
+                method,
+                self.request_uri,
+                self.algorithm.hex_digest(entity_body)
+            ),
             _ => format!("{}:{}", method, self.request_uri),
         }
     }
 
     fn hashed_a2(&self, method: Method, entity_body: &[u8]) -> String {
-        self.algorithm.hex_digest(
-            self.a2(method, entity_body).as_bytes(),
-        )
+        self.algorithm
+            .hex_digest(self.a2(method, entity_body).as_bytes())
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
@@ -436,12 +431,8 @@ impl Digest {
         username: Username,
         password: String,
     ) -> bool {
-        if let Ok(hex_digest) = self.using_username_and_password(
-            method,
-            entity_body,
-            username,
-            password,
-        )
+        if let Ok(hex_digest) =
+            self.using_username_and_password(method, entity_body, username, password)
         {
             hex_digest == self.response
         } else {

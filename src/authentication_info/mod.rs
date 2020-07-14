@@ -20,14 +20,14 @@
 
 //! An implementation of the `Authentication-Info` header.
 
-use hyper::{Error as HyperError, Result as HyperResult};
-use hyper::header::{Formatter, Header, Raw};
+use super::types::{NonceCount, Qop};
 use hyper::header::parsing::from_one_raw_str;
+use hyper::header::{Formatter, Header, Raw};
+use hyper::{Error as HyperError, Result as HyperResult};
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::{NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;

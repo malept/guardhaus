@@ -45,7 +45,7 @@ jobs:
           command: test
 
   coverage:
-    name: Test Suite (Code Coverage)
+    name: Test Suite (Linux, Code Coverage)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources

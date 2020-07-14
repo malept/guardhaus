@@ -91,7 +91,8 @@ jobs:
       - name: Install Cross 0.1.x
         uses: actions-rs/cargo@v1
         with:
-          command: install cross --version 0.1.16
+          command: install
+          args: cross --version 0.1.16
       - uses: actions-rs/cargo@v1
         with:
           use-cross: true

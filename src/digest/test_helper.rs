@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -84,7 +84,7 @@ pub fn rfc2617_digest_header(algorithm: HashAlgorithm) -> Digest {
         nonce_count: Some(NonceCount(1)),
         response: "6629fae49393a05397450978507c4ef1".to_owned(),
         request_uri: "/dir/index.html".to_owned(),
-        algorithm: algorithm,
+        algorithm,
         qop: Some(Qop::Auth),
         client_nonce: Some("0a4f113b".to_owned()),
         opaque: Some("5ccc069c403ebaf9f0171e9517f40e41".to_owned()),
@@ -107,7 +107,7 @@ pub fn rfc7616_digest_header(algorithm: HashAlgorithm, response: &str) -> Digest
         nonce_count: Some(NonceCount(1)),
         response: response.to_owned(),
         request_uri: "/dir/index.html".to_owned(),
-        algorithm: algorithm,
+        algorithm,
         qop: Some(Qop::Auth),
         client_nonce: Some("f2/wE4q74E6zIJEtWaHKaf5wv/H5QzzpXusqGemxURZJ".to_owned()),
         opaque: Some("FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS".to_owned()),
@@ -131,6 +131,6 @@ pub fn rfc7616_sha512_256_header(username: String, userhash: bool) -> Digest {
         client_nonce: Some("NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v".to_owned()),
         opaque: Some("HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS".to_owned()),
         charset: Some(Charset::Ext("UTF-8".to_owned())),
-        userhash: userhash,
+        userhash,
     }
 }

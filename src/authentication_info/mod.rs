@@ -1,4 +1,4 @@
-// Copyright (c) 2016, 2017 Mark Lee
+// Copyright (c) 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -77,11 +77,11 @@ impl FromStr for AuthenticationInfo {
         }
 
         Ok(AuthenticationInfo {
-            digest: digest,
+            digest,
             next_nonce: unraveled_map_value(&parameters, "nextnonce"),
-            qop: qop,
-            client_nonce: client_nonce,
-            nonce_count: nonce_count,
+            qop,
+            client_nonce,
+            nonce_count,
         })
     }
 }

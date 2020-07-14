@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -205,7 +205,7 @@ impl FromStr for Digest {
         let qop = Qop::from_parameters(&param_map)?;
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
             let utf8 = UniCase::new("utf-8".to_owned());
-            charset = if UniCase::new(value.clone()) == utf8 {
+            charset = if UniCase::new(value) == utf8 {
                 Some(Charset::Ext("UTF-8".to_owned()))
             } else {
                 return Err(Error::Header);
@@ -223,18 +223,18 @@ impl FromStr for Digest {
             userhash = false;
         }
         Ok(Digest {
-            username: username,
-            realm: realm,
-            nonce: nonce,
-            nonce_count: nonce_count,
-            response: response,
-            request_uri: request_uri,
-            algorithm: algorithm,
-            qop: qop,
+            username,
+            realm,
+            nonce,
+            nonce_count,
+            response,
+            request_uri,
+            algorithm,
+            qop,
             client_nonce: unraveled_map_value(&param_map, "cnonce"),
             opaque: unraveled_map_value(&param_map, "opaque"),
-            charset: charset,
-            userhash: userhash,
+            charset,
+            userhash,
         })
     }
 }
@@ -243,7 +243,7 @@ impl Digest {
     /// Generates a userhash, as defined in
     /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
     pub fn userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
-        let mut to_hash = username.clone();
+        let mut to_hash = username;
         to_hash.push(b':');
         to_hash.append(&mut realm.into_bytes());
         algorithm.hex_digest(to_hash.as_slice())
@@ -269,8 +269,8 @@ impl Digest {
 
     fn simple_a1(username: Username, realm: String, password: String) -> Vec<u8> {
         let mut a1: Vec<u8> = match username {
-            Username::Plain(name) => name.clone().into_bytes(),
-            Username::Encoded(encoded) => encoded.value.clone(),
+            Username::Plain(name) => name.into_bytes(),
+            Username::Encoded(encoded) => encoded.value,
         };
         a1.push(b':');
         a1.append(&mut realm.into_bytes());

@@ -24,10 +24,10 @@ jobs:
 
   test:
     name: Test Suite
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
-        os: [macOS-latest, windows-latest]
+        os: [macOS, windows]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v2
@@ -75,32 +75,32 @@ jobs:
 
   build:
     name: Build Only
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}-latest
     strategy:
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu
             target: aarch64-linux-android
             cross: true
-          - os: ubuntu-latest
+          - os: ubuntu
             target: arm-linux-androideabi
             cross: true
-          - os: ubuntu-latest
+          - os: ubuntu
             target: armv7-unknown-linux-gnueabihf
             cross: true
-          - os: ubuntu-latest
+          - os: ubuntu
             target: powerpc64-unknown-linux-gnu
             cross: true
-          - os: ubuntu-latest
+          - os: ubuntu
             target: x86_64-unknown-linux-musl
             cross: true
-          - os: ubuntu-latest
+          - os: ubuntu
             target: i686-unknown-linux-gnu
             cross: false
-          - os: macOS-latest
+          - os: macOS
             target: aarch64-apple-ios
             cross: false
-          - os: macOS-latest
+          - os: macOS
             target: x86_64-apple-ios
             cross: false
     steps:

@@ -152,6 +152,8 @@ jobs:
         with:
           command: build
           args: --release --target=${{ matrix.target }}
+        env:
+          PKG_CONFIG_ALLOW_CROSS: 1
 
   lints:
     name: Lints

@@ -137,7 +137,10 @@ jobs:
     steps:
       - name: Install OpenSSL (32-bit)
         if: matrix.target == 'i686-unknown-linux-gnu'
-        run: sudo apt-get install --yes --no-install-recommends libssl-dev:i386
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt-get install --yes --no-install-recommends libssl-dev:i386
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:

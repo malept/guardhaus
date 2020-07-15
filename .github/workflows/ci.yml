@@ -118,7 +118,7 @@ jobs:
           target: ${{ matrix.target }}
           toolchain: stable
       - name: Install Cross 0.1.x
-        if: cross == true
+        if: matrix.cross == true
         uses: actions-rs/cargo@v1
         with:
           command: install

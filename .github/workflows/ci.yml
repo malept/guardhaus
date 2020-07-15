@@ -135,6 +135,9 @@ jobs:
           # - wasm32-unknown-unknown
           - x86_64-unknown-linux-musl
     steps:
+      - name: Install OpenSSL (32-bit)
+        if: matrix.target == 'i686-unknown-linux-gnu'
+        run: sudo apt-get install --yes --no-install-recommends libssl-dev:i386
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:

@@ -172,6 +172,9 @@ jobs:
       - name: Checkout sources
         uses: actions/checkout@v2
 
+      - name: Fetch all git branches
+        run: git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
+
       - name: Install stable toolchain
         uses: actions-rs/toolchain@v1
         with:

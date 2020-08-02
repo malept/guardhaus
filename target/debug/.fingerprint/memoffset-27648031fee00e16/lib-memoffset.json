@@ -1,0 +1,1 @@
+{"rustc":16699087276250565111,"features":"[\"default\"]","target":1173744427709476633,"profile":12939370821261546320,"path":6882062202571768403,"deps":[[7623410506006913435,"build_script_build",false,3221656406325792176]],"local":[{"CheckDepInfo":{"dep_info":"debug/.fingerprint/memoffset-27648031fee00e16/dep-lib-memoffset"}}],"rustflags":[],"metadata":1371205671251306698}

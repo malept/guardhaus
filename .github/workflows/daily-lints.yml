@@ -2,7 +2,7 @@ name: Daily Lints
 
 on:
   schedule:
-    - '0 0 * * *'
+    - cron: '0 0 * * *'
 
 jobs:
   lints:

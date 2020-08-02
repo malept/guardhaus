@@ -22,8 +22,8 @@ extern crate futures;
 extern crate guardhaus;
 extern crate hyper;
 
-use futures::{Future, Stream};
 use futures::future::FutureResult;
+use futures::{Future, Stream};
 use guardhaus::digest::{Digest, Username};
 use hyper::header::Authorization;
 use hyper::server::{Http, Request, Response, Service};
@@ -56,8 +56,7 @@ impl Service for AuthEndpoint {
                 entity_body.as_slice(),
                 username,
                 password,
-            )
-            {
+            ) {
                 response.set_status(StatusCode::Ok);
             } else {
                 response.set_status(StatusCode::Forbidden);

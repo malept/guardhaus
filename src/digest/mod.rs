@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,15 +20,15 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
-use hyper::Method;
+use super::types::{HashAlgorithm, NonceCount, Qop};
 use hyper::error::Error;
+use hyper::header::parsing::{parse_extended_value, ExtendedValue};
 use hyper::header::{Charset, Scheme};
-use hyper::header::parsing::{ExtendedValue, parse_extended_value};
+use hyper::Method;
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::{HashAlgorithm, NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;
@@ -205,7 +205,7 @@ impl FromStr for Digest {
         let qop = Qop::from_parameters(&param_map)?;
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
             let utf8 = UniCase::new("utf-8".to_owned());
-            charset = if UniCase::new(value.clone()) == utf8 {
+            charset = if UniCase::new(value) == utf8 {
                 Some(Charset::Ext("UTF-8".to_owned()))
             } else {
                 return Err(Error::Header);
@@ -223,18 +223,18 @@ impl FromStr for Digest {
             userhash = false;
         }
         Ok(Digest {
-            username: username,
-            realm: realm,
-            nonce: nonce,
-            nonce_count: nonce_count,
-            response: response,
-            request_uri: request_uri,
-            algorithm: algorithm,
-            qop: qop,
+            username,
+            realm,
+            nonce,
+            nonce_count,
+            response,
+            request_uri,
+            algorithm,
+            qop,
             client_nonce: unraveled_map_value(&param_map, "cnonce"),
             opaque: unraveled_map_value(&param_map, "opaque"),
-            charset: charset,
-            userhash: userhash,
+            charset,
+            userhash,
         })
     }
 }
@@ -243,7 +243,7 @@ impl Digest {
     /// Generates a userhash, as defined in
     /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
     pub fn userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
-        let mut to_hash = username.clone();
+        let mut to_hash = username;
         to_hash.push(b':');
         to_hash.append(&mut realm.into_bytes());
         algorithm.hex_digest(to_hash.as_slice())
@@ -269,8 +269,8 @@ impl Digest {
 
     fn simple_a1(username: Username, realm: String, password: String) -> Vec<u8> {
         let mut a1: Vec<u8> = match username {
-            Username::Plain(name) => name.clone().into_bytes(),
-            Username::Encoded(encoded) => encoded.value.clone(),
+            Username::Plain(name) => name.into_bytes(),
+            Username::Encoded(encoded) => encoded.value,
         };
         a1.push(b':');
         a1.append(&mut realm.into_bytes());
@@ -301,19 +301,17 @@ impl Digest {
     fn a1(&self, username: Username, password: String) -> Result<Vec<u8>, Error> {
         let realm = self.realm.clone();
         match self.algorithm {
-            HashAlgorithm::MD5 |
-            HashAlgorithm::SHA256 |
-            HashAlgorithm::SHA512256 => Ok(Digest::simple_a1(username, realm, password)),
+            HashAlgorithm::MD5 | HashAlgorithm::SHA256 | HashAlgorithm::SHA512256 => {
+                Ok(Digest::simple_a1(username, realm, password))
+            }
 
-            HashAlgorithm::MD5Session |
-            HashAlgorithm::SHA256Session |
-            HashAlgorithm::SHA512256Session => {
+            HashAlgorithm::MD5Session
+            | HashAlgorithm::SHA256Session
+            | HashAlgorithm::SHA512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
-                    let simple_hashed_a1 =
-                        self.algorithm.hex_digest(
-                            Digest::simple_a1(username, realm, password)
-                                .as_slice(),
-                        );
+                    let simple_hashed_a1 = self
+                        .algorithm
+                        .hex_digest(Digest::simple_a1(username, realm, password).as_slice());
                     let mut a1 = simple_hashed_a1.into_bytes();
                     a1.push(b':');
                     a1.append(&mut self.nonce.clone().into_bytes());
@@ -342,22 +340,19 @@ impl Digest {
     // RFC 7616, Section 3.4.3
     fn a2(&self, method: Method, entity_body: &[u8]) -> String {
         match self.qop {
-            Some(Qop::AuthInt) => {
-                format!(
-                    "{}:{}:{}",
-                    method,
-                    self.request_uri,
-                    self.algorithm.hex_digest(entity_body)
-                )
-            }
+            Some(Qop::AuthInt) => format!(
+                "{}:{}:{}",
+                method,
+                self.request_uri,
+                self.algorithm.hex_digest(entity_body)
+            ),
             _ => format!("{}:{}", method, self.request_uri),
         }
     }
 
     fn hashed_a2(&self, method: Method, entity_body: &[u8]) -> String {
-        self.algorithm.hex_digest(
-            self.a2(method, entity_body).as_bytes(),
-        )
+        self.algorithm
+            .hex_digest(self.a2(method, entity_body).as_bytes())
     }
 
     fn kd(algorithm: &HashAlgorithm, secret: String, data: String) -> String {
@@ -436,12 +431,8 @@ impl Digest {
         username: Username,
         password: String,
     ) -> bool {
-        if let Ok(hex_digest) = self.using_username_and_password(
-            method,
-            entity_body,
-            username,
-            password,
-        )
+        if let Ok(hex_digest) =
+            self.using_username_and_password(method, entity_body, username, password)
         {
             hex_digest == self.response
         } else {

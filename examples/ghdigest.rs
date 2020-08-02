@@ -27,9 +27,9 @@ use guardhaus::digest::{Digest, Username};
 use guardhaus::types::HashAlgorithm;
 use rpassword::prompt_password_stdout;
 use std::env;
+use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::Write;
-use std::fs::{File, OpenOptions};
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [options] passwdfile realm username", program);

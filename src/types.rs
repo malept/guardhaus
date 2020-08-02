@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,13 +20,13 @@
 
 //! Common authentication types.
 
+use super::parsing::unraveled_map_value;
 use crypto_hash;
 use hex::FromHex;
 use hyper::error::Error;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::parsing::unraveled_map_value;
 use unicase::UniCase;
 
 /// Allowable hash algorithms for the `algorithm` parameter.
@@ -65,12 +65,12 @@ impl FromStr for HashAlgorithm {
 impl fmt::Display for HashAlgorithm {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            HashAlgorithm::MD5 => write!(f, "{}", "MD5"),
-            HashAlgorithm::MD5Session => write!(f, "{}", "MD5-sess"),
-            HashAlgorithm::SHA256 => write!(f, "{}", "SHA-256"),
-            HashAlgorithm::SHA256Session => write!(f, "{}", "SHA-256-sess"),
-            HashAlgorithm::SHA512256 => write!(f, "{}", "SHA-512-256"),
-            HashAlgorithm::SHA512256Session => write!(f, "{}", "SHA-512-256-sess"),
+            HashAlgorithm::MD5 => write!(f, "MD5"),
+            HashAlgorithm::MD5Session => write!(f, "MD5-sess"),
+            HashAlgorithm::SHA256 => write!(f, "SHA-256"),
+            HashAlgorithm::SHA256Session => write!(f, "SHA-256-sess"),
+            HashAlgorithm::SHA512256 => write!(f, "SHA-512-256"),
+            HashAlgorithm::SHA512256Session => write!(f, "SHA-512-256-sess"),
         }
     }
 }
@@ -78,12 +78,11 @@ impl fmt::Display for HashAlgorithm {
 impl HashAlgorithm {
     fn to_algorithm(&self) -> crypto_hash::Algorithm {
         match *self {
-            HashAlgorithm::MD5 |
-            HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
-            HashAlgorithm::SHA256 |
-            HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
-            HashAlgorithm::SHA512256 |
-            HashAlgorithm::SHA512256Session => crypto_hash::Algorithm::SHA512,
+            HashAlgorithm::MD5 | HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
+            HashAlgorithm::SHA256 | HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
+            HashAlgorithm::SHA512256 | HashAlgorithm::SHA512256Session => {
+                crypto_hash::Algorithm::SHA512
+            }
         }
     }
 
@@ -167,8 +166,8 @@ impl FromStr for Qop {
 impl fmt::Display for Qop {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            Qop::Auth => write!(f, "{}", "auth"),
-            Qop::AuthInt => write!(f, "{}", "auth-int"),
+            Qop::Auth => write!(f, "auth"),
+            Qop::AuthInt => write!(f, "auth-int"),
         }
     }
 }

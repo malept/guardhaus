@@ -19,16 +19,16 @@
 // THE SOFTWARE.
 
 #![cfg(test)]
-use hyper::Method;
-use hyper::header::{Authorization, Header, Raw, Scheme};
-use hyper::header::parsing::parse_extended_value;
-use super::{Digest, Username};
 use super::super::types::{HashAlgorithm, Qop};
-use super::test_helper::{assert_header_parsing_error, assert_parsed_header_equal,
-                         assert_serialized_header_equal, parse_digest_header,
-                         rfc2069_a1_digest_header, rfc2069_a2_digest_header, rfc2069_username,
-                         rfc2617_digest_header, rfc7616_digest_header, rfc7616_sha512_256_header,
-                         rfc7616_username};
+use super::test_helper::{
+    assert_header_parsing_error, assert_parsed_header_equal, assert_serialized_header_equal,
+    parse_digest_header, rfc2069_a1_digest_header, rfc2069_a2_digest_header, rfc2069_username,
+    rfc2617_digest_header, rfc7616_digest_header, rfc7616_sha512_256_header, rfc7616_username,
+};
+use super::{Digest, Username};
+use hyper::header::parsing::parse_extended_value;
+use hyper::header::{Authorization, Header, Raw, Scheme};
+use hyper::Method;
 
 #[test]
 fn test_display_sha256_for_hashalgorithm() {
@@ -417,7 +417,8 @@ fn test_a1_for_md5_sess() {
         "939e7578ed9e3c518a452acee763bce9:{}:{}",
         digest.nonce,
         digest.client_nonce.unwrap()
-    ).into_bytes();
+    )
+    .into_bytes();
     assert_eq!(expected, a1.unwrap())
 }
 
@@ -475,7 +476,8 @@ fn test_from_header() {
             uri=\"/dir/index.html\", \
             response=\"1949323746fe6a43ef61f9606e7febea\", \
             opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"",
-    )).unwrap();
+    ))
+    .unwrap();
 
     let hex_digest = header.0.using_password(Method::Get, b"", password);
     assert!(hex_digest.is_ok());
@@ -582,11 +584,9 @@ fn test_validate_using_password() {
                                       opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\", \
                                       qop=auth, nc=00000001, cnonce=\"b24ce2519b8cdb10\"",
     );
-    assert!(header.0.validate_using_password(
-        Method::Get,
-        b"",
-        password.clone(),
-    ));
+    assert!(header
+        .0
+        .validate_using_password(Method::Get, b"", password.clone(),));
     let mut digest = header.0.clone();
     digest.client_nonce = Some("somethingelse".to_owned());
     assert!(!digest.validate_using_password(Method::Get, b"", password));
@@ -608,11 +608,9 @@ fn test_validate_using_encoded_username_and_password() {
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false",
     );
-    assert!(header.0.validate_using_password(
-        Method::Get,
-        b"",
-        password.clone(),
-    ));
+    assert!(header
+        .0
+        .validate_using_password(Method::Get, b"", password.clone(),));
 }
 
 #[test]
@@ -663,16 +661,8 @@ fn test_validate_using_userhash_and_password() {
 fn test_validate_using_hashed_a1() {
     let hashed_a1 = "3d78807defe7de2157e2b0b6573a855f".to_owned();
     let mut digest = rfc7616_digest_header(HashAlgorithm::MD5, "8ca523f5e9506fed4657c9700eebdbec");
-    assert!(digest.validate_using_hashed_a1(
-        Method::Get,
-        b"",
-        hashed_a1.clone(),
-    ));
+    assert!(digest.validate_using_hashed_a1(Method::Get, b"", hashed_a1.clone(),));
 
     digest.client_nonce = Some("different".to_owned());
-    assert!(!digest.validate_using_hashed_a1(
-        Method::Get,
-        b"",
-        hashed_a1,
-    ));
+    assert!(!digest.validate_using_hashed_a1(Method::Get, b"", hashed_a1,));
 }

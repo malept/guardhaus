@@ -1,4 +1,4 @@
-// Copyright (c) 2016, 2017 Mark Lee
+// Copyright (c) 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,14 +20,14 @@
 
 //! An implementation of the `Authentication-Info` header.
 
-use hyper::{Error as HyperError, Result as HyperResult};
-use hyper::header::{Formatter, Header, Raw};
+use super::types::{NonceCount, Qop};
 use hyper::header::parsing::from_one_raw_str;
+use hyper::header::{Formatter, Header, Raw};
+use hyper::{Error as HyperError, Result as HyperResult};
 use parsing::{append_parameter, parse_parameters, unraveled_map_value};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
-use super::types::{NonceCount, Qop};
 use unicase::UniCase;
 
 mod test;
@@ -77,11 +77,11 @@ impl FromStr for AuthenticationInfo {
         }
 
         Ok(AuthenticationInfo {
-            digest: digest,
+            digest,
             next_nonce: unraveled_map_value(&parameters, "nextnonce"),
-            qop: qop,
-            client_nonce: client_nonce,
-            nonce_count: nonce_count,
+            qop,
+            client_nonce,
+            nonce_count,
         })
     }
 }

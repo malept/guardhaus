@@ -1,0 +1,193 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+*
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  check:
+    name: Check
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          profile: minimal
+          toolchain: stable
+
+      - name: Run cargo check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+  test:
+    name: Test Suite
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        os: [macOS, windows]
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          profile: minimal
+          toolchain: stable
+
+      - name: Run Tests
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+
+  coverage:
+    name: Test Suite (Linux, Code Coverage)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          profile: minimal
+          toolchain: stable
+
+      - name: Run cargo-tarpaulin
+        uses: actions-rs/tarpaulin@v0.1
+        with:
+          version: '0.14.2'
+          args: '-- --test-threads 1'
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v1
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v1
+        with:
+          name: code-coverage-report
+          path: cobertura.xml
+
+  build:
+    name: Build Only
+    runs-on: ${{ matrix.os }}-latest
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu
+            target: aarch64-linux-android
+            cross: true
+          - os: ubuntu
+            target: arm-linux-androideabi
+            cross: true
+          - os: ubuntu
+            target: armv7-unknown-linux-gnueabihf
+            cross: true
+          - os: ubuntu
+            target: powerpc64-unknown-linux-gnu
+            cross: true
+          - os: ubuntu
+            target: x86_64-unknown-linux-musl
+            cross: true
+          - os: ubuntu
+            target: i686-unknown-linux-gnu
+            cross: false
+          - os: macOS
+            target: aarch64-apple-ios
+            cross: false
+          - os: macOS
+            target: x86_64-apple-ios
+            cross: false
+    steps:
+      - name: Install OpenSSL (32-bit)
+        if: matrix.target == 'i686-unknown-linux-gnu'
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt update
+          sudo apt-get install --yes --no-install-recommends libssl-dev:i386
+      - uses: actions/checkout@v2
+      - uses: actions-rs/toolchain@v1
+        with:
+          override: true
+          profile: minimal
+          target: ${{ matrix.target }}
+          toolchain: stable
+      - name: Install Cross 0.1.x
+        if: matrix.cross == true
+        uses: actions-rs/cargo@v1
+        with:
+          command: install
+          args: cross --version 0.1.16
+      - uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.cross }}
+          command: build
+          args: --release --target=${{ matrix.target }}
+        env:
+          PKG_CONFIG_ALLOW_CROSS: 1
+
+  lints:
+    name: Lints
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+          components: rustfmt, clippy
+
+      - name: rustfmt
+        uses: mbrobbel/rustfmt-check@2d0978f
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Clippy
+        uses: actions-rs/clippy-check@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          args: --all-features -- -D warnings
+
+  docs:
+    name: Docs
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: stable
+          override: true
+
+      - name: Build docs
+        uses: actions-rs/cargo@v1
+        with:
+          command: doc
+      - name: Publish to GitHub Pages
+        uses: docker://malept/gha-gh-pages:1.0.2
+        if: github.event_name == 'push'
+        with:
+          docsPath: target/doc
+          versionDocs: true
+        env:
+          GH_PAGES_SSH_DEPLOY_KEY: ${{ secrets.GH_PAGES_SSH_DEPLOY_KEY }}

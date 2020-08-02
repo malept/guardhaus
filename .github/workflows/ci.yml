@@ -183,7 +183,9 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: doc
-      - uses: docker://malept/gha-gh-pages:1.0.2
+      - name: Publish to GitHub Pages
+        uses: docker://malept/gha-gh-pages:1.0.2
+        if: github.event_name == 'push'
         with:
           docsPath: target/doc
           versionDocs: true

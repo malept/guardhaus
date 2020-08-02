@@ -183,4 +183,9 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: doc
-          args: --no-deps
+      - uses: docker://malept/gha-gh-pages:1.0.2
+        with:
+          docsPath: target/doc
+          versionDocs: true
+        env:
+          GH_PAGES_SSH_DEPLOY_KEY: ${{ secrets.GH_PAGES_SSH_DEPLOY_KEY }}

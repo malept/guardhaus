@@ -70,7 +70,7 @@
 <span id="70">70</span>
 <span id="71">71</span>
 </pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">// Copyright (c) 2015, 2016, 2017 Mark Lee</span>
+<span class="comment">// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining a copy</span>
 <span class="comment">// of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
@@ -94,9 +94,9 @@
 
 <span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">header</span>::<span class="ident">parsing</span>::<span class="ident">from_comma_delimited</span>;
 <span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">header</span>::<span class="ident">Raw</span>;
+<span class="kw">use</span> <span class="ident">percent_encoding</span>::<span class="ident">percent_decode</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
 <span class="kw">use</span> <span class="ident">unicase</span>::<span class="ident">UniCase</span>;
-<span class="kw">use</span> <span class="ident">url</span>::<span class="ident">percent_encoding</span>::<span class="ident">percent_decode</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">test_helper</span>;
 

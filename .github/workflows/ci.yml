@@ -187,11 +187,12 @@ jobs:
         with:
           command: doc
       - name: Publish to GitHub Pages
-        uses: docker://malept/gha-gh-pages:1.1.1
+        uses: docker://malept/gha-gh-pages:1.2.0
         if: github.event_name == 'push'
         with:
           defaultBranch: main
           docsPath: target/doc
+          redirectURLSuffix: guardhaus/
           versionDocs: true
         env:
           GH_PAGES_SSH_DEPLOY_KEY: ${{ secrets.GH_PAGES_SSH_DEPLOY_KEY }}

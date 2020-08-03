@@ -187,7 +187,7 @@ jobs:
         with:
           command: doc
       - name: Publish to GitHub Pages
-        uses: docker://malept/gha-gh-pages:1.1.0
+        uses: docker://malept/gha-gh-pages:1.1.1
         if: github.event_name == 'push'
         with:
           defaultBranch: main

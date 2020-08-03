@@ -20,4 +20,4 @@ unicase = "2.0"
 
 futures = "0.1"
 getopts = "0.2"
-rpassword = "0.4"
+rpassword = "4.0.5"

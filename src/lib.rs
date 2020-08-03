@@ -23,8 +23,8 @@
 extern crate crypto_hash;
 extern crate hex;
 extern crate hyper;
+extern crate percent_encoding;
 extern crate unicase;
-extern crate url;
 
 #[warn(missing_docs)]
 pub mod authentication_info;

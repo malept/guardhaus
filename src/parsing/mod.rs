@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -22,9 +22,9 @@
 
 use hyper::header::parsing::from_comma_delimited;
 use hyper::header::Raw;
+use percent_encoding::percent_decode;
 use std::collections::HashMap;
 use unicase::UniCase;
-use url::percent_encoding::percent_decode;
 
 pub mod test_helper;
 

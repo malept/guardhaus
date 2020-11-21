@@ -34,13 +34,13 @@ pub fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted:
         serialized.push_str(", ")
     }
     serialized.push_str(key);
-    serialized.push_str("=");
+    serialized.push('=');
     if quoted {
-        serialized.push_str("\"");
+        serialized.push('"');
     }
     serialized.push_str(value);
     if quoted {
-        serialized.push_str("\"");
+        serialized.push('"');
     }
 }
 

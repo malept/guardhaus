@@ -1,4 +1,7 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-0.1.29/src/stream/futures_unordered.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>futures_unordered.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css"><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="shortcut icon" href="../../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../futures/index.html'><div class='logo-container'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-0.1.30/src/stream/futures_unordered.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>futures_unordered.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
+<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../futures/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><span class="help-button">?</span>
+                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -676,6 +679,36 @@
 <span id="676">676</span>
 <span id="677">677</span>
 <span id="678">678</span>
+<span id="679">679</span>
+<span id="680">680</span>
+<span id="681">681</span>
+<span id="682">682</span>
+<span id="683">683</span>
+<span id="684">684</span>
+<span id="685">685</span>
+<span id="686">686</span>
+<span id="687">687</span>
+<span id="688">688</span>
+<span id="689">689</span>
+<span id="690">690</span>
+<span id="691">691</span>
+<span id="692">692</span>
+<span id="693">693</span>
+<span id="694">694</span>
+<span id="695">695</span>
+<span id="696">696</span>
+<span id="697">697</span>
+<span id="698">698</span>
+<span id="699">699</span>
+<span id="700">700</span>
+<span id="701">701</span>
+<span id="702">702</span>
+<span id="703">703</span>
+<span id="704">704</span>
+<span id="705">705</span>
+<span id="706">706</span>
+<span id="707">707</span>
+<span id="708">708</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! An unbounded set of futures.</span>
 
@@ -693,6 +726,23 @@
 <span class="kw">use</span> {<span class="ident">task</span>, <span class="ident">Stream</span>, <span class="ident">Future</span>, <span class="ident">Poll</span>, <span class="ident">Async</span>};
 <span class="kw">use</span> <span class="ident">executor</span>::{<span class="ident">Notify</span>, <span class="ident">UnsafeNotify</span>, <span class="ident">NotifyHandle</span>};
 <span class="kw">use</span> <span class="ident">task_impl</span>::{<span class="self">self</span>, <span class="ident">AtomicTask</span>};
+
+<span class="doccomment">/// Constant used for a `FuturesUnordered` to determine how many times it is</span>
+<span class="doccomment">/// allowed to poll underlying futures without yielding.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// A single call to `poll_next` may potentially do a lot of work before</span>
+<span class="doccomment">/// yielding. This happens in particular if the underlying futures are awoken</span>
+<span class="doccomment">/// frequently but continue to return `Pending`. This is problematic if other</span>
+<span class="doccomment">/// tasks are waiting on the executor, since they do not get to run. This value</span>
+<span class="doccomment">/// caps the number of calls to `poll` on underlying futures a single call to</span>
+<span class="doccomment">/// `poll_next` is allowed to make.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The value itself is chosen somewhat arbitrarily. It needs to be high enough</span>
+<span class="doccomment">/// that amortize wakeup and scheduling costs, but low enough that we do not</span>
+<span class="doccomment">/// starve other tasks for long.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// See also https://github.com/rust-lang/futures-rs/issues/2047.</span>
+<span class="kw">const</span> <span class="ident">YIELD_EVERY</span>: <span class="ident">usize</span> <span class="op">=</span> <span class="number">32</span>;
 
 <span class="doccomment">/// An unbounded set of futures.</span>
 <span class="doccomment">///</span>
@@ -953,6 +1003,10 @@
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">T</span>::<span class="ident">Error</span>;
 
     <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">T</span>::<span class="ident">Item</span><span class="op">&gt;</span>, <span class="ident">T</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
+        <span class="comment">// Keep track of how many child futures we have polled,</span>
+        <span class="comment">// in case we want to forcibly yield.</span>
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">polled</span> <span class="op">=</span> <span class="number">0</span>;
+
         <span class="comment">// Ensure `parent` is correctly set.</span>
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">parent</span>.<span class="ident">register</span>();
 
@@ -1048,12 +1102,21 @@
                         <span class="ident">future</span>.<span class="ident">poll</span>()
                     })
                 };
+                <span class="ident">polled</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
 
                 <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">res</span> {
                     <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">NotReady</span>) <span class="op">=</span><span class="op">&gt;</span> {
                         <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">bomb</span>.<span class="ident">node</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>();
                         <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">future</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">future</span>);
                         <span class="ident">bomb</span>.<span class="ident">queue</span>.<span class="ident">link</span>(<span class="ident">node</span>);
+
+                        <span class="kw">if</span> <span class="ident">polled</span> <span class="op">=</span><span class="op">=</span> <span class="ident">YIELD_EVERY</span> {
+                            <span class="comment">// We have polled a large number of futures in a row without yielding.</span>
+                            <span class="comment">// To ensure we do not starve other tasks waiting on the executor,</span>
+                            <span class="comment">// we yield here, but immediately wake ourselves up to continue.</span>
+                            <span class="ident">task_impl</span>::<span class="ident">current</span>().<span class="ident">notify</span>();
+                            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">NotReady</span>);
+                        }
                         <span class="kw">continue</span>
                     }
                     <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">e</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="prelude-val">Some</span>(<span class="ident">e</span>))),

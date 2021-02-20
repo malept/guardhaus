@@ -155,7 +155,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: rustfmt
-        uses: mbrobbel/rustfmt-check@2d0978f
+        uses: mbrobbel/rustfmt-check@b8caf241958773f7f6b0fba68879316da6be821d
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
 

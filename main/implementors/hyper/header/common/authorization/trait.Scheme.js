@@ -1,3 +1,3 @@
 (function() {var implementors = {};
-implementors["guardhaus"] = [{"text":"impl Scheme for Digest","synthetic":false,"types":[]}];
+implementors["guardhaus"] = [{"text":"impl <a class=\"trait\" href=\"hyper/header/common/authorization/trait.Scheme.html\" title=\"trait hyper::header::common::authorization::Scheme\">Scheme</a> for <a class=\"struct\" href=\"guardhaus/digest/struct.Digest.html\" title=\"struct guardhaus::digest::Digest\">Digest</a>","synthetic":false,"types":["guardhaus::digest::Digest"]}];
 if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

@@ -698,7 +698,7 @@
                 <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
             }
         } <span class="kw">else</span> {
-            <span class="ident">algorithm</span> <span class="op">=</span> <span class="ident">HashAlgorithm</span>::<span class="ident">MD5</span>;
+            <span class="ident">algorithm</span> <span class="op">=</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Md5</span>;
         }
         <span class="kw">let</span> <span class="ident">qop</span> <span class="op">=</span> <span class="ident">Qop</span>::<span class="ident">from_parameters</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>)<span class="question-mark">?</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;charset&quot;</span>) {
@@ -799,13 +799,13 @@
     <span class="kw">fn</span> <span class="ident">a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">password</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">realm</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">realm</span>.<span class="ident">clone</span>();
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">algorithm</span> {
-            <span class="ident">HashAlgorithm</span>::<span class="ident">MD5</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">SHA256</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">SHA512256</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">HashAlgorithm</span>::<span class="ident">Md5</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha256</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha512256</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="prelude-val">Ok</span>(<span class="ident">Digest</span>::<span class="ident">simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>))
             }
 
-            <span class="ident">HashAlgorithm</span>::<span class="ident">MD5Session</span>
-            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">SHA256Session</span>
-            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">SHA512256Session</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">HashAlgorithm</span>::<span class="ident">Md5Session</span>
+            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha256Session</span>
+            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha512256Session</span> <span class="op">=</span><span class="op">&gt;</span> {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">client_nonce</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">client_nonce</span> {
                     <span class="kw">let</span> <span class="ident">simple_hashed_a1</span> <span class="op">=</span> <span class="self">self</span>
                         .<span class="ident">algorithm</span>
@@ -991,4 +991,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "guardhaus";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="guardhaus"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

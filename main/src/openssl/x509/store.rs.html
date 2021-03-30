@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/openssl-0.10.32/src/x509/store.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>store.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/openssl-0.10.33/src/x509/store.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>store.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
 <link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
 <link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../openssl/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
                 <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
@@ -200,11 +200,6 @@
 <span id="197">197</span>
 <span id="198">198</span>
 <span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
 </pre><div class="example-wrap"><pre class="rust ">
 <span class="doccomment">//! Describe a context in which to verify an `X509` certificate.</span>
 <span class="doccomment">//!</span>
@@ -214,9 +209,6 @@
 <span class="doccomment">//! # Example</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! ```rust</span>
-<span class="doccomment">//!</span>
-<span class="doccomment">//! extern crate openssl;</span>
-<span class="doccomment">//!</span>
 <span class="doccomment">//! use openssl::x509::store::{X509StoreBuilder, X509Store};</span>
 <span class="doccomment">//! use openssl::x509::{X509, X509Name};</span>
 <span class="doccomment">//! use openssl::pkey::PKey;</span>
@@ -224,38 +216,36 @@
 <span class="doccomment">//! use openssl::rsa::Rsa;</span>
 <span class="doccomment">//! use openssl::nid::Nid;</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//! fn main() {</span>
-<span class="doccomment">//!     let rsa = Rsa::generate(2048).unwrap();</span>
-<span class="doccomment">//!     let pkey = PKey::from_rsa(rsa).unwrap();</span>
+<span class="doccomment">//! let rsa = Rsa::generate(2048).unwrap();</span>
+<span class="doccomment">//! let pkey = PKey::from_rsa(rsa).unwrap();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     let mut name = X509Name::builder().unwrap();</span>
-<span class="doccomment">//!     name.append_entry_by_nid(Nid::COMMONNAME, &quot;foobar.com&quot;).unwrap();</span>
-<span class="doccomment">//!     let name = name.build();</span>
+<span class="doccomment">//! let mut name = X509Name::builder().unwrap();</span>
+<span class="doccomment">//! name.append_entry_by_nid(Nid::COMMONNAME, &quot;foobar.com&quot;).unwrap();</span>
+<span class="doccomment">//! let name = name.build();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     let mut builder = X509::builder().unwrap();</span>
-<span class="doccomment">//!     builder.set_version(2).unwrap();</span>
-<span class="doccomment">//!     builder.set_subject_name(&amp;name).unwrap();</span>
-<span class="doccomment">//!     builder.set_issuer_name(&amp;name).unwrap();</span>
-<span class="doccomment">//!     builder.set_pubkey(&amp;pkey).unwrap();</span>
-<span class="doccomment">//!     builder.sign(&amp;pkey, MessageDigest::sha256()).unwrap();</span>
+<span class="doccomment">//! let mut builder = X509::builder().unwrap();</span>
+<span class="doccomment">//! builder.set_version(2).unwrap();</span>
+<span class="doccomment">//! builder.set_subject_name(&amp;name).unwrap();</span>
+<span class="doccomment">//! builder.set_issuer_name(&amp;name).unwrap();</span>
+<span class="doccomment">//! builder.set_pubkey(&amp;pkey).unwrap();</span>
+<span class="doccomment">//! builder.sign(&amp;pkey, MessageDigest::sha256()).unwrap();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     let certificate: X509 = builder.build();</span>
+<span class="doccomment">//! let certificate: X509 = builder.build();</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     let mut builder = X509StoreBuilder::new().unwrap();</span>
-<span class="doccomment">//!     let _ = builder.add_cert(certificate);</span>
+<span class="doccomment">//! let mut builder = X509StoreBuilder::new().unwrap();</span>
+<span class="doccomment">//! let _ = builder.add_cert(certificate);</span>
 <span class="doccomment">//!</span>
-<span class="doccomment">//!     let store: X509Store = builder.build();</span>
-<span class="doccomment">//! }</span>
+<span class="doccomment">//! let store: X509Store = builder.build();</span>
 <span class="doccomment">//! ```</span>
 
-<span class="kw">use</span> <span class="ident">ffi</span>;
+<span class="kw">use</span> <span class="ident">cfg_if</span>::<span class="ident">cfg_if</span>;
 <span class="kw">use</span> <span class="ident">foreign_types</span>::<span class="ident">ForeignTypeRef</span>;
 <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">mem</span>;
 
-<span class="kw">use</span> <span class="ident">error</span>::<span class="ident">ErrorStack</span>;
-<span class="kw">use</span> <span class="ident">stack</span>::<span class="ident">StackRef</span>;
-<span class="kw">use</span> <span class="ident">x509</span>::{<span class="ident">X509Object</span>, <span class="ident">X509</span>};
-<span class="kw">use</span> {<span class="ident">cvt</span>, <span class="ident">cvt_p</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">error</span>::<span class="ident">ErrorStack</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">stack</span>::<span class="ident">StackRef</span>;
+<span class="kw">use</span> <span class="kw">crate</span>::<span class="ident">x509</span>::{<span class="ident">X509Object</span>, <span class="ident">X509</span>};
+<span class="kw">use</span> <span class="kw">crate</span>::{<span class="ident">cvt</span>, <span class="ident">cvt_p</span>};
 
 <span class="macro">foreign_type_and_impl_send_sync</span><span class="macro">!</span> {
     <span class="kw">type</span> <span class="ident">CType</span> <span class="op">=</span> <span class="ident">ffi</span>::<span class="ident">X509_STORE</span>;
@@ -411,4 +401,5 @@
     }
 }
 </pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><script>window.rootPath = "../../../";window.currentCrate = "openssl";</script><script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="openssl"></div>
+    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>

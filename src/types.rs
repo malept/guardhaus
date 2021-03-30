@@ -33,17 +33,17 @@ use unicase::UniCase;
 #[derive(Clone, Debug, PartialEq)]
 pub enum HashAlgorithm {
     /// `MD5`
-    MD5,
+    Md5,
     /// `MD5-sess`
-    MD5Session,
+    Md5Session,
     /// `SHA-256`
-    SHA256,
+    Sha256,
     /// `SHA-256-sess`
-    SHA256Session,
+    Sha256Session,
     /// `SHA-512-256`
-    SHA512256,
+    Sha512256,
     /// `SHA-512-256-sess`
-    SHA512256Session,
+    Sha512256Session,
 }
 
 impl FromStr for HashAlgorithm {
@@ -51,12 +51,12 @@ impl FromStr for HashAlgorithm {
 
     fn from_str(s: &str) -> Result<HashAlgorithm, Error> {
         match s {
-            "MD5" => Ok(HashAlgorithm::MD5),
-            "MD5-sess" => Ok(HashAlgorithm::MD5Session),
-            "SHA-256" => Ok(HashAlgorithm::SHA256),
-            "SHA-256-sess" => Ok(HashAlgorithm::SHA256Session),
-            "SHA-512-256" => Ok(HashAlgorithm::SHA512256),
-            "SHA-512-256-sess" => Ok(HashAlgorithm::SHA512256Session),
+            "MD5" => Ok(HashAlgorithm::Md5),
+            "MD5-sess" => Ok(HashAlgorithm::Md5Session),
+            "SHA-256" => Ok(HashAlgorithm::Sha256),
+            "SHA-256-sess" => Ok(HashAlgorithm::Sha256Session),
+            "SHA-512-256" => Ok(HashAlgorithm::Sha512256),
+            "SHA-512-256-sess" => Ok(HashAlgorithm::Sha512256Session),
             _ => Err(Error::Header),
         }
     }
@@ -65,12 +65,12 @@ impl FromStr for HashAlgorithm {
 impl fmt::Display for HashAlgorithm {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
-            HashAlgorithm::MD5 => write!(f, "MD5"),
-            HashAlgorithm::MD5Session => write!(f, "MD5-sess"),
-            HashAlgorithm::SHA256 => write!(f, "SHA-256"),
-            HashAlgorithm::SHA256Session => write!(f, "SHA-256-sess"),
-            HashAlgorithm::SHA512256 => write!(f, "SHA-512-256"),
-            HashAlgorithm::SHA512256Session => write!(f, "SHA-512-256-sess"),
+            HashAlgorithm::Md5 => write!(f, "MD5"),
+            HashAlgorithm::Md5Session => write!(f, "MD5-sess"),
+            HashAlgorithm::Sha256 => write!(f, "SHA-256"),
+            HashAlgorithm::Sha256Session => write!(f, "SHA-256-sess"),
+            HashAlgorithm::Sha512256 => write!(f, "SHA-512-256"),
+            HashAlgorithm::Sha512256Session => write!(f, "SHA-512-256-sess"),
         }
     }
 }
@@ -78,9 +78,9 @@ impl fmt::Display for HashAlgorithm {
 impl HashAlgorithm {
     fn to_algorithm(&self) -> crypto_hash::Algorithm {
         match *self {
-            HashAlgorithm::MD5 | HashAlgorithm::MD5Session => crypto_hash::Algorithm::MD5,
-            HashAlgorithm::SHA256 | HashAlgorithm::SHA256Session => crypto_hash::Algorithm::SHA256,
-            HashAlgorithm::SHA512256 | HashAlgorithm::SHA512256Session => {
+            HashAlgorithm::Md5 | HashAlgorithm::Md5Session => crypto_hash::Algorithm::MD5,
+            HashAlgorithm::Sha256 | HashAlgorithm::Sha256Session => crypto_hash::Algorithm::SHA256,
+            HashAlgorithm::Sha512256 | HashAlgorithm::Sha512256Session => {
                 crypto_hash::Algorithm::SHA512
             }
         }
@@ -90,7 +90,7 @@ impl HashAlgorithm {
     /// `data` and the algorithm.
     pub fn hex_digest(&self, data: &[u8]) -> String {
         let mut digest = crypto_hash::hex_digest(self.to_algorithm(), data);
-        if *self == HashAlgorithm::SHA512256 || *self == HashAlgorithm::SHA256Session {
+        if *self == HashAlgorithm::Sha512256 || *self == HashAlgorithm::Sha256Session {
             digest.truncate(64);
         }
 

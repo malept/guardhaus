@@ -200,7 +200,7 @@ impl FromStr for Digest {
                 Err(_) => return Err(Error::Header),
             }
         } else {
-            algorithm = HashAlgorithm::MD5;
+            algorithm = HashAlgorithm::Md5;
         }
         let qop = Qop::from_parameters(&param_map)?;
         if let Some(value) = unraveled_map_value(&param_map, "charset") {
@@ -301,13 +301,13 @@ impl Digest {
     fn a1(&self, username: Username, password: String) -> Result<Vec<u8>, Error> {
         let realm = self.realm.clone();
         match self.algorithm {
-            HashAlgorithm::MD5 | HashAlgorithm::SHA256 | HashAlgorithm::SHA512256 => {
+            HashAlgorithm::Md5 | HashAlgorithm::Sha256 | HashAlgorithm::Sha512256 => {
                 Ok(Digest::simple_a1(username, realm, password))
             }
 
-            HashAlgorithm::MD5Session
-            | HashAlgorithm::SHA256Session
-            | HashAlgorithm::SHA512256Session => {
+            HashAlgorithm::Md5Session
+            | HashAlgorithm::Sha256Session
+            | HashAlgorithm::Sha512256Session => {
                 if let Some(ref client_nonce) = self.client_nonce {
                     let simple_hashed_a1 = self
                         .algorithm

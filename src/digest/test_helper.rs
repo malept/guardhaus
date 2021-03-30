@@ -59,7 +59,7 @@ fn rfc2069_digest_header(realm: &str) -> Digest {
         // https://www.rfc-editor.org/errata_search.php?rfc=2069
         response: "1949323746fe6a43ef61f9606e7febea".to_owned(),
         request_uri: "/dir/index.html".to_owned(),
-        algorithm: HashAlgorithm::MD5,
+        algorithm: HashAlgorithm::Md5,
         qop: None,
         client_nonce: None,
         opaque: None,
@@ -126,7 +126,7 @@ pub fn rfc7616_sha512_256_header(username: String, userhash: bool) -> Digest {
         nonce_count: Some(NonceCount(1)),
         response: "ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd".to_owned(),
         request_uri: "/doe.json".to_owned(),
-        algorithm: HashAlgorithm::SHA512256,
+        algorithm: HashAlgorithm::Sha512256,
         qop: Some(Qop::Auth),
         client_nonce: Some("NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v".to_owned()),
         opaque: Some("HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS".to_owned()),

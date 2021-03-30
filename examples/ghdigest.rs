@@ -63,7 +63,7 @@ fn get_password() -> String {
 
 fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: String) {
     let hashed = Digest::simple_hashed_a1(
-        &HashAlgorithm::MD5,
+        &HashAlgorithm::Md5,
         Username::Plain(username.to_string()),
         realm.to_string(),
         password,

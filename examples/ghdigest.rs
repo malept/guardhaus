@@ -30,6 +30,7 @@ use std::env;
 use std::fs::{File, OpenOptions};
 use std::io;
 use std::io::Write;
+use std::panic::panic_any;
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [options] passwdfile realm username", program);
@@ -47,7 +48,7 @@ fn open_passwdfile(path: String, create_passwdfile: bool) -> io::Result<File> {
 fn getpass(prompt: &str) -> String {
     match prompt_password_stdout(prompt) {
         Ok(password) => password,
-        Err(failure) => panic!(failure.to_string()),
+        Err(failure) => panic_any(failure.to_string()),
     }
 }
 
@@ -69,7 +70,7 @@ fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: 
         password,
     );
     if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
-        panic!(failure.to_string())
+        panic_any(failure.to_string())
     }
 }
 
@@ -87,7 +88,7 @@ fn main() {
 
     let matches = match opts.parse(&args[1..]) {
         Ok(opt) => opt,
-        Err(failure) => panic!(failure.to_string()),
+        Err(failure) => panic_any(failure.to_string()),
     };
 
     if matches.opt_present("h") {
@@ -105,7 +106,7 @@ fn main() {
             Ok(mut passwdfile) => {
                 append_to_passwdfile(&mut passwdfile, username, realm, get_password())
             }
-            Err(failure) => panic!(failure.to_string()),
+            Err(failure) => panic_any(failure.to_string()),
         }
     } else {
         print_usage(&program, &opts);

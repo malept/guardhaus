@@ -158,6 +158,15 @@ fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Er
     }
 }
 
+macro_rules! unravel_map_value {
+    ($map: ident, $param_name:literal) => {
+        match unraveled_map_value(&$map, $param_name) {
+            Some(value) => value,
+            None => return Err(Error::Header),
+        }
+    };
+}
+
 impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
@@ -166,26 +175,14 @@ impl FromStr for Digest {
             Ok(value) => value,
             Err(err) => return Err(err),
         };
-        let realm: String = match unraveled_map_value(&param_map, "realm") {
-            Some(value) => value,
-            None => return Err(Error::Header),
-        };
-        let nonce: String = match unraveled_map_value(&param_map, "nonce") {
-            Some(value) => value,
-            None => return Err(Error::Header),
-        };
+        let realm: String = unravel_map_value!(param_map, "realm");
+        let nonce: String = unravel_map_value!(param_map, "nonce");
         let nonce_count = match NonceCount::from_parameters(&param_map) {
             Ok(value) => value,
             Err(err) => return Err(err),
         };
-        let response: String = match unraveled_map_value(&param_map, "response") {
-            Some(value) => value,
-            None => return Err(Error::Header),
-        };
-        let request_uri: String = match unraveled_map_value(&param_map, "uri") {
-            Some(value) => value,
-            None => return Err(Error::Header),
-        };
+        let response: String = unravel_map_value!(param_map, "response");
+        let request_uri: String = unravel_map_value!(param_map, "uri");
         let algorithm: HashAlgorithm = if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
             match HashAlgorithm::from_str(&value[..]) {
                 Ok(converted) => converted,

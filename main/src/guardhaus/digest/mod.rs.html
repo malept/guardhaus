@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/digest/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../guardhaus/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src&#x2F;digest&#x2F;mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../guardhaus/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../guardhaus/index.html"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -484,19 +483,7 @@
 <span id="481">481</span>
 <span id="482">482</span>
 <span id="483">483</span>
-<span id="484">484</span>
-<span id="485">485</span>
-<span id="486">486</span>
-<span id="487">487</span>
-<span id="488">488</span>
-<span id="489">489</span>
-<span id="490">490</span>
-<span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="comment">// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee</span>
+</pre><pre class="rust"><code><span class="comment">// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee</span>
 <span class="comment">//</span>
 <span class="comment">// Permission is hereby granted, free of charge, to any person obtaining a copy</span>
 <span class="comment">// of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
@@ -518,16 +505,16 @@
 
 <span class="doccomment">//! An HTTP Digest implementation for [Hyper](http://hyper.rs)&#39;s `Authorization` header.</span>
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">types</span>::{<span class="ident">HashAlgorithm</span>, <span class="ident">NonceCount</span>, <span class="ident">Qop</span>};
-<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">error</span>::<span class="ident">Error</span>;
-<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">header</span>::<span class="ident">parsing</span>::{<span class="ident">parse_extended_value</span>, <span class="ident">ExtendedValue</span>};
-<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">header</span>::{<span class="ident">Charset</span>, <span class="ident">Scheme</span>};
-<span class="kw">use</span> <span class="ident">hyper</span>::<span class="ident">Method</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::types</span>::{<span class="ident">HashAlgorithm</span>, <span class="ident">NonceCount</span>, <span class="ident">Qop</span>};
+<span class="kw">use</span> <span class="ident">hyper::error::Error</span>;
+<span class="kw">use</span> <span class="ident">hyper::header::parsing</span>::{<span class="ident">parse_extended_value</span>, <span class="ident">ExtendedValue</span>};
+<span class="kw">use</span> <span class="ident">hyper::header</span>::{<span class="ident">Charset</span>, <span class="ident">Scheme</span>};
+<span class="kw">use</span> <span class="ident">hyper::Method</span>;
 <span class="kw">use</span> <span class="ident">parsing</span>::{<span class="ident">append_parameter</span>, <span class="ident">parse_parameters</span>, <span class="ident">unraveled_map_value</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">collections</span>::<span class="ident">HashMap</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
-<span class="kw">use</span> <span class="ident">unicase</span>::<span class="ident">UniCase</span>;
+<span class="kw">use</span> <span class="ident">std::collections::HashMap</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
+<span class="kw">use</span> <span class="ident">unicase::UniCase</span>;
 
 <span class="kw">mod</span> <span class="ident">test</span>;
 <span class="kw">mod</span> <span class="ident">test_helper</span>;
@@ -542,11 +529,11 @@
     <span class="ident">Encoded</span>(<span class="ident">ExtendedValue</span>),
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Username</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Username</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="kw-2">ref</span> <span class="ident">username</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">username</span>),
-            <span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="kw-2">ref</span> <span class="ident">encoded</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">encoded</span>),
+            <span class="ident">Username::Plain</span>(<span class="kw-2">ref</span> <span class="ident">username</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">username</span>),
+            <span class="ident">Username::Encoded</span>(<span class="kw-2">ref</span> <span class="ident">encoded</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">encoded</span>),
         }
     }
 }
@@ -586,140 +573,129 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Scheme</span> <span class="kw">for</span> <span class="ident">Digest</span> {
-    <span class="kw">fn</span> <span class="ident">scheme</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">scheme</span>() -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
         <span class="prelude-val">Some</span>(<span class="string">&quot;Digest&quot;</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">fmt_scheme</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
+    <span class="kw">fn</span> <span class="ident">fmt_scheme</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">serialized</span> <span class="op">=</span> <span class="ident">String::new</span>();
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">username</span> {
-            <span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="kw-2">ref</span> <span class="ident">username</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;username&quot;</span>, <span class="ident">username</span>, <span class="bool-val">true</span>)
+            <span class="ident">Username::Plain</span>(<span class="kw-2">ref</span> <span class="ident">username</span>) =&gt; {
+                <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;username&quot;</span>, <span class="ident">username</span>, <span class="bool-val">true</span>)
             }
-            <span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="kw-2">ref</span> <span class="ident">encoded</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;username*&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">encoded</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>)
+            <span class="ident">Username::Encoded</span>(<span class="kw-2">ref</span> <span class="ident">encoded</span>) =&gt; {
+                <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;username*&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">encoded</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>)
             }
         }
-        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;realm&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">realm</span>, <span class="bool-val">true</span>);
-        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;nonce&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">nonce</span>, <span class="bool-val">true</span>);
+        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;realm&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">realm</span>, <span class="bool-val">true</span>);
+        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;nonce&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">nonce</span>, <span class="bool-val">true</span>);
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">nonce_count</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">nonce_count</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;nc&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">nonce_count</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;nc&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">nonce_count</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
         }
-        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;response&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">response</span>, <span class="bool-val">true</span>);
-        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;uri&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">request_uri</span>, <span class="bool-val">true</span>);
+        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;response&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">response</span>, <span class="bool-val">true</span>);
+        <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;uri&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">request_uri</span>, <span class="bool-val">true</span>);
         <span class="ident">append_parameter</span>(
-            <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>,
+            <span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>,
             <span class="string">&quot;algorithm&quot;</span>,
             <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">algorithm</span>.<span class="ident">to_string</span>(),
             <span class="bool-val">false</span>,
         );
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">qop</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">qop</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;qop&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">qop</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;qop&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">qop</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">client_nonce</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">client_nonce</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;cnonce&quot;</span>, <span class="ident">client_nonce</span>, <span class="bool-val">true</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;cnonce&quot;</span>, <span class="ident">client_nonce</span>, <span class="bool-val">true</span>);
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">opaque</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">opaque</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;opaque&quot;</span>, <span class="ident">opaque</span>, <span class="bool-val">true</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;opaque&quot;</span>, <span class="ident">opaque</span>, <span class="bool-val">true</span>);
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">charset</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">charset</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;charset&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">charset</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;charset&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">charset</span>.<span class="ident">to_string</span>(), <span class="bool-val">false</span>);
         }
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">userhash</span> {
-            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">serialized</span>, <span class="string">&quot;userhash&quot;</span>, <span class="string">&quot;true&quot;</span>, <span class="bool-val">false</span>);
+            <span class="ident">append_parameter</span>(<span class="kw-2">&amp;mut</span> <span class="ident">serialized</span>, <span class="string">&quot;userhash&quot;</span>, <span class="string">&quot;true&quot;</span>, <span class="bool-val">false</span>);
         }
-        <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">serialized</span>)
+        <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">serialized</span>)
     }
 }
 
-<span class="kw">fn</span> <span class="ident">parse_username</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">UniCase</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Username</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">parse_username</span>(<span class="ident">map</span>: <span class="kw-2">&amp;</span><span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">UniCase</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span>, <span class="ident">String</span><span class="op">&gt;</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Username</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="ident">map</span>, <span class="string">&quot;username&quot;</span>) {
         <span class="kw">if</span> <span class="ident">unraveled_map_value</span>(<span class="ident">map</span>, <span class="string">&quot;username*&quot;</span>).<span class="ident">is_some</span>() {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
         } <span class="kw">else</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="ident">value</span>))
+            <span class="prelude-val">Ok</span>(<span class="ident">Username::Plain</span>(<span class="ident">value</span>))
         }
     } <span class="kw">else</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">encoded</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="ident">map</span>, <span class="string">&quot;username*&quot;</span>) {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">userhash</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="ident">map</span>, <span class="string">&quot;userhash&quot;</span>) {
-            <span class="kw">if</span> <span class="ident">userhash</span> <span class="op">=</span><span class="op">=</span> <span class="string">&quot;true&quot;</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>);
+            <span class="kw">if</span> <span class="ident">userhash</span> <span class="op">==</span> <span class="string">&quot;true&quot;</span> {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>);
             }
         }
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">extended_value</span>) <span class="op">=</span> <span class="ident">parse_extended_value</span>(<span class="kw-2">&amp;</span><span class="ident">encoded</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="ident">extended_value</span>))
+            <span class="prelude-val">Ok</span>(<span class="ident">Username::Encoded</span>(<span class="ident">extended_value</span>))
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
         }
     } <span class="kw">else</span> {
-        <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+        <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
     }
+}
+
+<span class="macro">macro_rules!</span> <span class="ident">unravel_map_value</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">map</span>: <span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param_name</span>:<span class="ident">literal</span>) =&gt; {
+        <span class="kw">match</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="macro-nonterminal">$</span><span class="macro-nonterminal">map</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">param_name</span>) {
+            <span class="prelude-val">Some</span>(<span class="ident">value</span>) =&gt; <span class="ident">value</span>,
+            <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>),
+        }
+    };
 }
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Digest</span> {
     <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">Error</span>;
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Digest</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Digest</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">param_map</span> <span class="op">=</span> <span class="ident">parse_parameters</span>(<span class="ident">s</span>);
-        <span class="kw">let</span> <span class="ident">username</span>: <span class="ident">Username</span>;
-        <span class="kw">let</span> <span class="ident">realm</span>: <span class="ident">String</span>;
-        <span class="kw">let</span> <span class="ident">nonce</span>: <span class="ident">String</span>;
-        <span class="kw">let</span> <span class="ident">response</span>: <span class="ident">String</span>;
-        <span class="kw">let</span> <span class="ident">request_uri</span>: <span class="ident">String</span>;
-        <span class="kw">let</span> <span class="ident">algorithm</span>: <span class="ident">HashAlgorithm</span>;
-        <span class="kw">let</span> <span class="ident">charset</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Charset</span><span class="op">&gt;</span>;
-        <span class="kw">let</span> <span class="ident">userhash</span>: <span class="ident">bool</span>;
-        <span class="kw">match</span> <span class="ident">parse_username</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">username</span> <span class="op">=</span> <span class="ident">value</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
-        }
-        <span class="kw">match</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;realm&quot;</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">realm</span> <span class="op">=</span> <span class="ident">value</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
-        }
-        <span class="kw">match</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;nonce&quot;</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">nonce</span> <span class="op">=</span> <span class="ident">value</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
-        }
-        <span class="kw">let</span> <span class="ident">nonce_count</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">NonceCount</span>::<span class="ident">from_parameters</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">value</span>,
-            <span class="prelude-val">Err</span>(<span class="ident">err</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+        <span class="kw">let</span> <span class="ident">username</span>: <span class="ident">Username</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">parse_username</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>) {
+            <span class="prelude-val">Ok</span>(<span class="ident">value</span>) =&gt; <span class="ident">value</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
         };
-        <span class="kw">match</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;response&quot;</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">response</span> <span class="op">=</span> <span class="ident">value</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
-        }
-        <span class="kw">match</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;uri&quot;</span>) {
-            <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">request_uri</span> <span class="op">=</span> <span class="ident">value</span>,
-            <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
-        }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;algorithm&quot;</span>) {
-            <span class="kw">match</span> <span class="ident">HashAlgorithm</span>::<span class="ident">from_str</span>(<span class="kw-2">&amp;</span><span class="ident">value</span>[..]) {
-                <span class="prelude-val">Ok</span>(<span class="ident">converted</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">algorithm</span> <span class="op">=</span> <span class="ident">converted</span>,
-                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
+        <span class="kw">let</span> <span class="ident">realm</span>: <span class="ident">String</span> <span class="op">=</span> <span class="macro">unravel_map_value!</span>(<span class="ident">param_map</span>, <span class="string">&quot;realm&quot;</span>);
+        <span class="kw">let</span> <span class="ident">nonce</span>: <span class="ident">String</span> <span class="op">=</span> <span class="macro">unravel_map_value!</span>(<span class="ident">param_map</span>, <span class="string">&quot;nonce&quot;</span>);
+        <span class="kw">let</span> <span class="ident">nonce_count</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">NonceCount::from_parameters</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>) {
+            <span class="prelude-val">Ok</span>(<span class="ident">value</span>) =&gt; <span class="ident">value</span>,
+            <span class="prelude-val">Err</span>(<span class="ident">err</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">err</span>),
+        };
+        <span class="kw">let</span> <span class="ident">response</span>: <span class="ident">String</span> <span class="op">=</span> <span class="macro">unravel_map_value!</span>(<span class="ident">param_map</span>, <span class="string">&quot;response&quot;</span>);
+        <span class="kw">let</span> <span class="ident">request_uri</span>: <span class="ident">String</span> <span class="op">=</span> <span class="macro">unravel_map_value!</span>(<span class="ident">param_map</span>, <span class="string">&quot;uri&quot;</span>);
+        <span class="kw">let</span> <span class="ident">algorithm</span>: <span class="ident">HashAlgorithm</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;algorithm&quot;</span>) {
+            <span class="kw">match</span> <span class="ident">HashAlgorithm::from_str</span>(<span class="kw-2">&amp;</span><span class="ident">value</span>[..]) {
+                <span class="prelude-val">Ok</span>(<span class="ident">converted</span>) =&gt; <span class="ident">converted</span>,
+                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>),
             }
         } <span class="kw">else</span> {
-            <span class="ident">algorithm</span> <span class="op">=</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Md5</span>;
-        }
-        <span class="kw">let</span> <span class="ident">qop</span> <span class="op">=</span> <span class="ident">Qop</span>::<span class="ident">from_parameters</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>)<span class="question-mark">?</span>;
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;charset&quot;</span>) {
-            <span class="kw">let</span> <span class="ident">utf8</span> <span class="op">=</span> <span class="ident">UniCase</span>::<span class="ident">new</span>(<span class="string">&quot;utf-8&quot;</span>.<span class="ident">to_owned</span>());
-            <span class="ident">charset</span> <span class="op">=</span> <span class="kw">if</span> <span class="ident">UniCase</span>::<span class="ident">new</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">utf8</span> {
-                <span class="prelude-val">Some</span>(<span class="ident">Charset</span>::<span class="ident">Ext</span>(<span class="string">&quot;UTF-8&quot;</span>.<span class="ident">to_owned</span>()))
+            <span class="ident">HashAlgorithm::Md5</span>
+        };
+        <span class="kw">let</span> <span class="ident">charset</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Charset</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;charset&quot;</span>) {
+            <span class="kw">let</span> <span class="ident">utf8</span> <span class="op">=</span> <span class="ident">UniCase::new</span>(<span class="string">&quot;utf-8&quot;</span>.<span class="ident">to_owned</span>());
+            <span class="kw">if</span> <span class="ident">UniCase::new</span>(<span class="ident">value</span>) <span class="op">==</span> <span class="ident">utf8</span> {
+                <span class="prelude-val">Some</span>(<span class="ident">Charset::Ext</span>(<span class="string">&quot;UTF-8&quot;</span>.<span class="ident">to_owned</span>()))
             } <span class="kw">else</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>);
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>);
             }
         } <span class="kw">else</span> {
-            <span class="ident">charset</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-        }
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;userhash&quot;</span>) {
+            <span class="prelude-val">None</span>
+        };
+        <span class="kw">let</span> <span class="ident">userhash</span>: <span class="ident">bool</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">value</span>) <span class="op">=</span> <span class="ident">unraveled_map_value</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>, <span class="string">&quot;userhash&quot;</span>) {
             <span class="kw">match</span> <span class="kw-2">&amp;</span><span class="ident">value</span>[..] {
-                <span class="string">&quot;true&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">userhash</span> <span class="op">=</span> <span class="bool-val">true</span>,
-                <span class="string">&quot;false&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">userhash</span> <span class="op">=</span> <span class="bool-val">false</span>,
-                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>),
+                <span class="string">&quot;true&quot;</span> =&gt; <span class="bool-val">true</span>,
+                <span class="string">&quot;false&quot;</span> =&gt; <span class="bool-val">false</span>,
+                <span class="kw">_</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>),
             }
         } <span class="kw">else</span> {
-            <span class="ident">userhash</span> <span class="op">=</span> <span class="bool-val">false</span>;
-        }
+            <span class="bool-val">false</span>
+        };
+        <span class="kw">let</span> <span class="ident">qop</span> <span class="op">=</span> <span class="ident">Qop::from_parameters</span>(<span class="kw-2">&amp;</span><span class="ident">param_map</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="ident">Digest</span> {
             <span class="ident">username</span>,
             <span class="ident">realm</span>,
@@ -740,10 +716,10 @@
 <span class="kw">impl</span> <span class="ident">Digest</span> {
     <span class="doccomment">/// Generates a userhash, as defined in</span>
     <span class="doccomment">/// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">userhash</span>(<span class="ident">algorithm</span>: <span class="kw-2">&amp;</span><span class="ident">HashAlgorithm</span>, <span class="ident">username</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">realm</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">userhash</span>(<span class="ident">algorithm</span>: <span class="kw-2">&amp;</span><span class="ident">HashAlgorithm</span>, <span class="ident">username</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">realm</span>: <span class="ident">String</span>) -&gt; <span class="ident">String</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">to_hash</span> <span class="op">=</span> <span class="ident">username</span>;
         <span class="ident">to_hash</span>.<span class="ident">push</span>(<span class="string">b&#39;:&#39;</span>);
-        <span class="ident">to_hash</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">realm</span>.<span class="ident">into_bytes</span>());
+        <span class="ident">to_hash</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">realm</span>.<span class="ident">into_bytes</span>());
         <span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">to_hash</span>.<span class="ident">as_slice</span>())
     }
 
@@ -752,28 +728,28 @@
     <span class="doccomment">/// `Digest` header.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// If userhash is `false`, returns `false`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_userhash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_userhash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">username</span> {
-            <span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="kw-2">ref</span> <span class="ident">userhash</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Username::Plain</span>(<span class="kw-2">ref</span> <span class="ident">userhash</span>) =&gt; {
                 <span class="kw">let</span> <span class="ident">name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">username</span> {
-                    <span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="ident">value</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">value</span>.<span class="ident">into_bytes</span>(),
-                    <span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="ident">encoded</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">encoded</span>.<span class="ident">value</span>,
+                    <span class="ident">Username::Plain</span>(<span class="ident">value</span>) =&gt; <span class="ident">value</span>.<span class="ident">into_bytes</span>(),
+                    <span class="ident">Username::Encoded</span>(<span class="ident">encoded</span>) =&gt; <span class="ident">encoded</span>.<span class="ident">value</span>,
                 };
-                <span class="kw-2">*</span><span class="ident">userhash</span> <span class="op">=</span><span class="op">=</span> <span class="ident">Digest</span>::<span class="ident">userhash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">algorithm</span>, <span class="ident">name</span>, <span class="self">self</span>.<span class="ident">realm</span>.<span class="ident">clone</span>())
+                <span class="kw-2">*</span><span class="ident">userhash</span> <span class="op">==</span> <span class="ident">Digest::userhash</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">algorithm</span>, <span class="ident">name</span>, <span class="self">self</span>.<span class="ident">realm</span>.<span class="ident">clone</span>())
             }
-            <span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="ident">Username::Encoded</span>(<span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">simple_a1</span>(<span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">realm</span>: <span class="ident">String</span>, <span class="ident">password</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">simple_a1</span>(<span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">realm</span>: <span class="ident">String</span>, <span class="ident">password</span>: <span class="ident">String</span>) -&gt; <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a1</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">username</span> {
-            <span class="ident">Username</span>::<span class="ident">Plain</span>(<span class="ident">name</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">name</span>.<span class="ident">into_bytes</span>(),
-            <span class="ident">Username</span>::<span class="ident">Encoded</span>(<span class="ident">encoded</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">encoded</span>.<span class="ident">value</span>,
+            <span class="ident">Username::Plain</span>(<span class="ident">name</span>) =&gt; <span class="ident">name</span>.<span class="ident">into_bytes</span>(),
+            <span class="ident">Username::Encoded</span>(<span class="ident">encoded</span>) =&gt; <span class="ident">encoded</span>.<span class="ident">value</span>,
         };
         <span class="ident">a1</span>.<span class="ident">push</span>(<span class="string">b&#39;:&#39;</span>);
-        <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">realm</span>.<span class="ident">into_bytes</span>());
+        <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">realm</span>.<span class="ident">into_bytes</span>());
         <span class="ident">a1</span>.<span class="ident">push</span>(<span class="string">b&#39;:&#39;</span>);
-        <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">password</span>.<span class="ident">into_bytes</span>());
+        <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">password</span>.<span class="ident">into_bytes</span>());
 
         <span class="ident">a1</span>
     }
@@ -791,33 +767,33 @@
         <span class="ident">username</span>: <span class="ident">Username</span>,
         <span class="ident">realm</span>: <span class="ident">String</span>,
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">Digest</span>::<span class="ident">simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>).<span class="ident">as_slice</span>())
+    ) -&gt; <span class="ident">String</span> {
+        <span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">Digest::simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>).<span class="ident">as_slice</span>())
     }
 
     <span class="comment">// RFC 7616, Section 3.4.2</span>
-    <span class="kw">fn</span> <span class="ident">a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">password</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">password</span>: <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">realm</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">realm</span>.<span class="ident">clone</span>();
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">algorithm</span> {
-            <span class="ident">HashAlgorithm</span>::<span class="ident">Md5</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha256</span> <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha512256</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="prelude-val">Ok</span>(<span class="ident">Digest</span>::<span class="ident">simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>))
+            <span class="ident">HashAlgorithm::Md5</span> <span class="op">|</span> <span class="ident">HashAlgorithm::Sha256</span> <span class="op">|</span> <span class="ident">HashAlgorithm::Sha512256</span> =&gt; {
+                <span class="prelude-val">Ok</span>(<span class="ident">Digest::simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>))
             }
 
-            <span class="ident">HashAlgorithm</span>::<span class="ident">Md5Session</span>
-            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha256Session</span>
-            <span class="op">|</span> <span class="ident">HashAlgorithm</span>::<span class="ident">Sha512256Session</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">HashAlgorithm::Md5Session</span>
+            <span class="op">|</span> <span class="ident">HashAlgorithm::Sha256Session</span>
+            <span class="op">|</span> <span class="ident">HashAlgorithm::Sha512256Session</span> =&gt; {
                 <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">client_nonce</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">client_nonce</span> {
                     <span class="kw">let</span> <span class="ident">simple_hashed_a1</span> <span class="op">=</span> <span class="self">self</span>
                         .<span class="ident">algorithm</span>
-                        .<span class="ident">hex_digest</span>(<span class="ident">Digest</span>::<span class="ident">simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>).<span class="ident">as_slice</span>());
+                        .<span class="ident">hex_digest</span>(<span class="ident">Digest::simple_a1</span>(<span class="ident">username</span>, <span class="ident">realm</span>, <span class="ident">password</span>).<span class="ident">as_slice</span>());
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">a1</span> <span class="op">=</span> <span class="ident">simple_hashed_a1</span>.<span class="ident">into_bytes</span>();
                     <span class="ident">a1</span>.<span class="ident">push</span>(<span class="string">b&#39;:&#39;</span>);
-                    <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>.<span class="ident">nonce</span>.<span class="ident">clone</span>().<span class="ident">into_bytes</span>());
+                    <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>.<span class="ident">nonce</span>.<span class="ident">clone</span>().<span class="ident">into_bytes</span>());
                     <span class="ident">a1</span>.<span class="ident">push</span>(<span class="string">b&#39;:&#39;</span>);
-                    <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">client_nonce</span>.<span class="ident">clone</span>().<span class="ident">into_bytes</span>());
+                    <span class="ident">a1</span>.<span class="ident">append</span>(<span class="kw-2">&amp;mut</span> <span class="ident">client_nonce</span>.<span class="ident">clone</span>().<span class="ident">into_bytes</span>());
                     <span class="prelude-val">Ok</span>(<span class="ident">a1</span>)
                 } <span class="kw">else</span> {
-                    <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+                    <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
                 }
             }
         }
@@ -827,34 +803,34 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// To see how an A1 value is constructed, see</span>
     <span class="doccomment">/// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).</span>
-    <span class="kw">fn</span> <span class="ident">hashed_a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">password</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">hashed_a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">username</span>: <span class="ident">Username</span>, <span class="ident">password</span>: <span class="ident">String</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">a1</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">a1</span>(<span class="ident">username</span>, <span class="ident">password</span>) {
             <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">a1</span>.<span class="ident">as_slice</span>()))
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
         }
     }
 
     <span class="comment">// RFC 7616, Section 3.4.3</span>
-    <span class="kw">fn</span> <span class="ident">a2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">a2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">String</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">qop</span> {
-            <span class="prelude-val">Some</span>(<span class="ident">Qop</span>::<span class="ident">AuthInt</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(
+            <span class="prelude-val">Some</span>(<span class="ident">Qop::AuthInt</span>) =&gt; <span class="macro">format!</span>(
                 <span class="string">&quot;{}:{}:{}&quot;</span>,
                 <span class="ident">method</span>,
                 <span class="self">self</span>.<span class="ident">request_uri</span>,
                 <span class="self">self</span>.<span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">entity_body</span>)
             ),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="ident">method</span>, <span class="self">self</span>.<span class="ident">request_uri</span>),
+            <span class="kw">_</span> =&gt; <span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="ident">method</span>, <span class="self">self</span>.<span class="ident">request_uri</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">hashed_a2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+    <span class="kw">fn</span> <span class="ident">hashed_a2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>]) -&gt; <span class="ident">String</span> {
         <span class="self">self</span>.<span class="ident">algorithm</span>
             .<span class="ident">hex_digest</span>(<span class="self">self</span>.<span class="ident">a2</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>).<span class="ident">as_bytes</span>())
     }
 
-    <span class="kw">fn</span> <span class="ident">kd</span>(<span class="ident">algorithm</span>: <span class="kw-2">&amp;</span><span class="ident">HashAlgorithm</span>, <span class="ident">secret</span>: <span class="ident">String</span>, <span class="ident">data</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
-        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="ident">secret</span>, <span class="ident">data</span>);
+    <span class="kw">fn</span> <span class="ident">kd</span>(<span class="ident">algorithm</span>: <span class="kw-2">&amp;</span><span class="ident">HashAlgorithm</span>, <span class="ident">secret</span>: <span class="ident">String</span>, <span class="ident">data</span>: <span class="ident">String</span>) -&gt; <span class="ident">String</span> {
+        <span class="kw">let</span> <span class="ident">value</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="ident">secret</span>, <span class="ident">data</span>);
         <span class="ident">algorithm</span>.<span class="ident">hex_digest</span>(<span class="ident">value</span>.<span class="ident">as_bytes</span>())
     }
 
@@ -864,11 +840,11 @@
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">username</span>: <span class="ident">Username</span>,
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">a1</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">hashed_a1</span>(<span class="ident">username</span>, <span class="ident">password</span>) {
             <span class="self">self</span>.<span class="ident">using_hashed_a1</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>, <span class="ident">a1</span>)
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
         }
     }
 
@@ -881,11 +857,11 @@
         <span class="ident">method</span>: <span class="ident">Method</span>,
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">a1</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">hashed_a1</span>(<span class="self">self</span>.<span class="ident">username</span>.<span class="ident">clone</span>(), <span class="ident">password</span>) {
             <span class="self">self</span>.<span class="ident">using_hashed_a1</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>, <span class="ident">a1</span>)
         } <span class="kw">else</span> {
-            <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>)
+            <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>)
         }
     }
 
@@ -901,25 +877,25 @@
         <span class="ident">method</span>: <span class="ident">Method</span>,
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">a1</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
+    ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">String</span>, <span class="ident">Error</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">a2</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">hashed_a2</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>);
         <span class="kw">let</span> <span class="ident">data</span>: <span class="ident">String</span>;
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">qop</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">qop</span> {
             <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">qop</span> {
-                <span class="ident">Qop</span>::<span class="ident">Auth</span> <span class="op">|</span> <span class="ident">Qop</span>::<span class="ident">AuthInt</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Qop::Auth</span> <span class="op">|</span> <span class="ident">Qop::AuthInt</span> =&gt; {
                     <span class="kw">if</span> <span class="self">self</span>.<span class="ident">client_nonce</span>.<span class="ident">is_none</span>() <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">nonce_count</span>.<span class="ident">is_none</span>() {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error</span>::<span class="ident">Header</span>);
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">Error::Header</span>);
                     }
                     <span class="kw">let</span> <span class="ident">nonce</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">nonce</span>.<span class="ident">clone</span>();
                     <span class="kw">let</span> <span class="ident">nonce_count</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">nonce_count</span>.<span class="ident">clone</span>().<span class="ident">expect</span>(<span class="string">&quot;No nonce count found&quot;</span>);
                     <span class="kw">let</span> <span class="ident">client_nonce</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">client_nonce</span>.<span class="ident">clone</span>().<span class="ident">expect</span>(<span class="string">&quot;No client nonce found&quot;</span>);
-                    <span class="ident">data</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}:{}:{}:{}:{}&quot;</span>, <span class="ident">nonce</span>, <span class="ident">nonce_count</span>, <span class="ident">client_nonce</span>, <span class="ident">qop</span>, <span class="ident">a2</span>);
+                    <span class="ident">data</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}:{}:{}:{}:{}&quot;</span>, <span class="ident">nonce</span>, <span class="ident">nonce_count</span>, <span class="ident">client_nonce</span>, <span class="ident">qop</span>, <span class="ident">a2</span>);
                 }
             }
         } <span class="kw">else</span> {
-            <span class="ident">data</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">nonce</span>, <span class="ident">a2</span>);
+            <span class="ident">data</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;{}:{}&quot;</span>, <span class="self">self</span>.<span class="ident">nonce</span>, <span class="ident">a2</span>);
         }
-        <span class="prelude-val">Ok</span>(<span class="ident">Digest</span>::<span class="ident">kd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">algorithm</span>, <span class="ident">a1</span>, <span class="ident">data</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">Digest::kd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">algorithm</span>, <span class="ident">a1</span>, <span class="ident">data</span>))
     }
 
     <span class="kw">fn</span> <span class="ident">validate_using_username_and_password</span>(
@@ -928,11 +904,11 @@
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">username</span>: <span class="ident">Username</span>,
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    ) -&gt; <span class="ident">bool</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">hex_digest</span>) <span class="op">=</span>
             <span class="self">self</span>.<span class="ident">using_username_and_password</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>, <span class="ident">username</span>, <span class="ident">password</span>)
         {
-            <span class="ident">hex_digest</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">response</span>
+            <span class="ident">hex_digest</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">response</span>
         } <span class="kw">else</span> {
             <span class="bool-val">false</span>
         }
@@ -947,7 +923,7 @@
         <span class="ident">method</span>: <span class="ident">Method</span>,
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    ) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">validate_using_username_and_password</span>(
             <span class="ident">method</span>,
             <span class="ident">entity_body</span>,
@@ -967,7 +943,7 @@
         <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
         <span class="ident">username</span>: <span class="ident">Username</span>,
         <span class="ident">password</span>: <span class="ident">String</span>,
-    ) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    ) -&gt; <span class="ident">bool</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">userhash</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">validate_userhash</span>(<span class="ident">username</span>.<span class="ident">clone</span>()) {
             <span class="kw">return</span> <span class="bool-val">false</span>;
         }
@@ -982,14 +958,14 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This is intended to be used in applications that use the `htdigest` style of secret hash</span>
     <span class="doccomment">/// generation.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_using_hashed_a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">a1</span>: <span class="ident">String</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">validate_using_hashed_a1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">method</span>: <span class="ident">Method</span>, <span class="ident">entity_body</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>], <span class="ident">a1</span>: <span class="ident">String</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">hex_digest</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">using_hashed_a1</span>(<span class="ident">method</span>, <span class="ident">entity_body</span>, <span class="ident">a1</span>) {
-            <span class="ident">hex_digest</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">response</span>
+            <span class="ident">hex_digest</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">response</span>
         } <span class="kw">else</span> {
             <span class="bool-val">false</span>
         }
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="guardhaus"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="guardhaus" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

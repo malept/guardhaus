@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.27/src/proto/h1/decode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>decode.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../hyper/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;hyper-0.11.27&#x2F;src&#x2F;proto&#x2F;h1&#x2F;decode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>decode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script src="../../../../crates.js"></script><script defer src="../../../../main.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../../hyper/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../hyper/index.html"><img class="rust-logo" src="../../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -538,18 +537,17 @@
 <span id="535">535</span>
 <span id="536">536</span>
 <span id="537">537</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">error</span>::<span class="ident">Error</span> <span class="kw">as</span> <span class="ident">StdError</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">usize</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::error::Error</span> <span class="kw">as</span> <span class="ident">StdError</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::usize</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>;
 
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">Async</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">Bytes</span>;
+<span class="kw">use</span> <span class="ident">bytes::Bytes</span>;
 
-<span class="kw">use</span> <span class="kw">super</span>::<span class="ident">io</span>::<span class="ident">MemRead</span>;
+<span class="kw">use</span> <span class="ident"><span class="kw">super</span>::io::MemRead</span>;
 
-<span class="kw">use</span> <span class="self">self</span>::<span class="ident">Kind</span>::{<span class="ident">Length</span>, <span class="ident">Chunked</span>, <span class="ident">Eof</span>};
+<span class="kw">use</span> <span class="ident"><span class="self">self</span>::Kind</span>::{<span class="ident">Length</span>, <span class="ident">Chunked</span>, <span class="ident">Eof</span>};
 
 <span class="doccomment">/// Decoders to handle different Transfer-Encodings.</span>
 <span class="doccomment">///</span>
@@ -602,73 +600,73 @@
 <span class="kw">impl</span> <span class="ident">Decoder</span> {
     <span class="comment">// constructors</span>
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">length</span>(<span class="ident">x</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Decoder</span> {
-        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind</span>::<span class="ident">Length</span>(<span class="ident">x</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">length</span>(<span class="ident">x</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Decoder</span> {
+        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind::Length</span>(<span class="ident">x</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunked</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Decoder</span> {
-        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind</span>::<span class="ident">Chunked</span>(<span class="ident">ChunkedState</span>::<span class="ident">Size</span>, <span class="number">0</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">chunked</span>() -&gt; <span class="ident">Decoder</span> {
+        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind::Chunked</span>(<span class="ident">ChunkedState::Size</span>, <span class="number">0</span>) }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eof</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Decoder</span> {
-        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind</span>::<span class="ident">Eof</span>(<span class="bool-val">false</span>) }
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">eof</span>() -&gt; <span class="ident">Decoder</span> {
+        <span class="ident">Decoder</span> { <span class="ident">kind</span>: <span class="ident">Kind::Eof</span>(<span class="bool-val">false</span>) }
     }
 
     <span class="comment">// methods</span>
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_eof</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_eof</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">kind</span> {
             <span class="ident">Length</span>(<span class="number">0</span>) <span class="op">|</span>
-            <span class="ident">Chunked</span>(<span class="ident">ChunkedState</span>::<span class="ident">End</span>, <span class="kw">_</span>) <span class="op">|</span>
-            <span class="ident">Eof</span>(<span class="bool-val">true</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">true</span>,
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="bool-val">false</span>,
+            <span class="ident">Chunked</span>(<span class="ident">ChunkedState::End</span>, <span class="kw">_</span>) <span class="op">|</span>
+            <span class="ident">Eof</span>(<span class="bool-val">true</span>) =&gt; <span class="bool-val">true</span>,
+            <span class="kw">_</span> =&gt; <span class="bool-val">false</span>,
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">body</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Bytes</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;decode; state={:?}&quot;</span>, <span class="self">self</span>.<span class="ident">kind</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decode</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">body</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Bytes</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;decode; state={:?}&quot;</span>, <span class="self">self</span>.<span class="ident">kind</span>);
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">kind</span> {
-            <span class="ident">Length</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">remaining</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">remaining</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">Bytes</span>::<span class="ident">new</span>()))
+            <span class="ident">Length</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">remaining</span>) =&gt; {
+                <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">remaining</span> <span class="op">==</span> <span class="number">0</span> {
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">Bytes::new</span>()))
                 } <span class="kw">else</span> {
                     <span class="kw">let</span> <span class="ident">to_read</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">remaining</span> <span class="kw">as</span> <span class="ident">usize</span>;
-                    <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">try_ready</span><span class="macro">!</span>(<span class="ident">body</span>.<span class="ident">read_mem</span>(<span class="ident">to_read</span>));
+                    <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">try_ready!</span>(<span class="ident">body</span>.<span class="ident">read_mem</span>(<span class="ident">to_read</span>));
                     <span class="kw">let</span> <span class="ident">num</span> <span class="op">=</span> <span class="ident">buf</span>.<span class="ident">as_ref</span>().<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>;
                     <span class="kw">if</span> <span class="ident">num</span> <span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">remaining</span> {
                         <span class="kw-2">*</span><span class="ident">remaining</span> <span class="op">=</span> <span class="number">0</span>;
-                    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">num</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>, <span class="ident">IncompleteBody</span>));
+                    } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">num</span> <span class="op">==</span> <span class="number">0</span> {
+                        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::UnexpectedEof</span>, <span class="ident">IncompleteBody</span>));
                     } <span class="kw">else</span> {
                         <span class="kw-2">*</span><span class="ident">remaining</span> <span class="op">-</span><span class="op">=</span> <span class="ident">num</span>;
                     }
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">buf</span>))
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">buf</span>))
                 }
             }
-            <span class="ident">Chunked</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">state</span>, <span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">size</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Chunked</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">state</span>, <span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">size</span>) =&gt; {
                 <span class="kw">loop</span> {
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="prelude-val">None</span>;
                     <span class="comment">// advances the chunked state</span>
-                    <span class="kw-2">*</span><span class="ident">state</span> <span class="op">=</span> <span class="macro">try_ready</span><span class="macro">!</span>(<span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">body</span>, <span class="ident">size</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>));
-                    <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">End</span> {
-                        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;end of chunked&quot;</span>);
-                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">Bytes</span>::<span class="ident">new</span>()));
+                    <span class="kw-2">*</span><span class="ident">state</span> <span class="op">=</span> <span class="macro">try_ready!</span>(<span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">body</span>, <span class="ident">size</span>, <span class="kw-2">&amp;mut</span> <span class="ident">buf</span>));
+                    <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">state</span> <span class="op">==</span> <span class="ident">ChunkedState::End</span> {
+                        <span class="macro">trace!</span>(<span class="string">&quot;end of chunked&quot;</span>);
+                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">Bytes::new</span>()));
                     }
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">buf</span>) <span class="op">=</span> <span class="ident">buf</span> {
-                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">buf</span>));
+                        <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">buf</span>));
                     }
                 }
             }
-            <span class="ident">Eof</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">is_eof</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">Eof</span>(<span class="kw-2">ref</span> <span class="kw-2">mut</span> <span class="ident">is_eof</span>) =&gt; {
                 <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">is_eof</span> {
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">Bytes</span>::<span class="ident">new</span>()))
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">Bytes::new</span>()))
                 } <span class="kw">else</span> {
                     <span class="comment">// 8192 chosen because its about 2 packets, there probably</span>
                     <span class="comment">// won&#39;t be that much available, so don&#39;t have MemReaders</span>
                     <span class="comment">// allocate buffers to big</span>
-                    <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="macro">try_ready</span><span class="macro">!</span>(<span class="ident">body</span>.<span class="ident">read_mem</span>(<span class="number">8192</span>));
+                    <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="macro">try_ready!</span>(<span class="ident">body</span>.<span class="ident">read_mem</span>(<span class="number">8192</span>));
                     <span class="kw-2">*</span><span class="ident">is_eof</span> <span class="op">=</span> <span class="ident">slice</span>.<span class="ident">is_empty</span>();
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">slice</span>))
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">slice</span>))
                 }
             }
         }
@@ -676,29 +674,29 @@
 }
 
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Decoder</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="ident">fmt</span>::<span class="ident">Debug</span>::<span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">kind</span>, <span class="ident">f</span>)
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Decoder</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="ident">fmt::Debug::fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">kind</span>, <span class="ident">f</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Decoder</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Decoder</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">kind</span> {
-            <span class="ident">Kind</span>::<span class="ident">Length</span>(<span class="ident">n</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;content-length ({} bytes)&quot;</span>, <span class="ident">n</span>),
-            <span class="ident">Kind</span>::<span class="ident">Chunked</span>(..) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;chunked encoded&quot;</span>),
-            <span class="ident">Kind</span>::<span class="ident">Eof</span>(..) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;until end-of-file&quot;</span>),
+            <span class="ident">Kind::Length</span>(<span class="ident">n</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;content-length ({} bytes)&quot;</span>, <span class="ident">n</span>),
+            <span class="ident">Kind::Chunked</span>(..) =&gt; <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;chunked encoded&quot;</span>),
+            <span class="ident">Kind::Eof</span>(..) =&gt; <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="string">&quot;until end-of-file&quot;</span>),
         }
     }
 }
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">byte</span> (
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rdr</span>:<span class="ident">ident</span>) <span class="op">=</span><span class="op">&gt;</span> ({
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">try_ready</span><span class="macro">!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rdr</span>.<span class="ident">read_mem</span>(<span class="number">1</span>));
+<span class="macro">macro_rules!</span> <span class="ident">byte</span> (
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rdr</span>:<span class="ident">ident</span>) =&gt; ({
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="macro">try_ready!</span>(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">rdr</span>.<span class="ident">read_mem</span>(<span class="number">1</span>));
         <span class="kw">if</span> <span class="op">!</span><span class="ident">buf</span>.<span class="ident">is_empty</span>() {
             <span class="ident">buf</span>[<span class="number">0</span>]
         } <span class="kw">else</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>,
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::UnexpectedEof</span>,
                                       <span class="string">&quot;Unexpected eof during chunk size line&quot;</span>));
         }
     })
@@ -706,137 +704,137 @@
 
 <span class="kw">impl</span> <span class="ident">ChunkedState</span> {
     <span class="kw">fn</span> <span class="ident">step</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>,
-                        <span class="ident">body</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>,
-                        <span class="ident">size</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>,
-                        <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span>)
-                        <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">use</span> <span class="self">self</span>::<span class="ident">ChunkedState</span>::<span class="kw-2">*</span>;
+                        <span class="ident">body</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>,
+                        <span class="ident">size</span>: <span class="kw-2">&amp;mut</span> <span class="ident">u64</span>,
+                        <span class="ident">buf</span>: <span class="kw-2">&amp;mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span>)
+                        -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="kw">use</span> <span class="ident"><span class="self">self</span>::ChunkedState</span>::<span class="kw-2">*</span>;
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">Size</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_size</span>(<span class="ident">body</span>, <span class="ident">size</span>),
-            <span class="ident">SizeLws</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_size_lws</span>(<span class="ident">body</span>),
-            <span class="ident">Extension</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_extension</span>(<span class="ident">body</span>),
-            <span class="ident">SizeLf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_size_lf</span>(<span class="ident">body</span>, <span class="kw-2">*</span><span class="ident">size</span>),
-            <span class="ident">Body</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_body</span>(<span class="ident">body</span>, <span class="ident">size</span>, <span class="ident">buf</span>),
-            <span class="ident">BodyCr</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_body_cr</span>(<span class="ident">body</span>),
-            <span class="ident">BodyLf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_body_lf</span>(<span class="ident">body</span>),
-            <span class="ident">EndCr</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_end_cr</span>(<span class="ident">body</span>),
-            <span class="ident">EndLf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span>::<span class="ident">read_end_lf</span>(<span class="ident">body</span>),
-            <span class="ident">End</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">End</span>)),
+            <span class="ident">Size</span> =&gt; <span class="ident">ChunkedState::read_size</span>(<span class="ident">body</span>, <span class="ident">size</span>),
+            <span class="ident">SizeLws</span> =&gt; <span class="ident">ChunkedState::read_size_lws</span>(<span class="ident">body</span>),
+            <span class="ident">Extension</span> =&gt; <span class="ident">ChunkedState::read_extension</span>(<span class="ident">body</span>),
+            <span class="ident">SizeLf</span> =&gt; <span class="ident">ChunkedState::read_size_lf</span>(<span class="ident">body</span>, <span class="kw-2">*</span><span class="ident">size</span>),
+            <span class="ident">Body</span> =&gt; <span class="ident">ChunkedState::read_body</span>(<span class="ident">body</span>, <span class="ident">size</span>, <span class="ident">buf</span>),
+            <span class="ident">BodyCr</span> =&gt; <span class="ident">ChunkedState::read_body_cr</span>(<span class="ident">body</span>),
+            <span class="ident">BodyLf</span> =&gt; <span class="ident">ChunkedState::read_body_lf</span>(<span class="ident">body</span>),
+            <span class="ident">EndCr</span> =&gt; <span class="ident">ChunkedState::read_end_cr</span>(<span class="ident">body</span>),
+            <span class="ident">EndLf</span> =&gt; <span class="ident">ChunkedState::read_end_lf</span>(<span class="ident">body</span>),
+            <span class="ident">End</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::End</span>)),
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_size</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>, <span class="ident">size</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Read chunk hex size&quot;</span>);
+    <span class="kw">fn</span> <span class="ident">read_size</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>, <span class="ident">size</span>: <span class="kw-2">&amp;mut</span> <span class="ident">u64</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;Read chunk hex size&quot;</span>);
         <span class="kw">let</span> <span class="ident">radix</span> <span class="op">=</span> <span class="number">16</span>;
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="ident">b</span> @ <span class="string">b&#39;0&#39;</span>...<span class="string">b&#39;9&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="ident">b</span> @ <span class="string">b&#39;0&#39;</span>...<span class="string">b&#39;9&#39;</span> =&gt; {
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">radix</span>;
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="op">+</span><span class="op">=</span> (<span class="ident">b</span> <span class="op">-</span> <span class="string">b&#39;0&#39;</span>) <span class="kw">as</span> <span class="ident">u64</span>;
             }
-            <span class="ident">b</span> @ <span class="string">b&#39;a&#39;</span>...<span class="string">b&#39;f&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">b</span> @ <span class="string">b&#39;a&#39;</span>...<span class="string">b&#39;f&#39;</span> =&gt; {
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">radix</span>;
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="op">+</span><span class="op">=</span> (<span class="ident">b</span> <span class="op">+</span> <span class="number">10</span> <span class="op">-</span> <span class="string">b&#39;a&#39;</span>) <span class="kw">as</span> <span class="ident">u64</span>;
             }
-            <span class="ident">b</span> @ <span class="string">b&#39;A&#39;</span>...<span class="string">b&#39;F&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="ident">b</span> @ <span class="string">b&#39;A&#39;</span>...<span class="string">b&#39;F&#39;</span> =&gt; {
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="kw-2">*</span><span class="op">=</span> <span class="ident">radix</span>;
                 <span class="kw-2">*</span><span class="ident">size</span> <span class="op">+</span><span class="op">=</span> (<span class="ident">b</span> <span class="op">+</span> <span class="number">10</span> <span class="op">-</span> <span class="string">b&#39;A&#39;</span>) <span class="kw">as</span> <span class="ident">u64</span>;
             }
-            <span class="string">b&#39;\t&#39;</span> <span class="op">|</span> <span class="string">b&#39; &#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">SizeLws</span>)),
-            <span class="string">b&#39;;&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Extension</span>)),
-            <span class="string">b&#39;\r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">SizeLf</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>,
+            <span class="string">b&#39;\t&#39;</span> <span class="op">|</span> <span class="string">b&#39; &#39;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::SizeLws</span>)),
+            <span class="string">b&#39;;&#39;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Extension</span>)),
+            <span class="string">b&#39;\r&#39;</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::SizeLf</span>)),
+            <span class="kw">_</span> =&gt; {
+                <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>,
                                           <span class="string">&quot;Invalid chunk size line: Invalid Size&quot;</span>));
             }
         }
-        <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Size</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Size</span>))
     }
-    <span class="kw">fn</span> <span class="ident">read_size_lws</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;read_size_lws&quot;</span>);
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
+    <span class="kw">fn</span> <span class="ident">read_size_lws</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;read_size_lws&quot;</span>);
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
             <span class="comment">// LWS can follow the chunk size, but no more digits can come</span>
-            <span class="string">b&#39;\t&#39;</span> <span class="op">|</span> <span class="string">b&#39; &#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">SizeLws</span>)),
-            <span class="string">b&#39;;&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Extension</span>)),
-            <span class="string">b&#39;\r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">SizeLf</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>,
+            <span class="string">b&#39;\t&#39;</span> <span class="op">|</span> <span class="string">b&#39; &#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::SizeLws</span>)),
+            <span class="string">b&#39;;&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Extension</span>)),
+            <span class="string">b&#39;\r&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::SizeLf</span>)),
+            <span class="kw">_</span> =&gt; {
+                <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>,
                                    <span class="string">&quot;Invalid chunk size linear white space&quot;</span>))
             }
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_extension</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;read_extension&quot;</span>);
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">SizeLf</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Extension</span>)), <span class="comment">// no supported extensions</span>
+    <span class="kw">fn</span> <span class="ident">read_extension</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;read_extension&quot;</span>);
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\r&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::SizeLf</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Extension</span>)), <span class="comment">// no supported extensions</span>
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_size_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>, <span class="ident">size</span>: <span class="ident">u64</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Chunk size is {:?}&quot;</span>, <span class="ident">size</span>);
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\n&#39;</span> <span class="op">=</span><span class="op">&gt;</span> {
-                <span class="kw">if</span> <span class="ident">size</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">EndCr</span>))
+    <span class="kw">fn</span> <span class="ident">read_size_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>, <span class="ident">size</span>: <span class="ident">u64</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;Chunk size is {:?}&quot;</span>, <span class="ident">size</span>);
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\n&#39;</span> =&gt; {
+                <span class="kw">if</span> <span class="ident">size</span> <span class="op">==</span> <span class="number">0</span> {
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::EndCr</span>))
                 } <span class="kw">else</span> {
-                    <span class="macro">debug</span><span class="macro">!</span>(<span class="string">&quot;incoming chunked header: {0:#X} ({0} bytes)&quot;</span>, <span class="ident">size</span>);
-                    <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Body</span>))
+                    <span class="macro">debug!</span>(<span class="string">&quot;incoming chunked header: {0:#X} ({0} bytes)&quot;</span>, <span class="ident">size</span>);
+                    <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Body</span>))
                 }
             },
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="string">&quot;Invalid chunk size LF&quot;</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>, <span class="string">&quot;Invalid chunk size LF&quot;</span>)),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">read_body</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>,
-                          <span class="ident">rem</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">u64</span>,
-                          <span class="ident">buf</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span>)
-                          <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;Chunked read, remaining={:?}&quot;</span>, <span class="ident">rem</span>);
+    <span class="kw">fn</span> <span class="ident">read_body</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>,
+                          <span class="ident">rem</span>: <span class="kw-2">&amp;mut</span> <span class="ident">u64</span>,
+                          <span class="ident">buf</span>: <span class="kw-2">&amp;mut</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span>)
+                          -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="macro">trace!</span>(<span class="string">&quot;Chunked read, remaining={:?}&quot;</span>, <span class="ident">rem</span>);
 
         <span class="comment">// cap remaining bytes at the max capacity of usize</span>
         <span class="kw">let</span> <span class="ident">rem_cap</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw-2">*</span><span class="ident">rem</span> {
-            <span class="ident">r</span> <span class="kw">if</span> <span class="ident">r</span> <span class="op">&gt;</span> <span class="ident">usize</span>::<span class="ident">MAX</span> <span class="kw">as</span> <span class="ident">u64</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">usize</span>::<span class="ident">MAX</span>,
-            <span class="ident">r</span> <span class="op">=</span><span class="op">&gt;</span> <span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>,
+            <span class="ident">r</span> <span class="kw">if</span> <span class="ident">r</span> <span class="op">&gt;</span> <span class="ident">usize::MAX</span> <span class="kw">as</span> <span class="ident">u64</span> =&gt; <span class="ident">usize::MAX</span>,
+            <span class="ident">r</span> =&gt; <span class="ident">r</span> <span class="kw">as</span> <span class="ident">usize</span>,
         };
 
         <span class="kw">let</span> <span class="ident">to_read</span> <span class="op">=</span> <span class="ident">rem_cap</span>;
-        <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="macro">try_ready</span><span class="macro">!</span>(<span class="ident">rdr</span>.<span class="ident">read_mem</span>(<span class="ident">to_read</span>));
+        <span class="kw">let</span> <span class="ident">slice</span> <span class="op">=</span> <span class="macro">try_ready!</span>(<span class="ident">rdr</span>.<span class="ident">read_mem</span>(<span class="ident">to_read</span>));
         <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">slice</span>.<span class="ident">len</span>();
 
-        <span class="kw">if</span> <span class="ident">count</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+        <span class="kw">if</span> <span class="ident">count</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="kw-2">*</span><span class="ident">rem</span> <span class="op">=</span> <span class="number">0</span>;
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>, <span class="ident">IncompleteBody</span>));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::UnexpectedEof</span>, <span class="ident">IncompleteBody</span>));
         }
         <span class="kw-2">*</span><span class="ident">buf</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">slice</span>);
         <span class="kw-2">*</span><span class="ident">rem</span> <span class="op">-</span><span class="op">=</span> <span class="ident">count</span> <span class="kw">as</span> <span class="ident">u64</span>;
 
         <span class="kw">if</span> <span class="kw-2">*</span><span class="ident">rem</span> <span class="op">&gt;</span> <span class="number">0</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Body</span>))
+            <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Body</span>))
         } <span class="kw">else</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">BodyCr</span>))
+            <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::BodyCr</span>))
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_body_cr</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">BodyLf</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="string">&quot;Invalid chunk body CR&quot;</span>)),
+    <span class="kw">fn</span> <span class="ident">read_body_cr</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\r&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::BodyLf</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>, <span class="string">&quot;Invalid chunk body CR&quot;</span>)),
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_body_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\n&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">Size</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="string">&quot;Invalid chunk body LF&quot;</span>)),
+    <span class="kw">fn</span> <span class="ident">read_body_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\n&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::Size</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>, <span class="string">&quot;Invalid chunk body LF&quot;</span>)),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">read_end_cr</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\r&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">EndLf</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="string">&quot;Invalid chunk end CR&quot;</span>)),
+    <span class="kw">fn</span> <span class="ident">read_end_cr</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\r&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::EndLf</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>, <span class="string">&quot;Invalid chunk end CR&quot;</span>)),
         }
     }
-    <span class="kw">fn</span> <span class="ident">read_end_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">R</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-        <span class="kw">match</span> <span class="macro">byte</span><span class="macro">!</span>(<span class="ident">rdr</span>) {
-            <span class="string">b&#39;\n&#39;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">ChunkedState</span>::<span class="ident">End</span>)),
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">InvalidInput</span>, <span class="string">&quot;Invalid chunk end LF&quot;</span>)),
+    <span class="kw">fn</span> <span class="ident">read_end_lf</span><span class="op">&lt;</span><span class="ident">R</span>: <span class="ident">MemRead</span><span class="op">&gt;</span>(<span class="ident">rdr</span>: <span class="kw-2">&amp;mut</span> <span class="ident">R</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">ChunkedState</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+        <span class="kw">match</span> <span class="macro">byte!</span>(<span class="ident">rdr</span>) {
+            <span class="string">b&#39;\n&#39;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">ChunkedState::End</span>)),
+            <span class="kw">_</span> =&gt; <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::InvalidInput</span>, <span class="string">&quot;Invalid chunk end LF&quot;</span>)),
         }
     }
 }
@@ -844,110 +842,110 @@
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">struct</span> <span class="ident">IncompleteBody</span>;
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">IncompleteBody</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">IncompleteBody</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">write_str</span>(<span class="self">self</span>.<span class="ident">description</span>())
     }
 }
 
 <span class="kw">impl</span> <span class="ident">StdError</span> <span class="kw">for</span> <span class="ident">IncompleteBody</span> {
-    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
+    <span class="kw">fn</span> <span class="ident">description</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
         <span class="string">&quot;end of file before message length reached&quot;</span>
     }
 }
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">Write</span>;
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">Decoder</span>;
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="ident">ChunkedState</span>;
-    <span class="kw">use</span> <span class="kw">super</span>::<span class="kw">super</span>::<span class="ident">io</span>::<span class="ident">MemRead</span>;
+    <span class="kw">use</span> <span class="ident">std::io</span>;
+    <span class="kw">use</span> <span class="ident">std::io::Write</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::Decoder</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::ChunkedState</span>;
+    <span class="kw">use</span> <span class="ident"><span class="kw">super</span>::<span class="kw">super</span>::io::MemRead</span>;
     <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">Async</span>, <span class="ident">Poll</span>};
     <span class="kw">use</span> <span class="ident">bytes</span>::{<span class="ident">BytesMut</span>, <span class="ident">Bytes</span>};
-    <span class="kw">use</span> <span class="ident">mock</span>::<span class="ident">AsyncIo</span>;
+    <span class="kw">use</span> <span class="ident">mock::AsyncIo</span>;
 
     <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">MemRead</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> [<span class="ident">u8</span>] {
-        <span class="kw">fn</span> <span class="ident">read_mem</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">len</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Bytes</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span> {
-            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">len</span>, <span class="self">self</span>.<span class="ident">len</span>());
+        <span class="kw">fn</span> <span class="ident">read_mem</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">len</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">Bytes</span>, <span class="ident">io::Error</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="ident">n</span> <span class="op">=</span> <span class="ident">::std::cmp::min</span>(<span class="ident">len</span>, <span class="self">self</span>.<span class="ident">len</span>());
             <span class="kw">if</span> <span class="ident">n</span> <span class="op">&gt;</span> <span class="number">0</span> {
                 <span class="kw">let</span> (<span class="ident">a</span>, <span class="ident">b</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">split_at</span>(<span class="ident">n</span>);
-                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">BytesMut</span>::<span class="ident">from</span>(<span class="ident">a</span>);
+                <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">BytesMut::from</span>(<span class="ident">a</span>);
                 <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="ident">b</span>;
-                <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">buf</span>.<span class="ident">split_to</span>(<span class="ident">n</span>).<span class="ident">freeze</span>()))
+                <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">buf</span>.<span class="ident">split_to</span>(<span class="ident">n</span>).<span class="ident">freeze</span>()))
             } <span class="kw">else</span> {
-                <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">Bytes</span>::<span class="ident">new</span>()))
+                <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">Bytes::new</span>()))
             }
         }
     }
 
     <span class="kw">trait</span> <span class="ident">HelpUnwrap</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">T</span>;
+        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) -&gt; <span class="ident">T</span>;
     }
     <span class="kw">impl</span> <span class="ident">HelpUnwrap</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Async</span><span class="op">&lt;</span><span class="ident">Bytes</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Bytes</span> {
+        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) -&gt; <span class="ident">Bytes</span> {
             <span class="kw">match</span> <span class="self">self</span> {
-                <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">bytes</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">bytes</span>,
-                <span class="ident">Async</span>::<span class="ident">NotReady</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(),
+                <span class="ident">Async::Ready</span>(<span class="ident">bytes</span>) =&gt; <span class="ident">bytes</span>,
+                <span class="ident">Async::NotReady</span> =&gt; <span class="macro">panic!</span>(),
             }
         }
     }
     <span class="kw">impl</span> <span class="ident">HelpUnwrap</span><span class="op">&lt;</span><span class="ident">ChunkedState</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Async</span><span class="op">&lt;</span><span class="ident">ChunkedState</span><span class="op">&gt;</span> {
-        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ChunkedState</span> {
+        <span class="kw">fn</span> <span class="ident">unwrap</span>(<span class="self">self</span>) -&gt; <span class="ident">ChunkedState</span> {
             <span class="kw">match</span> <span class="self">self</span> {
-                <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">state</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">state</span>,
-                <span class="ident">Async</span>::<span class="ident">NotReady</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">panic</span><span class="macro">!</span>(),
+                <span class="ident">Async::Ready</span>(<span class="ident">state</span>) =&gt; <span class="ident">state</span>,
+                <span class="ident">Async::NotReady</span> =&gt; <span class="macro">panic!</span>(),
             }
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_chunk_size</span>() {
-        <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">ErrorKind</span>::{<span class="ident">UnexpectedEof</span>, <span class="ident">InvalidInput</span>};
+        <span class="kw">use</span> <span class="ident">std::io::ErrorKind</span>::{<span class="ident">UnexpectedEof</span>, <span class="ident">InvalidInput</span>};
 
-        <span class="kw">fn</span> <span class="ident">read</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">Size</span>;
-            <span class="kw">let</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>();
+        <span class="kw">fn</span> <span class="ident">read</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">u64</span> {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ChunkedState::Size</span>;
+            <span class="kw">let</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">size</span> <span class="op">=</span> <span class="number">0</span>;
             <span class="kw">loop</span> {
-                <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">rdr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">size</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-val">None</span>);
-                <span class="kw">let</span> <span class="ident">desc</span> <span class="op">=</span> <span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;read_size failed for {:?}&quot;</span>, <span class="ident">s</span>);
+                <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">rdr</span>, <span class="kw-2">&amp;mut</span> <span class="ident">size</span>, <span class="kw-2">&amp;mut</span> <span class="prelude-val">None</span>);
+                <span class="kw">let</span> <span class="ident">desc</span> <span class="op">=</span> <span class="macro">format!</span>(<span class="string">&quot;read_size failed for {:?}&quot;</span>, <span class="ident">s</span>);
                 <span class="ident">state</span> <span class="op">=</span> <span class="ident">result</span>.<span class="ident">expect</span>(<span class="ident">desc</span>.<span class="ident">as_str</span>()).<span class="ident">unwrap</span>();
-                <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">Body</span> <span class="op">|</span><span class="op">|</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">EndCr</span> {
+                <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">ChunkedState::Body</span> <span class="op">|</span><span class="op">|</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">ChunkedState::EndCr</span> {
                     <span class="kw">break</span>;
                 }
             }
             <span class="ident">size</span>
         }
 
-        <span class="kw">fn</span> <span class="ident">read_err</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">expected_err</span>: <span class="ident">io</span>::<span class="ident">ErrorKind</span>) {
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">Size</span>;
-            <span class="kw">let</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>();
+        <span class="kw">fn</span> <span class="ident">read_err</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">expected_err</span>: <span class="ident">io::ErrorKind</span>) {
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ChunkedState::Size</span>;
+            <span class="kw">let</span> <span class="ident">rdr</span> <span class="op">=</span> <span class="kw-2">&amp;mut</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>();
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">size</span> <span class="op">=</span> <span class="number">0</span>;
             <span class="kw">loop</span> {
-                <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">rdr</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">size</span>, <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="prelude-val">None</span>);
+                <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">step</span>(<span class="ident">rdr</span>, <span class="kw-2">&amp;mut</span> <span class="ident">size</span>, <span class="kw-2">&amp;mut</span> <span class="prelude-val">None</span>);
                 <span class="ident">state</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">result</span> {
-                    <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">s</span>.<span class="ident">unwrap</span>(),
-                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">expected_err</span> <span class="op">=</span><span class="op">=</span> <span class="ident">e</span>.<span class="ident">kind</span>(), <span class="string">&quot;Reading {:?}, expected {:?}, but got {:?}&quot;</span>,
+                    <span class="prelude-val">Ok</span>(<span class="ident">s</span>) =&gt; <span class="ident">s</span>.<span class="ident">unwrap</span>(),
+                    <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; {
+                        <span class="macro">assert!</span>(<span class="ident">expected_err</span> <span class="op">==</span> <span class="ident">e</span>.<span class="ident">kind</span>(), <span class="string">&quot;Reading {:?}, expected {:?}, but got {:?}&quot;</span>,
                                                           <span class="ident">s</span>, <span class="ident">expected_err</span>, <span class="ident">e</span>.<span class="ident">kind</span>());
                         <span class="kw">return</span>;
                     }
                 };
-                <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">Body</span> <span class="op">|</span><span class="op">|</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">ChunkedState</span>::<span class="ident">End</span> {
-                    <span class="macro">panic</span><span class="macro">!</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;Was Ok. Expected Err for {:?}&quot;</span>, <span class="ident">s</span>));
+                <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">ChunkedState::Body</span> <span class="op">|</span><span class="op">|</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">ChunkedState::End</span> {
+                    <span class="macro">panic!</span>(<span class="macro">format!</span>(<span class="string">&quot;Was Ok. Expected Err for {:?}&quot;</span>, <span class="ident">s</span>));
                 }
             }
         }
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;01\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">read</span>(<span class="string">&quot;0\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">read</span>(<span class="string">&quot;00\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;A\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;a\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">255</span>, <span class="ident">read</span>(<span class="string">&quot;Ff\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">255</span>, <span class="ident">read</span>(<span class="string">&quot;Ff   \r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;01\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">read</span>(<span class="string">&quot;0\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">read</span>(<span class="string">&quot;00\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;A\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;a\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">255</span>, <span class="ident">read</span>(<span class="string">&quot;Ff\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">255</span>, <span class="ident">read</span>(<span class="string">&quot;Ff   \r\n&quot;</span>));
         <span class="comment">// Missing LF or CRLF</span>
         <span class="ident">read_err</span>(<span class="string">&quot;F\rF&quot;</span>, <span class="ident">InvalidInput</span>);
         <span class="ident">read_err</span>(<span class="string">&quot;F&quot;</span>, <span class="ident">UnexpectedEof</span>);
@@ -957,14 +955,14 @@
         <span class="ident">read_err</span>(<span class="string">&quot;-\r\n&quot;</span>, <span class="ident">InvalidInput</span>);
         <span class="ident">read_err</span>(<span class="string">&quot;-1\r\n&quot;</span>, <span class="ident">InvalidInput</span>);
         <span class="comment">// Acceptable (if not fully valid) extensions do not influence the size</span>
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;extension\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;a;ext name=value\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;extension;extension2\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;;;  ;\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">2</span>, <span class="ident">read</span>(<span class="string">&quot;2; extension...\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ; extension=123\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ;\r\n&quot;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ;   \r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;extension\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">10</span>, <span class="ident">read</span>(<span class="string">&quot;a;ext name=value\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;extension;extension2\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">read</span>(<span class="string">&quot;1;;;  ;\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">2</span>, <span class="ident">read</span>(<span class="string">&quot;2; extension...\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ; extension=123\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ;\r\n&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="number">3</span>, <span class="ident">read</span>(<span class="string">&quot;3   ;   \r\n&quot;</span>));
         <span class="comment">// Invalid extensions cause an error</span>
         <span class="ident">read_err</span>(<span class="string">&quot;1 invalid extension\r\n&quot;</span>, <span class="ident">InvalidInput</span>);
         <span class="ident">read_err</span>(<span class="string">&quot;1 A\r\n&quot;</span>, <span class="ident">InvalidInput</span>);
@@ -974,10 +972,10 @@
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_sized_early_eof</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">bytes</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;foo bar&quot;</span>[..];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">length</span>(<span class="number">10</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">7</span>);
-        <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">e</span>.<span class="ident">kind</span>(), <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder::length</span>(<span class="number">10</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">7</span>);
+        <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">e</span>.<span class="ident">kind</span>(), <span class="ident">io::ErrorKind::UnexpectedEof</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -986,39 +984,39 @@
             9\r\n\
             foo bar\
         &quot;</span>[..];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">chunked</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">7</span>);
-        <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">e</span>.<span class="ident">kind</span>(), <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">UnexpectedEof</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder::chunked</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>().<span class="ident">len</span>(), <span class="number">7</span>);
+        <span class="kw">let</span> <span class="ident">e</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">bytes</span>).<span class="ident">unwrap_err</span>();
+        <span class="macro">assert_eq!</span>(<span class="ident">e</span>.<span class="ident">kind</span>(), <span class="ident">io::ErrorKind::UnexpectedEof</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_chunked_single_read</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mock_buf</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;10\r\n1234567890abcdef\r\n0\r\n&quot;</span>[..];
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">chunked</span>().<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">16</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">buf</span>.<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;1234567890abcdef&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">result</span>);
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">Decoder::chunked</span>().<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="number">16</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String::from_utf8</span>(<span class="ident">buf</span>.<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;1234567890abcdef&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">result</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_chunked_after_eof</span>() {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">mock_buf</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="string">b&quot;10\r\n1234567890abcdef\r\n0\r\n\r\n&quot;</span>[..];
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder</span>::<span class="ident">chunked</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">decoder</span> <span class="op">=</span> <span class="ident">Decoder::chunked</span>();
 
         <span class="comment">// normal read</span>
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">16</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
-        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">buf</span>.<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>);
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="string">&quot;1234567890abcdef&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">result</span>);
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="number">16</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> <span class="ident">String::from_utf8</span>(<span class="ident">buf</span>.<span class="ident">as_ref</span>().<span class="ident">to_vec</span>()).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>);
+        <span class="macro">assert_eq!</span>(<span class="string">&quot;1234567890abcdef&quot;</span>, <span class="kw-2">&amp;</span><span class="ident">result</span>);
 
         <span class="comment">// eof read</span>
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
 
         <span class="comment">// ensure read after eof also returns eof</span>
-        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
+        <span class="kw">let</span> <span class="ident">buf</span> <span class="op">=</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">mock_buf</span>).<span class="ident">expect</span>(<span class="string">&quot;decode&quot;</span>).<span class="ident">unwrap</span>();
+        <span class="macro">assert_eq!</span>(<span class="number">0</span>, <span class="ident">buf</span>.<span class="ident">len</span>());
     }
 
     <span class="comment">// perform an async read using a custom buffer size and causing a blocking</span>
@@ -1026,24 +1024,24 @@
     <span class="kw">fn</span> <span class="ident">read_async</span>(<span class="kw-2">mut</span> <span class="ident">decoder</span>: <span class="ident">Decoder</span>,
                   <span class="ident">content</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
                   <span class="ident">block_at</span>: <span class="ident">usize</span>)
-                  <span class="op">-</span><span class="op">&gt;</span> <span class="ident">String</span> {
+                  -&gt; <span class="ident">String</span> {
         <span class="kw">let</span> <span class="ident">content_len</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">len</span>();
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ins</span> <span class="op">=</span> <span class="ident">AsyncIo</span>::<span class="ident">new</span>(<span class="ident">content</span>, <span class="ident">block_at</span>);
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">outs</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">ins</span> <span class="op">=</span> <span class="ident">AsyncIo::new</span>(<span class="ident">content</span>, <span class="ident">block_at</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">outs</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
         <span class="kw">loop</span> {
-            <span class="kw">match</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">ins</span>).<span class="ident">expect</span>(<span class="string">&quot;unexpected decode error: {}&quot;</span>) {
-                <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">buf</span>) <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">match</span> <span class="ident">decoder</span>.<span class="ident">decode</span>(<span class="kw-2">&amp;mut</span> <span class="ident">ins</span>).<span class="ident">expect</span>(<span class="string">&quot;unexpected decode error: {}&quot;</span>) {
+                <span class="ident">Async::Ready</span>(<span class="ident">buf</span>) =&gt; {
                     <span class="kw">if</span> <span class="ident">buf</span>.<span class="ident">is_empty</span>() {
                         <span class="kw">break</span>; <span class="comment">// eof</span>
                     }
                     <span class="ident">outs</span>.<span class="ident">write</span>(<span class="ident">buf</span>.<span class="ident">as_ref</span>()).<span class="ident">expect</span>(<span class="string">&quot;write buffer&quot;</span>);
                 },
-                <span class="ident">Async</span>::<span class="ident">NotReady</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="ident">Async::NotReady</span> =&gt; {
                     <span class="ident">ins</span>.<span class="ident">block_in</span>(<span class="ident">content_len</span>); <span class="comment">// we only block once</span>
                 }
             };
         }
-        <span class="ident">String</span>::<span class="ident">from_utf8</span>(<span class="ident">outs</span>).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>)
+        <span class="ident">String::from_utf8</span>(<span class="ident">outs</span>).<span class="ident">expect</span>(<span class="string">&quot;decode String&quot;</span>)
     }
 
     <span class="comment">// iterate over the different ways that this async read could go.</span>
@@ -1052,30 +1050,30 @@
         <span class="kw">let</span> <span class="ident">content_len</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">len</span>();
         <span class="kw">for</span> <span class="ident">block_at</span> <span class="kw">in</span> <span class="number">0</span>..<span class="ident">content_len</span> {
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">read_async</span>(<span class="ident">decoder</span>.<span class="ident">clone</span>(), <span class="ident">content</span>.<span class="ident">as_bytes</span>(), <span class="ident">block_at</span>);
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">expected</span>, <span class="kw-2">&amp;</span><span class="ident">actual</span>) <span class="comment">//, &quot;Failed async. Blocking at {}&quot;, block_at);</span>
+            <span class="macro">assert_eq!</span>(<span class="ident">expected</span>, <span class="kw-2">&amp;</span><span class="ident">actual</span>) <span class="comment">//, &quot;Failed async. Blocking at {}&quot;, block_at);</span>
         }
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_length_async</span>() {
         <span class="kw">let</span> <span class="ident">content</span> <span class="op">=</span> <span class="string">&quot;foobar&quot;</span>;
-        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">content</span>, <span class="ident">Decoder</span>::<span class="ident">length</span>(<span class="ident">content</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>));
+        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">content</span>, <span class="ident">Decoder::length</span>(<span class="ident">content</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u64</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_chunked_async</span>() {
         <span class="kw">let</span> <span class="ident">content</span> <span class="op">=</span> <span class="string">&quot;3\r\nfoo\r\n3\r\nbar\r\n0\r\n\r\n&quot;</span>;
         <span class="kw">let</span> <span class="ident">expected</span> <span class="op">=</span> <span class="string">&quot;foobar&quot;</span>;
-        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">expected</span>, <span class="ident">Decoder</span>::<span class="ident">chunked</span>());
+        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">expected</span>, <span class="ident">Decoder::chunked</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_read_eof_async</span>() {
         <span class="kw">let</span> <span class="ident">content</span> <span class="op">=</span> <span class="string">&quot;foobar&quot;</span>;
-        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">content</span>, <span class="ident">Decoder</span>::<span class="ident">eof</span>());
+        <span class="ident">all_async_cases</span>(<span class="ident">content</span>, <span class="ident">content</span>, <span class="ident">Decoder::eof</span>());
     }
 
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="hyper"></div>
-    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="hyper" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/mio-0.6.23/src/poll.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>poll.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../mio/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;mio-0.6.23&#x2F;src&#x2F;poll.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>poll.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../mio/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../mio/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -2784,21 +2783,20 @@
 <span id="2781">2781</span>
 <span id="2782">2782</span>
 <span id="2783">2783</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> {<span class="ident">sys</span>, <span class="ident">Token</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> {<span class="ident">sys</span>, <span class="ident">Token</span>};
 <span class="kw">use</span> <span class="ident">event_imp</span>::{<span class="self">self</span> <span class="kw">as</span> <span class="ident">event</span>, <span class="ident">Ready</span>, <span class="ident">Event</span>, <span class="ident">Evented</span>, <span class="ident">PollOpt</span>};
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">fmt</span>, <span class="ident">io</span>, <span class="ident">ptr</span>, <span class="ident">usize</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">cell</span>::<span class="ident">UnsafeCell</span>;
+<span class="kw">use</span> <span class="ident">std::cell::UnsafeCell</span>;
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">mem</span>, <span class="ident">ops</span>, <span class="ident">isize</span>};
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>)))]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::<span class="ident">AsRawFd</span>;
+<span class="kw">use</span> <span class="ident">std::os::unix::io::AsRawFd</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>)))]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">os</span>::<span class="ident">unix</span>::<span class="ident">io</span>::<span class="ident">RawFd</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">process</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>, <span class="ident">Condvar</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">AtomicPtr</span>, <span class="ident">AtomicBool</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::<span class="ident">Ordering</span>::{<span class="self">self</span>, <span class="ident">Acquire</span>, <span class="ident">Release</span>, <span class="ident">AcqRel</span>, <span class="ident">Relaxed</span>, <span class="ident">SeqCst</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
+<span class="kw">use</span> <span class="ident">std::os::unix::io::RawFd</span>;
+<span class="kw">use</span> <span class="ident">std::process</span>;
+<span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>, <span class="ident">Condvar</span>};
+<span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicUsize</span>, <span class="ident">AtomicPtr</span>, <span class="ident">AtomicBool</span>};
+<span class="kw">use</span> <span class="ident">std::sync::atomic::Ordering</span>::{<span class="self">self</span>, <span class="ident">Acquire</span>, <span class="ident">Release</span>, <span class="ident">AcqRel</span>, <span class="ident">Relaxed</span>, <span class="ident">SeqCst</span>};
+<span class="kw">use</span> <span class="ident">std::time</span>::{<span class="ident">Duration</span>, <span class="ident">Instant</span>};
 
 <span class="comment">// Poll is backed by two readiness queues. The first is a system readiness queue</span>
 <span class="comment">// represented by `sys::Selector`. The system readiness queue handles events</span>
@@ -3115,7 +3113,7 @@
 <span class="doccomment">/// [`Poll::poll`]: struct.Poll.html#method.poll</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Poll</span> {
     <span class="comment">// Platform specific IO selector</span>
-    <span class="ident">selector</span>: <span class="ident">sys</span>::<span class="ident">Selector</span>,
+    <span class="ident">selector</span>: <span class="ident">sys::Selector</span>,
 
     <span class="comment">// Custom readiness queue</span>
     <span class="ident">readiness_queue</span>: <span class="ident">ReadinessQueue</span>,
@@ -3258,7 +3256,7 @@
     <span class="comment">// cannot &quot;simply&quot; be tracked by an Arc because `Poll::poll` has an implicit</span>
     <span class="comment">// handle though it isn&#39;t stored anywhere. In other words, `Poll::poll`</span>
     <span class="comment">// needs to decrement the ref count before the node is freed.</span>
-    <span class="ident">node</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>,
+    <span class="ident">node</span>: <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>,
 }
 
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Clone</span>)]</span>
@@ -3271,7 +3269,7 @@
 
 <span class="kw">struct</span> <span class="ident">ReadinessQueueInner</span> {
     <span class="comment">// Used to wake up `Poll` when readiness is set in another thread.</span>
-    <span class="ident">awakener</span>: <span class="ident">sys</span>::<span class="ident">Awakener</span>,
+    <span class="ident">awakener</span>: <span class="ident">sys::Awakener</span>,
 
     <span class="comment">// Head of the MPSC queue used to signal readiness to `Poll::poll`.</span>
     <span class="ident">head_readiness</span>: <span class="ident">AtomicPtr</span><span class="op">&lt;</span><span class="ident">ReadinessNode</span><span class="op">&gt;</span>,
@@ -3279,7 +3277,7 @@
     <span class="comment">// Tail of the readiness queue.</span>
     <span class="comment">//</span>
     <span class="comment">// Only accessed by Poll::poll. Coordination will be handled by the poll fn</span>
-    <span class="ident">tail_readiness</span>: <span class="ident">UnsafeCell</span><span class="op">&lt;</span><span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span><span class="op">&gt;</span>,
+    <span class="ident">tail_readiness</span>: <span class="ident">UnsafeCell</span><span class="op">&lt;</span><span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span><span class="op">&gt;</span>,
 
     <span class="comment">// Fake readiness node used to punctuate the end of the readiness queue.</span>
     <span class="comment">// Before attempting to read from the queue, this node is inserted in order</span>
@@ -3384,13 +3382,13 @@
 <span class="doccomment">/// Returned by `dequeue_node`. Represents the different states as described by</span>
 <span class="doccomment">/// the queue documentation on 1024cores.net.</span>
 <span class="kw">enum</span> <span class="ident">Dequeue</span> {
-    <span class="ident">Data</span>(<span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>),
+    <span class="ident">Data</span>(<span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>),
     <span class="ident">Empty</span>,
     <span class="ident">Inconsistent</span>,
 }
 
-<span class="kw">const</span> <span class="ident">AWAKEN</span>: <span class="ident">Token</span> <span class="op">=</span> <span class="ident">Token</span>(<span class="ident">usize</span>::<span class="ident">MAX</span>);
-<span class="kw">const</span> <span class="ident">MAX_REFCOUNT</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">isize</span>::<span class="ident">MAX</span>) <span class="kw">as</span> <span class="ident">usize</span>;
+<span class="kw">const</span> <span class="ident">AWAKEN</span>: <span class="ident">Token</span> <span class="op">=</span> <span class="ident">Token</span>(<span class="ident">usize::MAX</span>);
+<span class="kw">const</span> <span class="ident">MAX_REFCOUNT</span>: <span class="ident">usize</span> <span class="op">=</span> (<span class="ident">isize::MAX</span>) <span class="kw">as</span> <span class="ident">usize</span>;
 
 <span class="comment">/*
  *
@@ -3436,20 +3434,20 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Poll</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">Poll</span><span class="op">&gt;</span> {
         <span class="ident">is_send</span>::<span class="op">&lt;</span><span class="ident">Poll</span><span class="op">&gt;</span>();
         <span class="ident">is_sync</span>::<span class="op">&lt;</span><span class="ident">Poll</span><span class="op">&gt;</span>();
 
         <span class="kw">let</span> <span class="ident">poll</span> <span class="op">=</span> <span class="ident">Poll</span> {
-            <span class="ident">selector</span>: <span class="ident">sys</span>::<span class="ident">Selector</span>::<span class="ident">new</span>()<span class="question-mark">?</span>,
-            <span class="ident">readiness_queue</span>: <span class="ident">ReadinessQueue</span>::<span class="ident">new</span>()<span class="question-mark">?</span>,
-            <span class="ident">lock_state</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">0</span>),
-            <span class="ident">lock</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(()),
-            <span class="ident">condvar</span>: <span class="ident">Condvar</span>::<span class="ident">new</span>(),
+            <span class="ident">selector</span>: <span class="ident">sys::Selector::new</span>()<span class="question-mark">?</span>,
+            <span class="ident">readiness_queue</span>: <span class="ident">ReadinessQueue::new</span>()<span class="question-mark">?</span>,
+            <span class="ident">lock_state</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
+            <span class="ident">lock</span>: <span class="ident">Mutex::new</span>(()),
+            <span class="ident">condvar</span>: <span class="ident">Condvar::new</span>(),
         };
 
         <span class="comment">// Register the notification wakeup FD with the IO poller</span>
-        <span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span>.<span class="ident">awakener</span>.<span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="ident">poll</span>, <span class="ident">AWAKEN</span>, <span class="ident">Ready</span>::<span class="ident">readable</span>(), <span class="ident">PollOpt</span>::<span class="ident">edge</span>())<span class="question-mark">?</span>;
+        <span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span>.<span class="ident">awakener</span>.<span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="ident">poll</span>, <span class="ident">AWAKEN</span>, <span class="ident">Ready::readable</span>(), <span class="ident">PollOpt::edge</span>())<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">poll</span>)
     }
@@ -3561,7 +3559,7 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">register</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">E</span>: <span class="ident">Evented</span>
     {
         <span class="ident">validate_args</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
@@ -3571,7 +3569,7 @@
          * - Reusing a token with a different `Evented` without deregistering
          * (or closing) the original `Evented`.
          */</span>
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;registering with poller&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">&quot;registering with poller&quot;</span>);
 
         <span class="comment">// Register interests for this socket</span>
         <span class="ident">handle</span>.<span class="ident">register</span>(<span class="self">self</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opts</span>)<span class="question-mark">?</span>;
@@ -3632,12 +3630,12 @@
     <span class="doccomment">/// [`register`]: #method.register</span>
     <span class="doccomment">/// [`readable`]: struct.Ready.html#method.readable</span>
     <span class="doccomment">/// [`writable`]: struct.Ready.html#method.writable</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reregister</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">reregister</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">E</span>: <span class="ident">Evented</span>
     {
         <span class="ident">validate_args</span>(<span class="ident">token</span>)<span class="question-mark">?</span>;
 
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;registering with poller&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">&quot;registering with poller&quot;</span>);
 
         <span class="comment">// Register interests for this socket</span>
         <span class="ident">handle</span>.<span class="ident">reregister</span>(<span class="self">self</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opts</span>)<span class="question-mark">?</span>;
@@ -3688,10 +3686,10 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deregister</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deregister</span><span class="op">&lt;</span><span class="ident">E</span>: <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">handle</span>: <span class="kw-2">&amp;</span><span class="ident">E</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">E</span>: <span class="ident">Evented</span>
     {
-        <span class="macro">trace</span><span class="macro">!</span>(<span class="string">&quot;deregistering handle with poller&quot;</span>);
+        <span class="macro">trace!</span>(<span class="string">&quot;deregistering handle with poller&quot;</span>);
 
         <span class="comment">// Deregister interests for this socket</span>
         <span class="ident">handle</span>.<span class="ident">deregister</span>(<span class="self">self</span>)<span class="question-mark">?</span>;
@@ -3793,7 +3791,7 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// [struct]: #</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Events</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Events</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">poll1</span>(<span class="ident">events</span>, <span class="ident">timeout</span>, <span class="bool-val">false</span>)
     }
 
@@ -3801,12 +3799,12 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// If `poll` is inturrupted while blocking, it will transparently retry the syscall.  If you</span>
     <span class="doccomment">/// want to handle signals yourself, however, use `poll_interruptible`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_interruptible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Events</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">poll_interruptible</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Events</span>, <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">poll1</span>(<span class="ident">events</span>, <span class="ident">timeout</span>, <span class="bool-val">true</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">poll1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Events</span>, <span class="kw-2">mut</span> <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>, <span class="ident">interruptible</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">zero</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_millis</span>(<span class="number">0</span>));
+    <span class="kw">fn</span> <span class="ident">poll1</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Events</span>, <span class="kw-2">mut</span> <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>, <span class="ident">interruptible</span>: <span class="ident">bool</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">zero</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration::from_millis</span>(<span class="number">0</span>));
 
         <span class="comment">// At a high level, the synchronization strategy is to acquire access to</span>
         <span class="comment">// the critical section by transitioning the atomic from unlocked -&gt;</span>
@@ -3844,7 +3842,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">inc</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
             <span class="kw">loop</span> {
-                <span class="kw">if</span> <span class="ident">curr</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+                <span class="kw">if</span> <span class="ident">curr</span> <span class="op">&amp;</span> <span class="number">1</span> <span class="op">==</span> <span class="number">0</span> {
                     <span class="comment">// The lock is currently free, attempt to grab it</span>
                     <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next</span> <span class="op">=</span> <span class="ident">curr</span> <span class="op">|</span> <span class="number">1</span>;
 
@@ -3865,7 +3863,7 @@
                     <span class="kw">break</span>;
                 }
 
-                <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">=</span><span class="op">=</span> <span class="ident">zero</span> {
+                <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">==</span> <span class="ident">zero</span> {
                     <span class="kw">if</span> <span class="ident">inc</span> {
                         <span class="self">self</span>.<span class="ident">lock_state</span>.<span class="ident">fetch_sub</span>(<span class="number">2</span>, <span class="ident">SeqCst</span>);
                     }
@@ -3891,8 +3889,8 @@
                 }
 
                 <span class="ident">lock</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">timeout</span> {
-                    <span class="prelude-val">Some</span>(<span class="ident">to</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                        <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
+                    <span class="prelude-val">Some</span>(<span class="ident">to</span>) =&gt; {
+                        <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant::now</span>();
 
                         <span class="comment">// Wait to be notified</span>
                         <span class="kw">let</span> (<span class="ident">l</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">condvar</span>.<span class="ident">wait_timeout</span>(<span class="ident">lock</span>, <span class="ident">to</span>).<span class="ident">unwrap</span>();
@@ -3911,7 +3909,7 @@
 
                         <span class="ident">l</span>
                     }
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> {
+                    <span class="prelude-val">None</span> =&gt; {
                         <span class="self">self</span>.<span class="ident">condvar</span>.<span class="ident">wait</span>(<span class="ident">lock</span>).<span class="ident">unwrap</span>()
                     }
                 };
@@ -3938,13 +3936,13 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cargo-clippy&quot;</span>, <span class="ident">allow</span>(<span class="ident">clippy</span>::<span class="ident">if_same_then_else</span>))]</span>
-    <span class="kw">fn</span> <span class="ident">poll2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">Events</span>, <span class="kw-2">mut</span> <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>, <span class="ident">interruptible</span>: <span class="ident">bool</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="attribute">#[<span class="ident">cfg_attr</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;cargo-clippy&quot;</span>, <span class="ident">allow</span>(<span class="ident">clippy::if_same_then_else</span>))]</span>
+    <span class="kw">fn</span> <span class="ident">poll2</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">events</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Events</span>, <span class="kw-2">mut</span> <span class="ident">timeout</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Duration</span><span class="op">&gt;</span>, <span class="ident">interruptible</span>: <span class="ident">bool</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="comment">// Compute the timeout value passed to the system selector. If the</span>
         <span class="comment">// readiness queue has pending nodes, we still want to poll the system</span>
         <span class="comment">// selector for new events, but we don&#39;t want to block the thread to</span>
         <span class="comment">// wait for new events.</span>
-        <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">=</span><span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_millis</span>(<span class="number">0</span>)) {
+        <span class="kw">if</span> <span class="ident">timeout</span> <span class="op">==</span> <span class="prelude-val">Some</span>(<span class="ident">Duration::from_millis</span>(<span class="number">0</span>)) {
             <span class="comment">// If blocking is not requested, then there is no need to prepare</span>
             <span class="comment">// the queue for sleep</span>
             <span class="comment">//</span>
@@ -3956,21 +3954,21 @@
             <span class="comment">// sleep, so the awakener should be used.</span>
         } <span class="kw">else</span> {
             <span class="comment">// The readiness queue is not empty, so do not block the thread.</span>
-            <span class="ident">timeout</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration</span>::<span class="ident">from_millis</span>(<span class="number">0</span>));
+            <span class="ident">timeout</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Duration::from_millis</span>(<span class="number">0</span>));
         }
 
         <span class="kw">loop</span> {
-            <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant</span>::<span class="ident">now</span>();
+            <span class="kw">let</span> <span class="ident">now</span> <span class="op">=</span> <span class="ident">Instant::now</span>();
             <span class="comment">// First get selector events</span>
-            <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">selector</span>.<span class="ident">select</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">events</span>.<span class="ident">inner</span>, <span class="ident">AWAKEN</span>, <span class="ident">timeout</span>);
+            <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">selector</span>.<span class="ident">select</span>(<span class="kw-2">&amp;mut</span> <span class="ident">events</span>.<span class="ident">inner</span>, <span class="ident">AWAKEN</span>, <span class="ident">timeout</span>);
             <span class="kw">match</span> <span class="ident">res</span> {
-                <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>) =&gt; {
                     <span class="comment">// Some awakeners require reading from a FD.</span>
                     <span class="self">self</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span>.<span class="ident">awakener</span>.<span class="ident">cleanup</span>();
                     <span class="kw">break</span>;
                 }
-                <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
-                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Interrupted</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">interruptible</span> <span class="op">=</span><span class="op">&gt;</span> {
+                <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>) =&gt; <span class="kw">break</span>,
+                <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">io::ErrorKind::Interrupted</span> <span class="op">&amp;&amp;</span> <span class="op">!</span><span class="ident">interruptible</span> =&gt; {
                     <span class="comment">// Interrupted by a signal; update timeout if necessary and retry</span>
                     <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">to</span>) <span class="op">=</span> <span class="ident">timeout</span> {
                         <span class="kw">let</span> <span class="ident">elapsed</span> <span class="op">=</span> <span class="ident">now</span>.<span class="ident">elapsed</span>();
@@ -3981,28 +3979,28 @@
                         }
                     }
                 }
-                <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
+                <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
             }
         }
 
         <span class="comment">// Poll custom event queue</span>
-        <span class="self">self</span>.<span class="ident">readiness_queue</span>.<span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">events</span>.<span class="ident">inner</span>);
+        <span class="self">self</span>.<span class="ident">readiness_queue</span>.<span class="ident">poll</span>(<span class="kw-2">&amp;mut</span> <span class="ident">events</span>.<span class="ident">inner</span>);
 
         <span class="comment">// Return number of polled events</span>
         <span class="prelude-val">Ok</span>(<span class="ident">events</span>.<span class="ident">inner</span>.<span class="ident">len</span>())
     }
 }
 
-<span class="kw">fn</span> <span class="ident">validate_args</span>(<span class="ident">token</span>: <span class="ident">Token</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-    <span class="kw">if</span> <span class="ident">token</span> <span class="op">=</span><span class="op">=</span> <span class="ident">AWAKEN</span> {
-        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;invalid token&quot;</span>));
+<span class="kw">fn</span> <span class="ident">validate_args</span>(<span class="ident">token</span>: <span class="ident">Token</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">if</span> <span class="ident">token</span> <span class="op">==</span> <span class="ident">AWAKEN</span> {
+        <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::Other</span>, <span class="string">&quot;invalid token&quot;</span>));
     }
 
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Poll</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Poll</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Poll&quot;</span>)
             .<span class="ident">finish</span>()
     }
@@ -4010,7 +4008,7 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>)))]</span>
 <span class="kw">impl</span> <span class="ident">AsRawFd</span> <span class="kw">for</span> <span class="ident">Poll</span> {
-    <span class="kw">fn</span> <span class="ident">as_raw_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RawFd</span> {
+    <span class="kw">fn</span> <span class="ident">as_raw_fd</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RawFd</span> {
         <span class="self">self</span>.<span class="ident">selector</span>.<span class="ident">as_raw_fd</span>()
     }
 }
@@ -4055,7 +4053,7 @@
 <span class="doccomment">/// [`Poll::poll`]: struct.Poll.html#method.poll</span>
 <span class="doccomment">/// [`Poll`]: struct.Poll.html</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Events</span> {
-    <span class="ident">inner</span>: <span class="ident">sys</span>::<span class="ident">Events</span>,
+    <span class="ident">inner</span>: <span class="ident">sys::Events</span>,
 }
 
 <span class="doccomment">/// [`Events`] iterator.</span>
@@ -4144,21 +4142,21 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(1024, events.capacity());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_capacity</span>(<span class="ident">capacity</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Events</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">with_capacity</span>(<span class="ident">capacity</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Events</span> {
         <span class="ident">Events</span> {
-            <span class="ident">inner</span>: <span class="ident">sys</span>::<span class="ident">Events</span>::<span class="ident">with_capacity</span>(<span class="ident">capacity</span>),
+            <span class="ident">inner</span>: <span class="ident">sys::Events::with_capacity</span>(<span class="ident">capacity</span>),
         }
     }
 
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span><span class="op">=</span><span class="string">&quot;0.6.10&quot;</span>, <span class="ident">note</span><span class="op">=</span><span class="string">&quot;Index access removed in favor of iterator only API.&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">get</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">idx</span>: <span class="ident">usize</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="ident">idx</span>)
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span><span class="op">=</span><span class="string">&quot;0.6.10&quot;</span>, <span class="ident">note</span><span class="op">=</span><span class="string">&quot;Index access removed in favor of iterator only API.&quot;</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">len</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">len</span>()
     }
 
@@ -4171,7 +4169,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(1024, events.capacity());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">capacity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">capacity</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">capacity</span>()
     }
 
@@ -4186,7 +4184,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(events.is_empty());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">is_empty</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">is_empty</span>()
     }
 
@@ -4217,7 +4215,7 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Iter</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">iter</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Iter</span> {
         <span class="ident">Iter</span> {
             <span class="ident">inner</span>: <span class="self">self</span>,
             <span class="ident">pos</span>: <span class="number">0</span>
@@ -4253,7 +4251,7 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">clear</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clear</span>();
     }
 }
@@ -4262,7 +4260,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Event</span>;
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::IntoIter</span> {
         <span class="self">self</span>.<span class="ident">iter</span>()
     }
 }
@@ -4270,7 +4268,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Event</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">pos</span>);
         <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         <span class="ident">ret</span>
@@ -4281,7 +4279,7 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Event</span>;
     <span class="kw">type</span> <span class="ident">IntoIter</span> <span class="op">=</span> <span class="ident">IntoIter</span>;
 
-    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="self">Self</span>::<span class="ident">IntoIter</span> {
+    <span class="kw">fn</span> <span class="ident">into_iter</span>(<span class="self">self</span>) -&gt; <span class="ident"><span class="self">Self</span>::IntoIter</span> {
         <span class="ident">IntoIter</span> {
             <span class="ident">inner</span>: <span class="self">self</span>,
             <span class="ident">pos</span>: <span class="number">0</span>,
@@ -4292,15 +4290,15 @@
 <span class="kw">impl</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">IntoIter</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">Event</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">Event</span><span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">inner</span>.<span class="ident">get</span>(<span class="self">self</span>.<span class="ident">pos</span>);
         <span class="self">self</span>.<span class="ident">pos</span> <span class="op">+</span><span class="op">=</span> <span class="number">1</span>;
         <span class="ident">ret</span>
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Events</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Events</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Events&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;capacity&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">capacity</span>())
             .<span class="ident">finish</span>()
@@ -4309,7 +4307,7 @@
 
 <span class="comment">// ===== Accessors for internal usage =====</span>
 
-<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">selector</span>(<span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">sys</span>::<span class="ident">Selector</span> {
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">selector</span>(<span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">sys::Selector</span> {
     <span class="kw-2">&amp;</span><span class="ident">poll</span>.<span class="ident">selector</span>
 }
 
@@ -4322,9 +4320,9 @@
 <span class="comment">// TODO: get rid of this, windows depends on it for now</span>
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">dead_code</span>)]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_registration</span>(<span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">ready</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>)
-        <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
+        -&gt; (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
 {
-    <span class="ident">Registration</span>::<span class="ident">new_priv</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">ready</span>, <span class="ident">opt</span>)
+    <span class="ident">Registration::new_priv</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">ready</span>, <span class="ident">opt</span>)
 }
 
 <span class="kw">impl</span> <span class="ident">Registration</span> {
@@ -4374,11 +4372,11 @@
     <span class="doccomment">/// ```</span>
     <span class="doccomment">/// [struct]: #</span>
     <span class="doccomment">/// [`Poll`]: struct.Poll.html</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new2</span>() <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new2</span>() -&gt; (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>) {
         <span class="comment">// Allocate the registration node. The new node will have `ref_count`</span>
         <span class="comment">// set to 2: one SetReadiness, one Registration.</span>
-        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">ReadinessNode</span>::<span class="ident">new</span>(
-                    <span class="ident">ptr</span>::<span class="ident">null_mut</span>(), <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready</span>::<span class="ident">empty</span>(), <span class="ident">PollOpt</span>::<span class="ident">empty</span>(), <span class="number">2</span>)));
+        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box::into_raw</span>(<span class="ident">Box::new</span>(<span class="ident">ReadinessNode::new</span>(
+                    <span class="ident">ptr::null_mut</span>(), <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready::empty</span>(), <span class="ident">PollOpt::empty</span>(), <span class="number">2</span>)));
 
         <span class="kw">let</span> <span class="ident">registration</span> <span class="op">=</span> <span class="ident">Registration</span> {
             <span class="ident">inner</span>: <span class="ident">RegistrationInner</span> {
@@ -4399,14 +4397,14 @@
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;with-deprecated&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>)
-        <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
+        -&gt; (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
     {
-        <span class="ident">Registration</span>::<span class="ident">new_priv</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opt</span>)
+        <span class="ident">Registration::new_priv</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opt</span>)
     }
 
     <span class="comment">// TODO: Get rid of this (windows depends on it for now)</span>
     <span class="kw">fn</span> <span class="ident">new_priv</span>(<span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>)
-        <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
+        -&gt; (<span class="ident">Registration</span>, <span class="ident">SetReadiness</span>)
     {
         <span class="ident">is_send</span>::<span class="op">&lt;</span><span class="ident">Registration</span><span class="op">&gt;</span>();
         <span class="ident">is_sync</span>::<span class="op">&lt;</span><span class="ident">Registration</span><span class="op">&gt;</span>();
@@ -4417,11 +4415,11 @@
         <span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span>.<span class="ident">clone</span>();
 
         <span class="comment">// Convert to a *mut () pointer</span>
-        <span class="kw">let</span> <span class="ident">queue</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> () <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">queue</span>) };
+        <span class="kw">let</span> <span class="ident">queue</span>: <span class="kw-2">*mut</span> () <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">mem::transmute</span>(<span class="ident">queue</span>) };
 
         <span class="comment">// Allocate the registration node. The new node will have `ref_count`</span>
         <span class="comment">// set to 3: one SetReadiness, one Registration, and one Poll handle.</span>
-        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">into_raw</span>(<span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">ReadinessNode</span>::<span class="ident">new</span>(
+        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box::into_raw</span>(<span class="ident">Box::new</span>(<span class="ident">ReadinessNode::new</span>(
                     <span class="ident">queue</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opt</span>, <span class="number">3</span>)));
 
         <span class="kw">let</span> <span class="ident">registration</span> <span class="op">=</span> <span class="ident">Registration</span> {
@@ -4442,34 +4440,34 @@
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span> <span class="op">=</span> <span class="string">&quot;0.6.5&quot;</span>, <span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;use `Evented` impl&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;with-deprecated&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opts</span>)
     }
 
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">since</span> <span class="op">=</span> <span class="string">&quot;0.6.5&quot;</span>, <span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;use `Poll::deregister` instead&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;with-deprecated&quot;</span>)]</span>
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready</span>::<span class="ident">empty</span>(), <span class="ident">PollOpt</span>::<span class="ident">empty</span>())
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">deregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready::empty</span>(), <span class="ident">PollOpt::empty</span>())
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Evented</span> <span class="kw">for</span> <span class="ident">Registration</span> {
-    <span class="kw">fn</span> <span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">register</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opts</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">reregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opts</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">token</span>, <span class="ident">interest</span>, <span class="ident">opts</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">deregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready</span>::<span class="ident">empty</span>(), <span class="ident">PollOpt</span>::<span class="ident">empty</span>())
+    <span class="kw">fn</span> <span class="ident">deregister</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">update</span>(<span class="ident">poll</span>, <span class="ident">Token</span>(<span class="number">0</span>), <span class="ident">Ready::empty</span>(), <span class="ident">PollOpt::empty</span>())
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">Registration</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="comment">// `flag_as_dropped` toggles the `dropped` flag and notifies</span>
         <span class="comment">// `Poll::poll` to release its handle (which is just decrementing</span>
         <span class="comment">// the ref count).</span>
@@ -4480,8 +4478,8 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Registration</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Registration</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">fmt</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">fmt</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Registration&quot;</span>)
             .<span class="ident">finish</span>()
     }
@@ -4516,7 +4514,7 @@
     <span class="doccomment">/// #     try_main().unwrap();</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Ready</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">readiness</span>()
     }
 
@@ -4599,13 +4597,13 @@
     <span class="doccomment">/// [`Evented`]: event/trait.Evented.html#examples</span>
     <span class="doccomment">/// [`Poll`]: struct.Poll.html</span>
     <span class="doccomment">/// [`Poll::poll`]: struct.Poll.html#method.poll</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ready</span>: <span class="ident">Ready</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ready</span>: <span class="ident">Ready</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">set_readiness</span>(<span class="ident">ready</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">SetReadiness</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">SetReadiness</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;SetReadiness&quot;</span>)
             .<span class="ident">finish</span>()
     }
@@ -4613,7 +4611,7 @@
 
 <span class="kw">impl</span> <span class="ident">RegistrationInner</span> {
     <span class="doccomment">/// Get the registration&#39;s readiness.</span>
-    <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span> {
+    <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">Ready</span> {
         <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>).<span class="ident">readiness</span>()
     }
 
@@ -4621,7 +4619,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function can be called concurrently by an arbitrary number of</span>
     <span class="doccomment">/// SetReadiness handles.</span>
-    <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ready</span>: <span class="ident">Ready</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">ready</span>: <span class="ident">Ready</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="comment">// Load the current atomic state.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">state</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next</span>;
@@ -4645,7 +4643,7 @@
 
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">compare_and_swap</span>(<span class="ident">state</span>, <span class="ident">next</span>, <span class="ident">AcqRel</span>);
 
-            <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">actual</span> {
+            <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">actual</span> {
                 <span class="kw">break</span>;
             }
 
@@ -4662,19 +4660,19 @@
     }
 
     <span class="doccomment">/// Update the registration details associated with the node</span>
-    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">update</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>, <span class="ident">token</span>: <span class="ident">Token</span>, <span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="comment">// First, ensure poll instances match</span>
         <span class="comment">//</span>
         <span class="comment">// Load the queue pointer, `Relaxed` is sufficient here as only the</span>
         <span class="comment">// pointer is being operated on. The actual memory is guaranteed to be</span>
         <span class="comment">// visible the `poll: &amp;Poll` ref passed as an argument to the function.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">queue</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">readiness_queue</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>);
-        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="kw-2">mut</span> () <span class="op">=</span> <span class="kw">unsafe</span> {
-            <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="kw-2">&amp;</span><span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw-2">*</span><span class="kw-2">mut</span> ())
+        <span class="kw">let</span> <span class="ident">other</span>: <span class="kw-2">&amp;</span><span class="kw-2">*mut</span> () <span class="op">=</span> <span class="kw">unsafe</span> {
+            <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="kw-2">&amp;</span><span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw-2">*mut</span> ())
         };
         <span class="kw">let</span> <span class="ident">other</span> <span class="op">=</span> <span class="kw-2">*</span><span class="ident">other</span>;
 
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span><span class="op">&gt;</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">mem</span>::<span class="ident">size_of</span>::<span class="op">&lt;</span><span class="kw-2">*</span><span class="kw-2">mut</span> ()<span class="op">&gt;</span>());
+        <span class="macro">debug_assert!</span>(<span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span><span class="op">&gt;</span>() <span class="op">==</span> <span class="ident">mem::size_of</span>::<span class="op">&lt;</span><span class="kw-2">*mut</span> ()<span class="op">&gt;</span>());
 
         <span class="kw">if</span> <span class="ident">queue</span>.<span class="ident">is_null</span>() {
             <span class="comment">// Attempt to set the queue pointer. `Release` ordering synchronizes</span>
@@ -4699,23 +4697,23 @@
                 <span class="comment">// Down below in `release_node` when we deallocate this</span>
                 <span class="comment">// `RegistrationInner` is where we&#39;ll transmute this back to an</span>
                 <span class="comment">// arc and decrement the reference count.</span>
-                <span class="ident">mem</span>::<span class="ident">forget</span>(<span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">clone</span>());
+                <span class="ident">mem::forget</span>(<span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">clone</span>());
             } <span class="kw">else</span> {
                 <span class="comment">// The CAS failed, another thread set the queue pointer, so ensure</span>
                 <span class="comment">// that the pointer and `other` match</span>
                 <span class="kw">if</span> <span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">other</span> {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;registration handle associated with another `Poll` instance&quot;</span>));
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::Other</span>, <span class="string">&quot;registration handle associated with another `Poll` instance&quot;</span>));
                 }
             }
 
             <span class="ident">queue</span> <span class="op">=</span> <span class="ident">other</span>;
         } <span class="kw">else</span> <span class="kw">if</span> <span class="ident">queue</span> <span class="op">!</span><span class="op">=</span> <span class="ident">other</span> {
-            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;registration handle associated with another `Poll` instance&quot;</span>));
+            <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::Other</span>, <span class="string">&quot;registration handle associated with another `Poll` instance&quot;</span>));
         }
 
         <span class="kw">unsafe</span> {
-            <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">usize</span>;
-            <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">queue</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="kw-2">*</span><span class="ident">actual</span>);
+            <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">poll</span>.<span class="ident">readiness_queue</span>.<span class="ident">inner</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">usize</span>;
+            <span class="macro">debug_assert_eq!</span>(<span class="ident">queue</span> <span class="kw">as</span> <span class="ident">usize</span>, <span class="kw-2">*</span><span class="ident">actual</span>);
         }
 
         <span class="comment">// The `update_lock` atomic is used as a flag ensuring only a single</span>
@@ -4742,7 +4740,7 @@
         <span class="comment">// Read the current token, again this memory has been ordered by the</span>
         <span class="comment">// acquire on `update_lock`.</span>
         <span class="kw">let</span> <span class="ident">curr_token_pos</span> <span class="op">=</span> <span class="ident">state</span>.<span class="ident">token_write_pos</span>();
-        <span class="kw">let</span> <span class="ident">curr_token</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="self">self</span>::<span class="ident">token</span>(<span class="self">self</span>, <span class="ident">curr_token_pos</span>) };
+        <span class="kw">let</span> <span class="ident">curr_token</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident"><span class="self">self</span>::token</span>(<span class="self">self</span>, <span class="ident">curr_token_pos</span>) };
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next_token_pos</span> <span class="op">=</span> <span class="ident">curr_token_pos</span>;
 
@@ -4761,10 +4759,10 @@
 
             <span class="comment">// Update the token</span>
             <span class="kw">match</span> <span class="ident">next_token_pos</span> {
-                <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_0</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
-                <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_1</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
-                <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_2</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
-                <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                <span class="number">0</span> =&gt; <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_0</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
+                <span class="number">1</span> =&gt; <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_1</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
+                <span class="number">2</span> =&gt; <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">token_2</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">token</span> },
+                <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
             }
         }
 
@@ -4774,7 +4772,7 @@
 
             <span class="comment">// The node is only dropped once all `Registration` handles are</span>
             <span class="comment">// dropped. Only `Registration` can call `update`.</span>
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">state</span>.<span class="ident">is_dropped</span>());
+            <span class="macro">debug_assert!</span>(<span class="op">!</span><span class="ident">state</span>.<span class="ident">is_dropped</span>());
 
             <span class="comment">// Update the write token position, this will also release the token</span>
             <span class="comment">// to Poll::poll.</span>
@@ -4799,13 +4797,13 @@
             <span class="comment">// memory visibility.</span>
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">state</span>.<span class="ident">compare_and_swap</span>(<span class="ident">state</span>, <span class="ident">next</span>, <span class="ident">Release</span>);
 
-            <span class="kw">if</span> <span class="ident">actual</span> <span class="op">=</span><span class="op">=</span> <span class="ident">state</span> {
+            <span class="kw">if</span> <span class="ident">actual</span> <span class="op">==</span> <span class="ident">state</span> {
                 <span class="kw">break</span>;
             }
 
             <span class="comment">// CAS failed, but `curr_token_pos` should not have changed given</span>
             <span class="comment">// that we still hold the update lock.</span>
-            <span class="macro">debug_assert_eq</span><span class="macro">!</span>(<span class="ident">curr_token_pos</span>, <span class="ident">actual</span>.<span class="ident">token_write_pos</span>());
+            <span class="macro">debug_assert_eq!</span>(<span class="ident">curr_token_pos</span>, <span class="ident">actual</span>.<span class="ident">token_write_pos</span>());
 
             <span class="ident">state</span> <span class="op">=</span> <span class="ident">actual</span>;
         }
@@ -4822,16 +4820,16 @@
     }
 }
 
-<span class="kw">impl</span> <span class="ident">ops</span>::<span class="ident">Deref</span> <span class="kw">for</span> <span class="ident">RegistrationInner</span> {
+<span class="kw">impl</span> <span class="ident">ops::Deref</span> <span class="kw">for</span> <span class="ident">RegistrationInner</span> {
     <span class="kw">type</span> <span class="ident">Target</span> <span class="op">=</span> <span class="ident">ReadinessNode</span>;
 
-    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span> {
+    <span class="kw">fn</span> <span class="ident">deref</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span> {
         <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">node</span> }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">RegistrationInner</span> {
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">RegistrationInner</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">RegistrationInner</span> {
         <span class="comment">// Using a relaxed ordering is alright here, as knowledge of the</span>
         <span class="comment">// original reference prevents other threads from erroneously deleting</span>
         <span class="comment">// the object.</span>
@@ -4855,7 +4853,7 @@
         <span class="comment">// We abort because such a program is incredibly degenerate, and we</span>
         <span class="comment">// don&#39;t care to support it.</span>
         <span class="kw">if</span> <span class="ident">old_size</span> <span class="op">&amp;</span> <span class="op">!</span><span class="ident">MAX_REFCOUNT</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
-            <span class="ident">process</span>::<span class="ident">abort</span>();
+            <span class="ident">process::abort</span>();
         }
 
         <span class="ident">RegistrationInner</span> {
@@ -4865,7 +4863,7 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">RegistrationInner</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="comment">// Only handles releasing from `Registration` and `SetReadiness`</span>
         <span class="comment">// handles. Poll has to call this itself.</span>
         <span class="ident">release_node</span>(<span class="self">self</span>.<span class="ident">node</span>);
@@ -4880,21 +4878,21 @@
 
 <span class="kw">impl</span> <span class="ident">ReadinessQueue</span> {
     <span class="doccomment">/// Create a new `ReadinessQueue`.</span>
-    <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">ReadinessQueue</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">ReadinessQueue</span><span class="op">&gt;</span> {
         <span class="ident">is_send</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>();
         <span class="ident">is_sync</span>::<span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>();
 
-        <span class="kw">let</span> <span class="ident">end_marker</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">ReadinessNode</span>::<span class="ident">marker</span>());
-        <span class="kw">let</span> <span class="ident">sleep_marker</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">ReadinessNode</span>::<span class="ident">marker</span>());
-        <span class="kw">let</span> <span class="ident">closed_marker</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">new</span>(<span class="ident">ReadinessNode</span>::<span class="ident">marker</span>());
+        <span class="kw">let</span> <span class="ident">end_marker</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ReadinessNode::marker</span>());
+        <span class="kw">let</span> <span class="ident">sleep_marker</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ReadinessNode::marker</span>());
+        <span class="kw">let</span> <span class="ident">closed_marker</span> <span class="op">=</span> <span class="ident">Box::new</span>(<span class="ident">ReadinessNode::marker</span>());
 
-        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">end_marker</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
+        <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">end_marker</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="kw">_</span>;
 
         <span class="prelude-val">Ok</span>(<span class="ident">ReadinessQueue</span> {
-            <span class="ident">inner</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">ReadinessQueueInner</span> {
-                <span class="ident">awakener</span>: <span class="ident">sys</span>::<span class="ident">Awakener</span>::<span class="ident">new</span>()<span class="question-mark">?</span>,
-                <span class="ident">head_readiness</span>: <span class="ident">AtomicPtr</span>::<span class="ident">new</span>(<span class="ident">ptr</span>),
-                <span class="ident">tail_readiness</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">ptr</span>),
+            <span class="ident">inner</span>: <span class="ident">Arc::new</span>(<span class="ident">ReadinessQueueInner</span> {
+                <span class="ident">awakener</span>: <span class="ident">sys::Awakener::new</span>()<span class="question-mark">?</span>,
+                <span class="ident">head_readiness</span>: <span class="ident">AtomicPtr::new</span>(<span class="ident">ptr</span>),
+                <span class="ident">tail_readiness</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">ptr</span>),
                 <span class="ident">end_marker</span>,
                 <span class="ident">sleep_marker</span>,
                 <span class="ident">closed_marker</span>,
@@ -4903,13 +4901,13 @@
     }
 
     <span class="doccomment">/// Poll the queue for new events</span>
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">sys</span>::<span class="ident">Events</span>) {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;mut</span> <span class="ident">sys::Events</span>) {
         <span class="comment">// `until` is set with the first node that gets re-enqueued due to being</span>
         <span class="comment">// set to have level-triggered notifications. This prevents an infinite</span>
         <span class="comment">// loop where `Poll::poll` will keep dequeuing nodes it enqueues.</span>
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">until</span> <span class="op">=</span> <span class="ident">ptr</span>::<span class="ident">null_mut</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">until</span> <span class="op">=</span> <span class="ident">ptr::null_mut</span>();
 
-        <span class="kw">if</span> <span class="ident">dst</span>.<span class="ident">len</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">dst</span>.<span class="ident">capacity</span>() {
+        <span class="kw">if</span> <span class="ident">dst</span>.<span class="ident">len</span>() <span class="op">==</span> <span class="ident">dst</span>.<span class="ident">capacity</span>() {
             <span class="comment">// If `dst` is already full, the readiness queue won&#39;t be drained.</span>
             <span class="comment">// This might result in `sleep_marker` staying in the queue and</span>
             <span class="comment">// unecessary pipe writes occuring.</span>
@@ -4923,8 +4921,8 @@
             <span class="comment">// a syscall, which should be enough to enable the other thread to</span>
             <span class="comment">// finish the queuing process.</span>
             <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">dequeue_node</span>(<span class="ident">until</span>) } {
-                <span class="ident">Dequeue</span>::<span class="ident">Empty</span> <span class="op">|</span> <span class="ident">Dequeue</span>::<span class="ident">Inconsistent</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
-                <span class="ident">Dequeue</span>::<span class="ident">Data</span>(<span class="ident">ptr</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ptr</span>,
+                <span class="ident">Dequeue::Empty</span> <span class="op">|</span> <span class="ident">Dequeue::Inconsistent</span> =&gt; <span class="kw">break</span>,
+                <span class="ident">Dequeue::Data</span>(<span class="ident">ptr</span>) =&gt; <span class="ident">ptr</span>,
             };
 
             <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ptr</span> };
@@ -4943,7 +4941,7 @@
 
                 <span class="comment">// Given that the node was just read from the queue, the</span>
                 <span class="comment">// `queued` flag should still be set.</span>
-                <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">state</span>.<span class="ident">is_queued</span>());
+                <span class="macro">debug_assert!</span>(<span class="ident">state</span>.<span class="ident">is_queued</span>());
 
                 <span class="comment">// The dropped flag means we need to release the node and</span>
                 <span class="comment">// perform no further processing on it.</span>
@@ -4972,13 +4970,13 @@
                 <span class="comment">// we read the most up to date token value.</span>
                 <span class="ident">next</span>.<span class="ident">update_token_read_pos</span>();
 
-                <span class="kw">if</span> <span class="ident">state</span> <span class="op">=</span><span class="op">=</span> <span class="ident">next</span> {
+                <span class="kw">if</span> <span class="ident">state</span> <span class="op">==</span> <span class="ident">next</span> {
                     <span class="kw">break</span>;
                 }
 
                 <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">state</span>.<span class="ident">compare_and_swap</span>(<span class="ident">state</span>, <span class="ident">next</span>, <span class="ident">AcqRel</span>);
 
-                <span class="kw">if</span> <span class="ident">actual</span> <span class="op">=</span><span class="op">=</span> <span class="ident">state</span> {
+                <span class="kw">if</span> <span class="ident">actual</span> <span class="op">==</span> <span class="ident">state</span> {
                     <span class="kw">break</span>;
                 }
 
@@ -5002,7 +5000,7 @@
                 <span class="kw">let</span> <span class="ident">token</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="ident">token</span>(<span class="ident">node</span>, <span class="ident">next</span>.<span class="ident">token_read_pos</span>()) };
 
                 <span class="comment">// Push the event</span>
-                <span class="ident">dst</span>.<span class="ident">push_event</span>(<span class="ident">Event</span>::<span class="ident">new</span>(<span class="ident">readiness</span>, <span class="ident">token</span>));
+                <span class="ident">dst</span>.<span class="ident">push_event</span>(<span class="ident">Event::new</span>(<span class="ident">readiness</span>, <span class="ident">token</span>));
             }
         }
     }
@@ -5010,7 +5008,7 @@
     <span class="doccomment">/// Prepare the queue for the `Poll::poll` thread to block in the system</span>
     <span class="doccomment">/// selector. This involves changing `head_readiness` to `sleep_marker`.</span>
     <span class="doccomment">/// Returns true if successful and `poll` can block.</span>
-    <span class="kw">fn</span> <span class="ident">prepare_for_sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">prepare_for_sleep</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">end_marker</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">end_marker</span>();
         <span class="kw">let</span> <span class="ident">sleep_marker</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">sleep_marker</span>();
 
@@ -5020,8 +5018,8 @@
         <span class="comment">// head is as well. If it is, then the queue is currently ready to</span>
         <span class="comment">// sleep. If it is not, then the queue is not empty and there should be</span>
         <span class="comment">// no sleeping.</span>
-        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">=</span><span class="op">=</span> <span class="ident">sleep_marker</span> {
-            <span class="kw">return</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">head_readiness</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>) <span class="op">=</span><span class="op">=</span> <span class="ident">sleep_marker</span>;
+        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">==</span> <span class="ident">sleep_marker</span> {
+            <span class="kw">return</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">head_readiness</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>) <span class="op">==</span> <span class="ident">sleep_marker</span>;
         }
 
         <span class="comment">// If the tail is not currently set to `end_marker`, then the queue is</span>
@@ -5040,12 +5038,12 @@
         <span class="comment">// Before inserting a node into the queue, the next pointer has to be</span>
         <span class="comment">// set to null. Again, this is only safe to do when the node is not</span>
         <span class="comment">// currently in the queue, but we already have ensured this.</span>
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">sleep_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>(), <span class="ident">Relaxed</span>);
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">sleep_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr::null_mut</span>(), <span class="ident">Relaxed</span>);
 
         <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">head_readiness</span>.<span class="ident">compare_and_swap</span>(
             <span class="ident">end_marker</span>, <span class="ident">sleep_marker</span>, <span class="ident">AcqRel</span>);
 
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">sleep_marker</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">sleep_marker</span>);
 
         <span class="kw">if</span> <span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">end_marker</span> {
             <span class="comment">// The readiness queue is not empty</span>
@@ -5053,9 +5051,9 @@
         }
 
         <span class="comment">// The current tail should be pointing to `end_marker`</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">=</span><span class="op">=</span> <span class="ident">end_marker</span> });
+        <span class="macro">debug_assert!</span>(<span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">==</span> <span class="ident">end_marker</span> });
         <span class="comment">// The `end_marker` next pointer should be null</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">end_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>).<span class="ident">is_null</span>());
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">end_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>).<span class="ident">is_null</span>());
 
         <span class="comment">// Update tail pointer.</span>
         <span class="kw">unsafe</span> { <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">sleep_marker</span>; }
@@ -5064,28 +5062,28 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">ReadinessQueue</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="comment">// Close the queue by enqueuing the closed node</span>
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">enqueue_node</span>(<span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">closed_marker</span>);
 
         <span class="kw">loop</span> {
             <span class="comment">// Free any nodes that happen to be left in the readiness queue</span>
-            <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">dequeue_node</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>()) } {
-                <span class="ident">Dequeue</span>::<span class="ident">Empty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
-                <span class="ident">Dequeue</span>::<span class="ident">Inconsistent</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="kw">let</span> <span class="ident">ptr</span> <span class="op">=</span> <span class="kw">match</span> <span class="kw">unsafe</span> { <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">dequeue_node</span>(<span class="ident">ptr::null_mut</span>()) } {
+                <span class="ident">Dequeue::Empty</span> =&gt; <span class="kw">break</span>,
+                <span class="ident">Dequeue::Inconsistent</span> =&gt; {
                     <span class="comment">// This really shouldn&#39;t be possible as all other handles to</span>
                     <span class="comment">// `ReadinessQueueInner` are dropped, but handle this by</span>
                     <span class="comment">// spinning I guess?</span>
                     <span class="kw">continue</span>;
                 }
-                <span class="ident">Dequeue</span>::<span class="ident">Data</span>(<span class="ident">ptr</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">ptr</span>,
+                <span class="ident">Dequeue::Data</span>(<span class="ident">ptr</span>) =&gt; <span class="ident">ptr</span>,
             };
 
             <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="kw">unsafe</span> { <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="ident">ptr</span> };
 
             <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">state</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">state</span>.<span class="ident">is_queued</span>());
+            <span class="macro">debug_assert!</span>(<span class="ident">state</span>.<span class="ident">is_queued</span>());
 
             <span class="ident">release_node</span>(<span class="ident">ptr</span>);
         }
@@ -5093,13 +5091,13 @@
 }
 
 <span class="kw">impl</span> <span class="ident">ReadinessQueueInner</span> {
-    <span class="kw">fn</span> <span class="ident">wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">awakener</span>.<span class="ident">wakeup</span>()
     }
 
     <span class="doccomment">/// Prepend the given node to the head of the readiness queue. This is done</span>
     <span class="doccomment">/// with relaxed ordering. Returns true if `Poll` needs to be woken up.</span>
-    <span class="kw">fn</span> <span class="ident">enqueue_node_with_wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">enqueue_node_with_wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">enqueue_node</span>(<span class="ident">node</span>) {
             <span class="self">self</span>.<span class="ident">wakeup</span>()<span class="question-mark">?</span>;
         }
@@ -5108,28 +5106,28 @@
     }
 
     <span class="doccomment">/// Push the node into the readiness queue</span>
-    <span class="kw">fn</span> <span class="ident">enqueue_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">enqueue_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) -&gt; <span class="ident">bool</span> {
         <span class="comment">// This is the 1024cores.net intrusive MPSC queue [1] &quot;push&quot; function.</span>
-        <span class="kw">let</span> <span class="ident">node_ptr</span> <span class="op">=</span> <span class="ident">node</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="kw">_</span>;
+        <span class="kw">let</span> <span class="ident">node_ptr</span> <span class="op">=</span> <span class="ident">node</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw">_</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="kw">_</span>;
 
         <span class="comment">// Relaxed used as the ordering is &quot;released&quot; when swapping</span>
         <span class="comment">// `head_readiness`</span>
-        <span class="ident">node</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>(), <span class="ident">Relaxed</span>);
+        <span class="ident">node</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr::null_mut</span>(), <span class="ident">Relaxed</span>);
 
         <span class="kw">unsafe</span> {
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">prev</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head_readiness</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
 
             <span class="kw">loop</span> {
-                <span class="kw">if</span> <span class="ident">prev</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">closed_marker</span>() {
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">node_ptr</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">closed_marker</span>());
+                <span class="kw">if</span> <span class="ident">prev</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">closed_marker</span>() {
+                    <span class="macro">debug_assert!</span>(<span class="ident">node_ptr</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">closed_marker</span>());
                     <span class="comment">// debug_assert!(node_ptr != self.end_marker());</span>
-                    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">node_ptr</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>());
+                    <span class="macro">debug_assert!</span>(<span class="ident">node_ptr</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>());
 
                     <span class="kw">if</span> <span class="ident">node_ptr</span> <span class="op">!</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">end_marker</span>() {
                         <span class="comment">// The readiness queue is shutdown, but the enqueue flag was</span>
                         <span class="comment">// set. This means that we are responsible for decrementing</span>
                         <span class="comment">// the ready queue&#39;s ref count</span>
-                        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">node</span>.<span class="ident">ref_count</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>) <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span>);
+                        <span class="macro">debug_assert!</span>(<span class="ident">node</span>.<span class="ident">ref_count</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>) <span class="op">&gt;</span><span class="op">=</span> <span class="number">2</span>);
                         <span class="ident">release_node</span>(<span class="ident">node_ptr</span>);
                     }
 
@@ -5138,18 +5136,18 @@
 
                 <span class="kw">let</span> <span class="ident">act</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head_readiness</span>.<span class="ident">compare_and_swap</span>(<span class="ident">prev</span>, <span class="ident">node_ptr</span>, <span class="ident">AcqRel</span>);
 
-                <span class="kw">if</span> <span class="ident">prev</span> <span class="op">=</span><span class="op">=</span> <span class="ident">act</span> {
+                <span class="kw">if</span> <span class="ident">prev</span> <span class="op">==</span> <span class="ident">act</span> {
                     <span class="kw">break</span>;
                 }
 
                 <span class="ident">prev</span> <span class="op">=</span> <span class="ident">act</span>;
             }
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>((<span class="kw-2">*</span><span class="ident">prev</span>).<span class="ident">next_readiness</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>).<span class="ident">is_null</span>());
+            <span class="macro">debug_assert!</span>((<span class="kw-2">*</span><span class="ident">prev</span>).<span class="ident">next_readiness</span>.<span class="ident">load</span>(<span class="ident">Relaxed</span>).<span class="ident">is_null</span>());
 
             (<span class="kw-2">*</span><span class="ident">prev</span>).<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">node_ptr</span>, <span class="ident">Release</span>);
 
-            <span class="ident">prev</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>()
+            <span class="ident">prev</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>()
         }
     }
 
@@ -5166,12 +5164,12 @@
 
             <span class="comment">// The empty markeer is *not* currently in the readiness queue</span>
             <span class="comment">// (since the sleep markeris).</span>
-            <span class="self">self</span>.<span class="ident">end_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>(), <span class="ident">Relaxed</span>);
+            <span class="self">self</span>.<span class="ident">end_marker</span>.<span class="ident">next_readiness</span>.<span class="ident">store</span>(<span class="ident">ptr::null_mut</span>(), <span class="ident">Relaxed</span>);
 
             <span class="kw">let</span> <span class="ident">actual</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">head_readiness</span>.<span class="ident">compare_and_swap</span>(
                 <span class="ident">sleep_marker</span>, <span class="ident">end_marker</span>, <span class="ident">AcqRel</span>);
 
-            <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">end_marker</span>);
+            <span class="macro">debug_assert!</span>(<span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">end_marker</span>);
 
             <span class="kw">if</span> <span class="ident">actual</span> <span class="op">!</span><span class="op">=</span> <span class="ident">sleep_marker</span> {
                 <span class="comment">// The readiness queue is not empty, we cannot remove the sleep</span>
@@ -5185,19 +5183,19 @@
     }
 
     <span class="doccomment">/// Must only be called in `poll` or `drop`</span>
-    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">dequeue_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">until</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Dequeue</span> {
+    <span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">dequeue_node</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">until</span>: <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>) -&gt; <span class="ident">Dequeue</span> {
         <span class="comment">// This is the 1024cores.net intrusive MPSC queue [1] &quot;pop&quot; function</span>
         <span class="comment">// with the modifications mentioned at the top of the file.</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">tail</span> <span class="op">=</span> <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>();
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">next</span> <span class="op">=</span> (<span class="kw-2">*</span><span class="ident">tail</span>).<span class="ident">next_readiness</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
 
-        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">end_marker</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">tail</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">tail</span> <span class="op">=</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">closed_marker</span>() {
+        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">end_marker</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">tail</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">sleep_marker</span>() <span class="op">|</span><span class="op">|</span> <span class="ident">tail</span> <span class="op">==</span> <span class="self">self</span>.<span class="ident">closed_marker</span>() {
             <span class="kw">if</span> <span class="ident">next</span>.<span class="ident">is_null</span>() {
                 <span class="comment">// Make sure the sleep marker is removed (as we are no longer</span>
                 <span class="comment">// sleeping</span>
                 <span class="self">self</span>.<span class="ident">clear_sleep_marker</span>();
 
-                <span class="kw">return</span> <span class="ident">Dequeue</span>::<span class="ident">Empty</span>;
+                <span class="kw">return</span> <span class="ident">Dequeue::Empty</span>;
             }
 
             <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">next</span>;
@@ -5212,17 +5210,17 @@
         <span class="comment">// 1) The queue is inconsistent, which is handled explicitly</span>
         <span class="comment">// 2) We encounter `until` at this point in dequeue</span>
         <span class="comment">// 3) we will pop a different node</span>
-        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">=</span><span class="op">=</span> <span class="ident">until</span> {
-            <span class="kw">return</span> <span class="ident">Dequeue</span>::<span class="ident">Empty</span>;
+        <span class="kw">if</span> <span class="ident">tail</span> <span class="op">==</span> <span class="ident">until</span> {
+            <span class="kw">return</span> <span class="ident">Dequeue::Empty</span>;
         }
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">next</span>.<span class="ident">is_null</span>() {
             <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">next</span>;
-            <span class="kw">return</span> <span class="ident">Dequeue</span>::<span class="ident">Data</span>(<span class="ident">tail</span>);
+            <span class="kw">return</span> <span class="ident">Dequeue::Data</span>(<span class="ident">tail</span>);
         }
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">head_readiness</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>) <span class="op">!</span><span class="op">=</span> <span class="ident">tail</span> {
-            <span class="kw">return</span> <span class="ident">Dequeue</span>::<span class="ident">Inconsistent</span>;
+            <span class="kw">return</span> <span class="ident">Dequeue::Inconsistent</span>;
         }
 
         <span class="comment">// Push the stub node</span>
@@ -5232,60 +5230,60 @@
 
         <span class="kw">if</span> <span class="op">!</span><span class="ident">next</span>.<span class="ident">is_null</span>() {
             <span class="kw-2">*</span><span class="self">self</span>.<span class="ident">tail_readiness</span>.<span class="ident">get</span>() <span class="op">=</span> <span class="ident">next</span>;
-            <span class="kw">return</span> <span class="ident">Dequeue</span>::<span class="ident">Data</span>(<span class="ident">tail</span>);
+            <span class="kw">return</span> <span class="ident">Dequeue::Data</span>(<span class="ident">tail</span>);
         }
 
-        <span class="ident">Dequeue</span>::<span class="ident">Inconsistent</span>
+        <span class="ident">Dequeue::Inconsistent</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">end_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span> {
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">end_marker</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>
+    <span class="kw">fn</span> <span class="ident">end_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span> {
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">end_marker</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">sleep_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span> {
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">sleep_marker</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>
+    <span class="kw">fn</span> <span class="ident">sleep_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span> {
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">sleep_marker</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">closed_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span> {
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">closed_marker</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>
+    <span class="kw">fn</span> <span class="ident">closed_marker</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span> {
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span><span class="self">self</span>.<span class="ident">closed_marker</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">ReadinessNode</span> <span class="kw">as</span> <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>
     }
 }
 
 <span class="kw">impl</span> <span class="ident">ReadinessNode</span> {
     <span class="doccomment">/// Return a new `ReadinessNode`, initialized with a ref_count of 3.</span>
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">queue</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> (),
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">queue</span>: <span class="kw-2">*mut</span> (),
            <span class="ident">token</span>: <span class="ident">Token</span>,
            <span class="ident">interest</span>: <span class="ident">Ready</span>,
            <span class="ident">opt</span>: <span class="ident">PollOpt</span>,
-           <span class="ident">ref_count</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessNode</span>
+           <span class="ident">ref_count</span>: <span class="ident">usize</span>) -&gt; <span class="ident">ReadinessNode</span>
     {
         <span class="ident">ReadinessNode</span> {
-            <span class="ident">state</span>: <span class="ident">AtomicState</span>::<span class="ident">new</span>(<span class="ident">interest</span>, <span class="ident">opt</span>),
+            <span class="ident">state</span>: <span class="ident">AtomicState::new</span>(<span class="ident">interest</span>, <span class="ident">opt</span>),
             <span class="comment">// Only the first token is set, the others are initialized to 0</span>
-            <span class="ident">token_0</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">token</span>),
-            <span class="ident">token_1</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
-            <span class="ident">token_2</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
-            <span class="ident">next_readiness</span>: <span class="ident">AtomicPtr</span>::<span class="ident">new</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>()),
-            <span class="ident">update_lock</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
-            <span class="ident">readiness_queue</span>: <span class="ident">AtomicPtr</span>::<span class="ident">new</span>(<span class="ident">queue</span>),
-            <span class="ident">ref_count</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="ident">ref_count</span>),
+            <span class="ident">token_0</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">token</span>),
+            <span class="ident">token_1</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
+            <span class="ident">token_2</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
+            <span class="ident">next_readiness</span>: <span class="ident">AtomicPtr::new</span>(<span class="ident">ptr::null_mut</span>()),
+            <span class="ident">update_lock</span>: <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>),
+            <span class="ident">readiness_queue</span>: <span class="ident">AtomicPtr::new</span>(<span class="ident">queue</span>),
+            <span class="ident">ref_count</span>: <span class="ident">AtomicUsize::new</span>(<span class="ident">ref_count</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">marker</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessNode</span> {
+    <span class="kw">fn</span> <span class="ident">marker</span>() -&gt; <span class="ident">ReadinessNode</span> {
         <span class="ident">ReadinessNode</span> {
-            <span class="ident">state</span>: <span class="ident">AtomicState</span>::<span class="ident">new</span>(<span class="ident">Ready</span>::<span class="ident">empty</span>(), <span class="ident">PollOpt</span>::<span class="ident">empty</span>()),
-            <span class="ident">token_0</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
-            <span class="ident">token_1</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
-            <span class="ident">token_2</span>: <span class="ident">UnsafeCell</span>::<span class="ident">new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
-            <span class="ident">next_readiness</span>: <span class="ident">AtomicPtr</span>::<span class="ident">new</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>()),
-            <span class="ident">update_lock</span>: <span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>),
-            <span class="ident">readiness_queue</span>: <span class="ident">AtomicPtr</span>::<span class="ident">new</span>(<span class="ident">ptr</span>::<span class="ident">null_mut</span>()),
-            <span class="ident">ref_count</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">0</span>),
+            <span class="ident">state</span>: <span class="ident">AtomicState::new</span>(<span class="ident">Ready::empty</span>(), <span class="ident">PollOpt::empty</span>()),
+            <span class="ident">token_0</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
+            <span class="ident">token_1</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
+            <span class="ident">token_2</span>: <span class="ident">UnsafeCell::new</span>(<span class="ident">Token</span>(<span class="number">0</span>)),
+            <span class="ident">next_readiness</span>: <span class="ident">AtomicPtr::new</span>(<span class="ident">ptr::null_mut</span>()),
+            <span class="ident">update_lock</span>: <span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>),
+            <span class="ident">readiness_queue</span>: <span class="ident">AtomicPtr::new</span>(<span class="ident">ptr::null_mut</span>()),
+            <span class="ident">ref_count</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">enqueue_with_wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">enqueue_with_wakeup</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
         <span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">readiness_queue</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
 
         <span class="kw">if</span> <span class="ident">queue</span>.<span class="ident">is_null</span>() {
@@ -5297,25 +5295,25 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">enqueue_with_wakeup</span>(<span class="ident">queue</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> (), <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-    <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">queue</span>.<span class="ident">is_null</span>());
+<span class="kw">fn</span> <span class="ident">enqueue_with_wakeup</span>(<span class="ident">queue</span>: <span class="kw-2">*mut</span> (), <span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+    <span class="macro">debug_assert!</span>(<span class="op">!</span><span class="ident">queue</span>.<span class="ident">is_null</span>());
     <span class="comment">// This is ugly... but we don&#39;t want to bump the ref count.</span>
     <span class="kw">let</span> <span class="ident">queue</span>: <span class="kw-2">&amp;</span><span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span> <span class="op">=</span> <span class="kw">unsafe</span> {
-        <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="kw-2">&amp;</span><span class="ident">queue</span> <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="kw-2">*</span><span class="kw-2">mut</span> () <span class="kw">as</span> <span class="kw-2">*</span><span class="kw">const</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span>)
+        <span class="kw-2">&amp;</span><span class="kw-2">*</span>(<span class="kw-2">&amp;</span><span class="ident">queue</span> <span class="kw">as</span> <span class="kw-2">*const</span> <span class="kw-2">*mut</span> () <span class="kw">as</span> <span class="kw-2">*const</span> <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span>)
     };
     <span class="ident">queue</span>.<span class="ident">enqueue_node_with_wakeup</span>(<span class="ident">node</span>)
 }
 
-<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">token</span>(<span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>, <span class="ident">pos</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Token</span> {
+<span class="kw">unsafe</span> <span class="kw">fn</span> <span class="ident">token</span>(<span class="ident">node</span>: <span class="kw-2">&amp;</span><span class="ident">ReadinessNode</span>, <span class="ident">pos</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Token</span> {
     <span class="kw">match</span> <span class="ident">pos</span> {
-        <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_0</span>.<span class="ident">get</span>(),
-        <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_1</span>.<span class="ident">get</span>(),
-        <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_2</span>.<span class="ident">get</span>(),
-        <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+        <span class="number">0</span> =&gt; <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_0</span>.<span class="ident">get</span>(),
+        <span class="number">1</span> =&gt; <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_1</span>.<span class="ident">get</span>(),
+        <span class="number">2</span> =&gt; <span class="kw-2">*</span><span class="ident">node</span>.<span class="ident">token_2</span>.<span class="ident">get</span>(),
+        <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
     }
 }
 
-<span class="kw">fn</span> <span class="ident">release_node</span>(<span class="ident">ptr</span>: <span class="kw-2">*</span><span class="kw-2">mut</span> <span class="ident">ReadinessNode</span>) {
+<span class="kw">fn</span> <span class="ident">release_node</span>(<span class="ident">ptr</span>: <span class="kw-2">*mut</span> <span class="ident">ReadinessNode</span>) {
     <span class="kw">unsafe</span> {
         <span class="comment">// `AcqRel` synchronizes with other `release_node` functions and ensures</span>
         <span class="comment">// that the drop happens after any reads / writes on other threads.</span>
@@ -5323,7 +5321,7 @@
             <span class="kw">return</span>;
         }
 
-        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box</span>::<span class="ident">from_raw</span>(<span class="ident">ptr</span>);
+        <span class="kw">let</span> <span class="ident">node</span> <span class="op">=</span> <span class="ident">Box::from_raw</span>(<span class="ident">ptr</span>);
 
         <span class="comment">// Decrement the readiness_queue Arc</span>
         <span class="kw">let</span> <span class="ident">queue</span> <span class="op">=</span> <span class="ident">node</span>.<span class="ident">readiness_queue</span>.<span class="ident">load</span>(<span class="ident">Acquire</span>);
@@ -5332,34 +5330,34 @@
             <span class="kw">return</span>;
         }
 
-        <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">mem</span>::<span class="ident">transmute</span>(<span class="ident">queue</span>);
+        <span class="kw">let</span> <span class="kw">_</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">ReadinessQueueInner</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">mem::transmute</span>(<span class="ident">queue</span>);
     }
 }
 
 <span class="kw">impl</span> <span class="ident">AtomicState</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">AtomicState</span> {
-        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ReadinessState</span>::<span class="ident">new</span>(<span class="ident">interest</span>, <span class="ident">opt</span>);
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">AtomicState</span> {
+        <span class="kw">let</span> <span class="ident">state</span> <span class="op">=</span> <span class="ident">ReadinessState::new</span>(<span class="ident">interest</span>, <span class="ident">opt</span>);
 
         <span class="ident">AtomicState</span> {
-            <span class="ident">inner</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="ident">state</span>.<span class="ident">into</span>()),
+            <span class="ident">inner</span>: <span class="ident">AtomicUsize::new</span>(<span class="ident">state</span>.<span class="ident">into</span>()),
         }
     }
 
     <span class="doccomment">/// Loads the current `ReadinessState`</span>
-    <span class="kw">fn</span> <span class="ident">load</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">order</span>: <span class="ident">Ordering</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessState</span> {
+    <span class="kw">fn</span> <span class="ident">load</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">order</span>: <span class="ident">Ordering</span>) -&gt; <span class="ident">ReadinessState</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">load</span>(<span class="ident">order</span>).<span class="ident">into</span>()
     }
 
     <span class="doccomment">/// Stores a state if the current state is the same as `current`.</span>
-    <span class="kw">fn</span> <span class="ident">compare_and_swap</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">current</span>: <span class="ident">ReadinessState</span>, <span class="ident">new</span>: <span class="ident">ReadinessState</span>, <span class="ident">order</span>: <span class="ident">Ordering</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessState</span> {
+    <span class="kw">fn</span> <span class="ident">compare_and_swap</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">current</span>: <span class="ident">ReadinessState</span>, <span class="ident">new</span>: <span class="ident">ReadinessState</span>, <span class="ident">order</span>: <span class="ident">Ordering</span>) -&gt; <span class="ident">ReadinessState</span> {
         <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">compare_and_swap</span>(<span class="ident">current</span>.<span class="ident">into</span>(), <span class="ident">new</span>.<span class="ident">into</span>(), <span class="ident">order</span>).<span class="ident">into</span>()
     }
 
     <span class="comment">// Returns `true` if the node should be queued</span>
-    <span class="kw">fn</span> <span class="ident">flag_as_dropped</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">flag_as_dropped</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="kw">let</span> <span class="ident">prev</span>: <span class="ident">ReadinessState</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">fetch_or</span>(<span class="ident">DROPPED_MASK</span> <span class="op">|</span> <span class="ident">QUEUED_MASK</span>, <span class="ident">Release</span>).<span class="ident">into</span>();
         <span class="comment">// The flag should not have been previously set</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">!</span><span class="ident">prev</span>.<span class="ident">is_dropped</span>());
+        <span class="macro">debug_assert!</span>(<span class="op">!</span><span class="ident">prev</span>.<span class="ident">is_dropped</span>());
 
         <span class="op">!</span><span class="ident">prev</span>.<span class="ident">is_queued</span>()
     }
@@ -5368,12 +5366,12 @@
 <span class="kw">impl</span> <span class="ident">ReadinessState</span> {
     <span class="comment">// Create a `ReadinessState` initialized with the provided arguments</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessState</span> {
-        <span class="kw">let</span> <span class="ident">interest</span> <span class="op">=</span> <span class="ident">event</span>::<span class="ident">ready_as_usize</span>(<span class="ident">interest</span>);
-        <span class="kw">let</span> <span class="ident">opt</span> <span class="op">=</span> <span class="ident">event</span>::<span class="ident">opt_as_usize</span>(<span class="ident">opt</span>);
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">interest</span>: <span class="ident">Ready</span>, <span class="ident">opt</span>: <span class="ident">PollOpt</span>) -&gt; <span class="ident">ReadinessState</span> {
+        <span class="kw">let</span> <span class="ident">interest</span> <span class="op">=</span> <span class="ident">event::ready_as_usize</span>(<span class="ident">interest</span>);
+        <span class="kw">let</span> <span class="ident">opt</span> <span class="op">=</span> <span class="ident">event::opt_as_usize</span>(<span class="ident">opt</span>);
 
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">interest</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">MASK_4</span>);
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="ident">opt</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">MASK_4</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">interest</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">MASK_4</span>);
+        <span class="macro">debug_assert!</span>(<span class="ident">opt</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">MASK_4</span>);
 
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">val</span> <span class="op">=</span> <span class="ident">interest</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">INTEREST_SHIFT</span>;
         <span class="ident">val</span> <span class="op">|</span><span class="op">=</span> <span class="ident">opt</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">POLL_OPT_SHIFT</span>;
@@ -5382,152 +5380,152 @@
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">get</span>(<span class="self">self</span>, <span class="ident">mask</span>: <span class="ident">usize</span>, <span class="ident">shift</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>{
+    <span class="kw">fn</span> <span class="ident">get</span>(<span class="self">self</span>, <span class="ident">mask</span>: <span class="ident">usize</span>, <span class="ident">shift</span>: <span class="ident">usize</span>) -&gt; <span class="ident">usize</span>{
         (<span class="self">self</span>.<span class="number">0</span> <span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">shift</span>) <span class="op">&amp;</span> <span class="ident">mask</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>, <span class="ident">mask</span>: <span class="ident">usize</span>, <span class="ident">shift</span>: <span class="ident">usize</span>) {
+    <span class="kw">fn</span> <span class="ident">set</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>, <span class="ident">mask</span>: <span class="ident">usize</span>, <span class="ident">shift</span>: <span class="ident">usize</span>) {
         <span class="self">self</span>.<span class="number">0</span> <span class="op">=</span> (<span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="op">!</span>(<span class="ident">mask</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">shift</span>)) <span class="op">|</span> (<span class="ident">val</span> <span class="op">&lt;</span><span class="op">&lt;</span> <span class="ident">shift</span>)
     }
 
     <span class="doccomment">/// Get the readiness</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span> {
+    <span class="kw">fn</span> <span class="ident">readiness</span>(<span class="self">self</span>) -&gt; <span class="ident">Ready</span> {
         <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">MASK_4</span>, <span class="ident">READINESS_SHIFT</span>);
-        <span class="ident">event</span>::<span class="ident">ready_from_usize</span>(<span class="ident">v</span>)
+        <span class="ident">event::ready_from_usize</span>(<span class="ident">v</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">effective_readiness</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span> {
+    <span class="kw">fn</span> <span class="ident">effective_readiness</span>(<span class="self">self</span>) -&gt; <span class="ident">Ready</span> {
         <span class="self">self</span>.<span class="ident">readiness</span>() <span class="op">&amp;</span> <span class="self">self</span>.<span class="ident">interest</span>()
     }
 
     <span class="doccomment">/// Set the readiness</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">Ready</span>) {
-        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event</span>::<span class="ident">ready_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">READINESS_SHIFT</span>);
+    <span class="kw">fn</span> <span class="ident">set_readiness</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">Ready</span>) {
+        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event::ready_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">READINESS_SHIFT</span>);
     }
 
     <span class="doccomment">/// Get the interest</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">interest</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Ready</span> {
+    <span class="kw">fn</span> <span class="ident">interest</span>(<span class="self">self</span>) -&gt; <span class="ident">Ready</span> {
         <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">MASK_4</span>, <span class="ident">INTEREST_SHIFT</span>);
-        <span class="ident">event</span>::<span class="ident">ready_from_usize</span>(<span class="ident">v</span>)
+        <span class="ident">event::ready_from_usize</span>(<span class="ident">v</span>)
     }
 
     <span class="doccomment">/// Set the interest</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_interest</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">Ready</span>) {
-        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event</span>::<span class="ident">ready_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">INTEREST_SHIFT</span>);
+    <span class="kw">fn</span> <span class="ident">set_interest</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">Ready</span>) {
+        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event::ready_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">INTEREST_SHIFT</span>);
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">disarm</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">set_interest</span>(<span class="ident">Ready</span>::<span class="ident">empty</span>());
+    <span class="kw">fn</span> <span class="ident">disarm</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="self">self</span>.<span class="ident">set_interest</span>(<span class="ident">Ready::empty</span>());
     }
 
     <span class="doccomment">/// Get the poll options</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">poll_opt</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">PollOpt</span> {
+    <span class="kw">fn</span> <span class="ident">poll_opt</span>(<span class="self">self</span>) -&gt; <span class="ident">PollOpt</span> {
         <span class="kw">let</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">MASK_4</span>, <span class="ident">POLL_OPT_SHIFT</span>);
-        <span class="ident">event</span>::<span class="ident">opt_from_usize</span>(<span class="ident">v</span>)
+        <span class="ident">event::opt_from_usize</span>(<span class="ident">v</span>)
     }
 
     <span class="doccomment">/// Set the poll options</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_poll_opt</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">PollOpt</span>) {
-        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event</span>::<span class="ident">opt_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">POLL_OPT_SHIFT</span>);
+    <span class="kw">fn</span> <span class="ident">set_poll_opt</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">v</span>: <span class="ident">PollOpt</span>) {
+        <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">event::opt_as_usize</span>(<span class="ident">v</span>), <span class="ident">MASK_4</span>, <span class="ident">POLL_OPT_SHIFT</span>);
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">is_queued</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">QUEUED_MASK</span> <span class="op">=</span><span class="op">=</span> <span class="ident">QUEUED_MASK</span>
+    <span class="kw">fn</span> <span class="ident">is_queued</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">QUEUED_MASK</span> <span class="op">==</span> <span class="ident">QUEUED_MASK</span>
     }
 
     <span class="doccomment">/// Set the queued flag</span>
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_queued</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">set_queued</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="comment">// Dropped nodes should never be queued</span>
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">is_dropped</span>());
+        <span class="macro">debug_assert!</span>(<span class="op">!</span><span class="self">self</span>.<span class="ident">is_dropped</span>());
         <span class="self">self</span>.<span class="number">0</span> <span class="op">|</span><span class="op">=</span> <span class="ident">QUEUED_MASK</span>;
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_dequeued</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="macro">debug_assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">is_queued</span>());
+    <span class="kw">fn</span> <span class="ident">set_dequeued</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.<span class="ident">is_queued</span>());
         <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;=</span> <span class="op">!</span><span class="ident">QUEUED_MASK</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">is_dropped</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
-        <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">DROPPED_MASK</span> <span class="op">=</span><span class="op">=</span> <span class="ident">DROPPED_MASK</span>
+    <span class="kw">fn</span> <span class="ident">is_dropped</span>(<span class="self">self</span>) -&gt; <span class="ident">bool</span> {
+        <span class="self">self</span>.<span class="number">0</span> <span class="op">&amp;</span> <span class="ident">DROPPED_MASK</span> <span class="op">==</span> <span class="ident">DROPPED_MASK</span>
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">token_read_pos</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">token_read_pos</span>(<span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">MASK_2</span>, <span class="ident">TOKEN_RD_SHIFT</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">token_write_pos</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">token_write_pos</span>(<span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="self">self</span>.<span class="ident">get</span>(<span class="ident">MASK_2</span>, <span class="ident">TOKEN_WR_SHIFT</span>)
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">next_token_pos</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">next_token_pos</span>(<span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="kw">let</span> <span class="ident">rd</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_read_pos</span>();
         <span class="kw">let</span> <span class="ident">wr</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_write_pos</span>();
 
         <span class="kw">match</span> <span class="ident">wr</span> {
-            <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="number">0</span> =&gt; {
                 <span class="kw">match</span> <span class="ident">rd</span> {
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
-                    <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="number">1</span> =&gt; <span class="number">2</span>,
+                    <span class="number">2</span> =&gt; <span class="number">1</span>,
+                    <span class="number">0</span> =&gt; <span class="number">1</span>,
+                    <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
                 }
             }
-            <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="number">1</span> =&gt; {
                 <span class="kw">match</span> <span class="ident">rd</span> {
-                    <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">2</span>,
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="number">0</span> =&gt; <span class="number">2</span>,
+                    <span class="number">2</span> =&gt; <span class="number">0</span>,
+                    <span class="number">1</span> =&gt; <span class="number">2</span>,
+                    <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
                 }
             }
-            <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> {
+            <span class="number">2</span> =&gt; {
                 <span class="kw">match</span> <span class="ident">rd</span> {
-                    <span class="number">0</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">1</span>,
-                    <span class="number">1</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-                    <span class="number">2</span> <span class="op">=</span><span class="op">&gt;</span> <span class="number">0</span>,
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+                    <span class="number">0</span> =&gt; <span class="number">1</span>,
+                    <span class="number">1</span> =&gt; <span class="number">0</span>,
+                    <span class="number">2</span> =&gt; <span class="number">0</span>,
+                    <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
                 }
             }
-            <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">unreachable</span><span class="macro">!</span>(),
+            <span class="kw">_</span> =&gt; <span class="macro">unreachable!</span>(),
         }
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">set_token_write_pos</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>) {
+    <span class="kw">fn</span> <span class="ident">set_token_write_pos</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">val</span>: <span class="ident">usize</span>) {
         <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">val</span>, <span class="ident">MASK_2</span>, <span class="ident">TOKEN_WR_SHIFT</span>);
     }
 
     <span class="attribute">#[<span class="ident">inline</span>]</span>
-    <span class="kw">fn</span> <span class="ident">update_token_read_pos</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
+    <span class="kw">fn</span> <span class="ident">update_token_read_pos</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
         <span class="kw">let</span> <span class="ident">val</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">token_write_pos</span>();
         <span class="self">self</span>.<span class="ident">set</span>(<span class="ident">val</span>, <span class="ident">MASK_2</span>, <span class="ident">TOKEN_RD_SHIFT</span>);
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">ReadinessState</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">usize</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">ReadinessState</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">ReadinessState</span>) -&gt; <span class="ident">usize</span> {
         <span class="ident">src</span>.<span class="number">0</span>
     }
 }
 
 <span class="kw">impl</span> <span class="ident">From</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">ReadinessState</span> {
-    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">ReadinessState</span> {
+    <span class="kw">fn</span> <span class="ident">from</span>(<span class="ident">src</span>: <span class="ident">usize</span>) -&gt; <span class="ident">ReadinessState</span> {
         <span class="ident">ReadinessState</span>(<span class="ident">src</span>)
     }
 }
@@ -5536,28 +5534,28 @@
 <span class="kw">fn</span> <span class="ident">is_sync</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Sync</span><span class="op">&gt;</span>() {}
 
 <span class="kw">impl</span> <span class="ident">SelectorId</span> {
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SelectorId</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">SelectorId</span> {
         <span class="ident">SelectorId</span> {
-            <span class="ident">id</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">0</span>),
+            <span class="ident">id</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">0</span>),
         }
     }
 
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">associate_selector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="kw">let</span> <span class="ident">selector_id</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">SeqCst</span>);
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">associate_selector</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">poll</span>: <span class="kw-2">&amp;</span><span class="ident">Poll</span>) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="kw">let</span> <span class="ident">selector_id</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>);
 
         <span class="kw">if</span> <span class="ident">selector_id</span> <span class="op">!</span><span class="op">=</span> <span class="number">0</span> <span class="op">&amp;&amp;</span> <span class="ident">selector_id</span> <span class="op">!</span><span class="op">=</span> <span class="ident">poll</span>.<span class="ident">selector</span>.<span class="ident">id</span>() {
-            <span class="prelude-val">Err</span>(<span class="ident">io</span>::<span class="ident">Error</span>::<span class="ident">new</span>(<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">Other</span>, <span class="string">&quot;socket already registered&quot;</span>))
+            <span class="prelude-val">Err</span>(<span class="ident">io::Error::new</span>(<span class="ident">io::ErrorKind::Other</span>, <span class="string">&quot;socket already registered&quot;</span>))
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">store</span>(<span class="ident">poll</span>.<span class="ident">selector</span>.<span class="ident">id</span>(), <span class="ident">Ordering</span>::<span class="ident">SeqCst</span>);
+            <span class="self">self</span>.<span class="ident">id</span>.<span class="ident">store</span>(<span class="ident">poll</span>.<span class="ident">selector</span>.<span class="ident">id</span>(), <span class="ident">Ordering::SeqCst</span>);
             <span class="prelude-val">Ok</span>(())
         }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">SelectorId</span> {
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SelectorId</span> {
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">SelectorId</span> {
         <span class="ident">SelectorId</span> {
-            <span class="ident">id</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">SeqCst</span>)),
+            <span class="ident">id</span>: <span class="ident">AtomicUsize::new</span>(<span class="self">self</span>.<span class="ident">id</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>)),
         }
     }
 }
@@ -5565,9 +5563,9 @@
 <span class="attribute">#[<span class="ident">test</span>]</span>
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">all</span>(<span class="ident">unix</span>, <span class="ident">not</span>(<span class="ident">target_os</span> <span class="op">=</span> <span class="string">&quot;fuchsia&quot;</span>)))]</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">as_raw_fd</span>() {
-    <span class="kw">let</span> <span class="ident">poll</span> <span class="op">=</span> <span class="ident">Poll</span>::<span class="ident">new</span>().<span class="ident">unwrap</span>();
-    <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">poll</span>.<span class="ident">as_raw_fd</span>() <span class="op">&gt;</span> <span class="number">0</span>);
+    <span class="kw">let</span> <span class="ident">poll</span> <span class="op">=</span> <span class="ident">Poll::new</span>().<span class="ident">unwrap</span>();
+    <span class="macro">assert!</span>(<span class="ident">poll</span>.<span class="ident">as_raw_fd</span>() <span class="op">&gt;</span> <span class="number">0</span>);
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="mio"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="mio" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

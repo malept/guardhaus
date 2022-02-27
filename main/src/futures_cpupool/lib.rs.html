@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/futures-cpupool-0.1.8/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled ><script id="default-settings"></script><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../futures_cpupool/index.html'><div class='logo-container rust-logo'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;futures-cpupool-0.1.8&#x2F;src&#x2F;lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../storage.js"></script><script src="../../crates.js"></script><script defer src="../../main.js"></script><script defer src="../../source-script.js"></script><script defer src="../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../futures_cpupool/index.html"><div class="logo-container"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../futures_cpupool/index.html"><img class="rust-logo" src="../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -451,8 +450,7 @@
 <span id="448">448</span>
 <span id="449">449</span>
 <span id="450">450</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! A simple crate for executing work on a thread pool, and getting back a</span>
+</pre><pre class="rust"><code><span class="doccomment">//! A simple crate for executing work on a thread pool, and getting back a</span>
 <span class="doccomment">//! future.</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! This crate provides a simple thread pool abstraction for running work</span>
@@ -494,17 +492,17 @@
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">futures</span>;
 <span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">num_cpus</span>;
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">panic</span>::{<span class="self">self</span>, <span class="ident">AssertUnwindSafe</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">thread</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
+<span class="kw">use</span> <span class="ident">std::panic</span>::{<span class="self">self</span>, <span class="ident">AssertUnwindSafe</span>};
+<span class="kw">use</span> <span class="ident">std::sync</span>::{<span class="ident">Arc</span>, <span class="ident">Mutex</span>};
+<span class="kw">use</span> <span class="ident">std::sync::atomic</span>::{<span class="ident">AtomicBool</span>, <span class="ident">AtomicUsize</span>, <span class="ident">Ordering</span>};
+<span class="kw">use</span> <span class="ident">std::sync::mpsc</span>;
+<span class="kw">use</span> <span class="ident">std::thread</span>;
+<span class="kw">use</span> <span class="ident">std::fmt</span>;
 
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">IntoFuture</span>, <span class="ident">Future</span>, <span class="ident">Poll</span>, <span class="ident">Async</span>};
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">future</span>::{<span class="ident">lazy</span>, <span class="ident">Executor</span>, <span class="ident">ExecuteError</span>};
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">sync</span>::<span class="ident">oneshot</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>, <span class="ident">Receiver</span>};
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">executor</span>::{<span class="self">self</span>, <span class="ident">Run</span>, <span class="ident">Executor</span> <span class="kw">as</span> <span class="ident">OldExecutor</span>};
+<span class="kw">use</span> <span class="ident">futures::future</span>::{<span class="ident">lazy</span>, <span class="ident">Executor</span>, <span class="ident">ExecuteError</span>};
+<span class="kw">use</span> <span class="ident">futures::sync::oneshot</span>::{<span class="ident">channel</span>, <span class="ident">Sender</span>, <span class="ident">Receiver</span>};
+<span class="kw">use</span> <span class="ident">futures::executor</span>::{<span class="self">self</span>, <span class="ident">Run</span>, <span class="ident">Executor</span> <span class="kw">as</span> <span class="ident">OldExecutor</span>};
 
 <span class="doccomment">/// A thread pool intended to run CPU intensive work.</span>
 <span class="doccomment">///</span>
@@ -550,22 +548,22 @@
 <span class="kw">impl</span> <span class="ident">AssertSendSync</span> <span class="kw">for</span> <span class="ident">CpuPool</span> {}
 
 <span class="kw">struct</span> <span class="ident">Inner</span> {
-    <span class="ident">tx</span>: <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">mpsc</span>::<span class="ident">Sender</span><span class="op">&lt;</span><span class="ident">Message</span><span class="op">&gt;</span><span class="op">&gt;</span>,
-    <span class="ident">rx</span>: <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">mpsc</span>::<span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">Message</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">tx</span>: <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">mpsc::Sender</span><span class="op">&lt;</span><span class="ident">Message</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">rx</span>: <span class="ident">Mutex</span><span class="op">&lt;</span><span class="ident">mpsc::Receiver</span><span class="op">&lt;</span><span class="ident">Message</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">cnt</span>: <span class="ident">AtomicUsize</span>,
     <span class="ident">size</span>: <span class="ident">usize</span>,
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">CpuPool</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">CpuPool</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;CpuPool&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;size&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">size</span>)
             .<span class="ident">finish</span>()
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Debug</span> <span class="kw">for</span> <span class="ident">Builder</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Debug</span> <span class="kw">for</span> <span class="ident">Builder</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">debug_struct</span>(<span class="string">&quot;Builder&quot;</span>)
             .<span class="ident">field</span>(<span class="string">&quot;pool_size&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">pool_size</span>)
             .<span class="ident">field</span>(<span class="string">&quot;name_prefix&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">name_prefix</span>)
@@ -581,7 +579,7 @@
 <span class="attribute">#[<span class="ident">must_use</span>]</span>
 <span class="attribute">#[<span class="ident">derive</span>(<span class="ident">Debug</span>)]</span>
 <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">CpuFuture</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span> {
-    <span class="ident">inner</span>: <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">thread</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+    <span class="ident">inner</span>: <span class="ident">Receiver</span><span class="op">&lt;</span><span class="ident">thread::Result</span><span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>,
     <span class="ident">keep_running_flag</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="ident">AtomicBool</span><span class="op">&gt;</span>,
 }
 
@@ -610,8 +608,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if `size == 0`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">size</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuPool</span> {
-        <span class="ident">Builder</span>::<span class="ident">new</span>().<span class="ident">pool_size</span>(<span class="ident">size</span>).<span class="ident">create</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="ident">CpuPool</span> {
+        <span class="ident">Builder::new</span>().<span class="ident">pool_size</span>(<span class="ident">size</span>).<span class="ident">create</span>()
     }
 
     <span class="doccomment">/// Creates a new thread pool with a number of workers equal to the number</span>
@@ -626,8 +624,8 @@
     <span class="doccomment">/// Builder::new().create()</span>
     <span class="doccomment">/// # }</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_num_cpus</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuPool</span> {
-        <span class="ident">Builder</span>::<span class="ident">new</span>().<span class="ident">create</span>()
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new_num_cpus</span>() -&gt; <span class="ident">CpuPool</span> {
+        <span class="ident">Builder::new</span>().<span class="ident">create</span>()
     }
 
     <span class="doccomment">/// Spawns a future to run on this thread pool, returning a future</span>
@@ -650,13 +648,13 @@
     <span class="doccomment">/// If the returned future is dropped then this `CpuPool` will attempt to</span>
     <span class="doccomment">/// cancel the computation, if possible. That is, if the computation is in</span>
     <span class="doccomment">/// the middle of working, it will be interrupted when possible.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuFuture</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Item</span>, <span class="ident">F</span>::<span class="ident">Error</span><span class="op">&gt;</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="ident">CpuFuture</span><span class="op">&lt;</span><span class="ident">F::Item</span>, <span class="ident">F::Error</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Future</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-              <span class="ident">F</span>::<span class="ident">Item</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-              <span class="ident">F</span>::<span class="ident">Error</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+              <span class="ident">F::Item</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+              <span class="ident">F::Error</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">channel</span>();
-        <span class="kw">let</span> <span class="ident">keep_running_flag</span> <span class="op">=</span> <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">AtomicBool</span>::<span class="ident">new</span>(<span class="bool-val">false</span>));
+        <span class="kw">let</span> <span class="ident">keep_running_flag</span> <span class="op">=</span> <span class="ident">Arc::new</span>(<span class="ident">AtomicBool::new</span>(<span class="bool-val">false</span>));
         <span class="comment">// AssertUnwindSafe is used here because `Send + &#39;static` is basically</span>
         <span class="comment">// an alias for an implementation of the `UnwindSafe` trait but we can&#39;t</span>
         <span class="comment">// express that in the standard library right now.</span>
@@ -665,7 +663,7 @@
             <span class="ident">tx</span>: <span class="prelude-val">Some</span>(<span class="ident">tx</span>),
             <span class="ident">keep_running_flag</span>: <span class="ident">keep_running_flag</span>.<span class="ident">clone</span>(),
         };
-        <span class="ident">executor</span>::<span class="ident">spawn</span>(<span class="ident">sender</span>).<span class="ident">execute</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>());
+        <span class="ident">executor::spawn</span>(<span class="ident">sender</span>).<span class="ident">execute</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>());
         <span class="ident">CpuFuture</span> { <span class="ident">inner</span>: <span class="ident">rx</span> , <span class="ident">keep_running_flag</span>: <span class="ident">keep_running_flag</span>.<span class="ident">clone</span>() }
     }
 
@@ -678,12 +676,12 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// The returned future will be a handle to the result produced by the</span>
     <span class="doccomment">/// future that `f` returns.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn_fn</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuFuture</span><span class="op">&lt;</span><span class="ident">R</span>::<span class="ident">Item</span>, <span class="ident">R</span>::<span class="ident">Error</span><span class="op">&gt;</span>
-        <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FnOnce</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">R</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">spawn_fn</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="ident">R</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="ident">CpuFuture</span><span class="op">&lt;</span><span class="ident">R::Item</span>, <span class="ident">R::Error</span><span class="op">&gt;</span>
+        <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">FnOnce</span>() -&gt; <span class="ident">R</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
               <span class="ident">R</span>: <span class="ident">IntoFuture</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-              <span class="ident">R</span>::<span class="ident">Future</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-              <span class="ident">R</span>::<span class="ident">Item</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
-              <span class="ident">R</span>::<span class="ident">Error</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+              <span class="ident">R::Future</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+              <span class="ident">R::Item</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
+              <span class="ident">R::Error</span>: <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
     {
         <span class="self">self</span>.<span class="ident">spawn</span>(<span class="ident">lazy</span>(<span class="ident">f</span>))
     }
@@ -692,8 +690,8 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="ident">Executor</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">CpuPool</span>
     <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Future</span><span class="op">&lt;</span><span class="ident">Item</span> <span class="op">=</span> (), <span class="ident">Error</span> <span class="op">=</span> ()<span class="op">&gt;</span> <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>,
 {
-    <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">future</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ExecuteError</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span> {
-        <span class="ident">executor</span>::<span class="ident">spawn</span>(<span class="ident">future</span>).<span class="ident">execute</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>());
+    <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">future</span>: <span class="ident">F</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="ident">ExecuteError</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+        <span class="ident">executor::spawn</span>(<span class="ident">future</span>).<span class="ident">execute</span>(<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>());
         <span class="prelude-val">Ok</span>(())
     }
 }
@@ -708,8 +706,8 @@
         <span class="kw">loop</span> {
             <span class="kw">let</span> <span class="ident">msg</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rx</span>.<span class="ident">lock</span>().<span class="ident">unwrap</span>().<span class="ident">recv</span>().<span class="ident">unwrap</span>();
             <span class="kw">match</span> <span class="ident">msg</span> {
-                <span class="ident">Message</span>::<span class="ident">Run</span>(<span class="ident">r</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">r</span>.<span class="ident">run</span>(),
-                <span class="ident">Message</span>::<span class="ident">Close</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">break</span>,
+                <span class="ident">Message::Run</span>(<span class="ident">r</span>) =&gt; <span class="ident">r</span>.<span class="ident">run</span>(),
+                <span class="ident">Message::Close</span> =&gt; <span class="kw">break</span>,
             }
         }
         <span class="ident">before_stop</span>.<span class="ident">map</span>(<span class="op">|</span><span class="ident">fun</span><span class="op">|</span> <span class="ident">fun</span>());
@@ -717,17 +715,17 @@
 }
 
 <span class="kw">impl</span> <span class="ident">Clone</span> <span class="kw">for</span> <span class="ident">CpuPool</span> {
-    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuPool</span> {
-        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cnt</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>);
+    <span class="kw">fn</span> <span class="ident">clone</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">CpuPool</span> {
+        <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cnt</span>.<span class="ident">fetch_add</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>);
         <span class="ident">CpuPool</span> { <span class="ident">inner</span>: <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">clone</span>() }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Drop</span> <span class="kw">for</span> <span class="ident">CpuPool</span> {
-    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) {
-        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cnt</span>.<span class="ident">fetch_sub</span>(<span class="number">1</span>, <span class="ident">Ordering</span>::<span class="ident">Relaxed</span>) <span class="op">=</span><span class="op">=</span> <span class="number">1</span> {
+    <span class="kw">fn</span> <span class="ident">drop</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) {
+        <span class="kw">if</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">cnt</span>.<span class="ident">fetch_sub</span>(<span class="number">1</span>, <span class="ident">Ordering::Relaxed</span>) <span class="op">==</span> <span class="number">1</span> {
             <span class="kw">for</span> <span class="kw">_</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">size</span> {
-                <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">send</span>(<span class="ident">Message</span>::<span class="ident">Close</span>);
+                <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">send</span>(<span class="ident">Message::Close</span>);
             }
         }
     }
@@ -735,7 +733,7 @@
 
 <span class="kw">impl</span> <span class="ident">OldExecutor</span> <span class="kw">for</span> <span class="ident">Inner</span> {
     <span class="kw">fn</span> <span class="ident">execute</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">run</span>: <span class="ident">Run</span>) {
-        <span class="self">self</span>.<span class="ident">send</span>(<span class="ident">Message</span>::<span class="ident">Run</span>(<span class="ident">run</span>))
+        <span class="self">self</span>.<span class="ident">send</span>(<span class="ident">Message::Run</span>(<span class="ident">run</span>))
     }
 }
 
@@ -746,7 +744,7 @@
     <span class="doccomment">/// future. This function can be used when user wants to drop but keep</span>
     <span class="doccomment">/// executing the underlying future.</span>
     <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">forget</span>(<span class="self">self</span>) {
-        <span class="self">self</span>.<span class="ident">keep_running_flag</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering</span>::<span class="ident">SeqCst</span>);
+        <span class="self">self</span>.<span class="ident">keep_running_flag</span>.<span class="ident">store</span>(<span class="bool-val">true</span>, <span class="ident">Ordering::SeqCst</span>);
     }
 }
 
@@ -754,47 +752,47 @@
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="ident">T</span>;
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> <span class="ident">E</span>;
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">E</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="self">self</span>.<span class="ident">inner</span>.<span class="ident">poll</span>().<span class="ident">expect</span>(<span class="string">&quot;cannot poll CpuFuture twice&quot;</span>) {
-            <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>(<span class="ident">e</span>))) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
-            <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="prelude-val">Ok</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>))) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
-            <span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">panic</span>::<span class="ident">resume_unwind</span>(<span class="ident">e</span>),
-            <span class="ident">Async</span>::<span class="ident">NotReady</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">NotReady</span>),
+            <span class="ident">Async::Ready</span>(<span class="prelude-val">Ok</span>(<span class="prelude-val">Ok</span>(<span class="ident">e</span>))) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
+            <span class="ident">Async::Ready</span>(<span class="prelude-val">Ok</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>))) =&gt; <span class="prelude-val">Err</span>(<span class="ident">e</span>),
+            <span class="ident">Async::Ready</span>(<span class="prelude-val">Err</span>(<span class="ident">e</span>)) =&gt; <span class="ident">panic::resume_unwind</span>(<span class="ident">e</span>),
+            <span class="ident">Async::NotReady</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">Async::NotReady</span>),
         }
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">Future</span><span class="op">&gt;</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">MySender</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F</span>::<span class="ident">Item</span>, <span class="ident">F</span>::<span class="ident">Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">F</span>: <span class="ident">Future</span><span class="op">&gt;</span> <span class="ident">Future</span> <span class="kw">for</span> <span class="ident">MySender</span><span class="op">&lt;</span><span class="ident">F</span>, <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">F::Item</span>, <span class="ident">F::Error</span><span class="op">&gt;</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> ();
     <span class="kw">type</span> <span class="ident">Error</span> <span class="op">=</span> ();
 
-    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
-        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="kw">_</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">tx</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">poll_cancel</span>() {
-            <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">keep_running_flag</span>.<span class="ident">load</span>(<span class="ident">Ordering</span>::<span class="ident">SeqCst</span>) {
+    <span class="kw">fn</span> <span class="ident">poll</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span>(), ()<span class="op">&gt;</span> {
+        <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="kw">_</span>)) <span class="op">=</span> <span class="self">self</span>.<span class="ident">tx</span>.<span class="ident">as_mut</span>().<span class="ident">unwrap</span>().<span class="ident">poll_cancel</span>() {
+            <span class="kw">if</span> <span class="op">!</span><span class="self">self</span>.<span class="ident">keep_running_flag</span>.<span class="ident">load</span>(<span class="ident">Ordering::SeqCst</span>) {
                 <span class="comment">// Cancelled, bail out</span>
                 <span class="kw">return</span> <span class="prelude-val">Ok</span>(().<span class="ident">into</span>())
             }
         }
 
         <span class="kw">let</span> <span class="ident">res</span> <span class="op">=</span> <span class="kw">match</span> <span class="self">self</span>.<span class="ident">fut</span>.<span class="ident">poll</span>() {
-            <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(<span class="ident">e</span>)) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">e</span>),
-            <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">NotReady</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">NotReady</span>),
-            <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>),
+            <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(<span class="ident">e</span>)) =&gt; <span class="prelude-val">Ok</span>(<span class="ident">e</span>),
+            <span class="prelude-val">Ok</span>(<span class="ident">Async::NotReady</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">Async::NotReady</span>),
+            <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="prelude-val">Err</span>(<span class="ident">e</span>),
         };
 
         <span class="comment">// if the receiving end has gone away then that&#39;s ok, we just ignore the</span>
         <span class="comment">// send error here.</span>
         <span class="ident">drop</span>(<span class="self">self</span>.<span class="ident">tx</span>.<span class="ident">take</span>().<span class="ident">unwrap</span>().<span class="ident">send</span>(<span class="ident">res</span>));
-        <span class="prelude-val">Ok</span>(<span class="ident">Async</span>::<span class="ident">Ready</span>(()))
+        <span class="prelude-val">Ok</span>(<span class="ident">Async::Ready</span>(()))
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Builder</span> {
     <span class="doccomment">/// Create a builder a number of workers equal to the number</span>
     <span class="doccomment">/// of CPUs on the host.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Builder</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>() -&gt; <span class="ident">Builder</span> {
         <span class="ident">Builder</span> {
-            <span class="ident">pool_size</span>: <span class="ident">num_cpus</span>::<span class="ident">get</span>(),
+            <span class="ident">pool_size</span>: <span class="ident">num_cpus::get</span>(),
             <span class="ident">stack_size</span>: <span class="number">0</span>,
             <span class="ident">name_prefix</span>: <span class="prelude-val">None</span>,
             <span class="ident">after_start</span>: <span class="prelude-val">None</span>,
@@ -805,13 +803,13 @@
     <span class="doccomment">/// Set size of a future CpuPool</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The size of a thread pool is the number of worker threads spawned</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pool_size</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">size</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">pool_size</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">size</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">pool_size</span> <span class="op">=</span> <span class="ident">size</span>;
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Set stack size of threads in the pool.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stack_size</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">stack_size</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">stack_size</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">stack_size</span>: <span class="ident">usize</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">stack_size</span> <span class="op">=</span> <span class="ident">stack_size</span>;
         <span class="self">self</span>
     }
@@ -820,7 +818,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// Thread name prefix is used for generating thread names. For example, if prefix is</span>
     <span class="doccomment">/// `my-pool-`, then threads in the pool will get names like `my-pool-1` etc.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name_prefix</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">name_prefix</span>: <span class="ident">S</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">name_prefix</span><span class="op">&lt;</span><span class="ident">S</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">name_prefix</span>: <span class="ident">S</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> {
         <span class="self">self</span>.<span class="ident">name_prefix</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">name_prefix</span>.<span class="ident">into</span>());
         <span class="self">self</span>
     }
@@ -831,10 +829,10 @@
     <span class="doccomment">/// This is initially intended for bookkeeping and monitoring uses.</span>
     <span class="doccomment">/// The `f` will be deconstructed after the `builder` is deconstructed</span>
     <span class="doccomment">/// and all threads in the pool has executed it.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">after_start</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">after_start</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span>
         <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Fn</span>() <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>
     {
-        <span class="self">self</span>.<span class="ident">after_start</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">f</span>));
+        <span class="self">self</span>.<span class="ident">after_start</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc::new</span>(<span class="ident">f</span>));
         <span class="self">self</span>
     }
 
@@ -843,10 +841,10 @@
     <span class="doccomment">/// This is initially intended for bookkeeping and monitoring uses.</span>
     <span class="doccomment">/// The `f` will be deconstructed after the `builder` is deconstructed</span>
     <span class="doccomment">/// and all threads in the pool has executed it.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">before_stop</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">before_stop</span><span class="op">&lt;</span><span class="ident">F</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">f</span>: <span class="ident">F</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span>
         <span class="kw">where</span> <span class="ident">F</span>: <span class="ident">Fn</span>() <span class="op">+</span> <span class="ident">Send</span> <span class="op">+</span> <span class="ident">Sync</span> <span class="op">+</span> <span class="lifetime">&#39;static</span>
     {
-        <span class="self">self</span>.<span class="ident">before_stop</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">f</span>));
+        <span class="self">self</span>.<span class="ident">before_stop</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">Arc::new</span>(<span class="ident">f</span>));
         <span class="self">self</span>
     }
 
@@ -855,25 +853,25 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Panics if `pool_size == 0`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">CpuPool</span> {
-        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc</span>::<span class="ident">channel</span>();
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">create</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">CpuPool</span> {
+        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc::channel</span>();
         <span class="kw">let</span> <span class="ident">pool</span> <span class="op">=</span> <span class="ident">CpuPool</span> {
-            <span class="ident">inner</span>: <span class="ident">Arc</span>::<span class="ident">new</span>(<span class="ident">Inner</span> {
-                <span class="ident">tx</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">tx</span>),
-                <span class="ident">rx</span>: <span class="ident">Mutex</span>::<span class="ident">new</span>(<span class="ident">rx</span>),
-                <span class="ident">cnt</span>: <span class="ident">AtomicUsize</span>::<span class="ident">new</span>(<span class="number">1</span>),
+            <span class="ident">inner</span>: <span class="ident">Arc::new</span>(<span class="ident">Inner</span> {
+                <span class="ident">tx</span>: <span class="ident">Mutex::new</span>(<span class="ident">tx</span>),
+                <span class="ident">rx</span>: <span class="ident">Mutex::new</span>(<span class="ident">rx</span>),
+                <span class="ident">cnt</span>: <span class="ident">AtomicUsize::new</span>(<span class="number">1</span>),
                 <span class="ident">size</span>: <span class="self">self</span>.<span class="ident">pool_size</span>,
             }),
         };
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">pool_size</span> <span class="op">&gt;</span> <span class="number">0</span>);
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">pool_size</span> <span class="op">&gt;</span> <span class="number">0</span>);
 
         <span class="kw">for</span> <span class="ident">counter</span> <span class="kw">in</span> <span class="number">0</span>..<span class="self">self</span>.<span class="ident">pool_size</span> {
             <span class="kw">let</span> <span class="ident">inner</span> <span class="op">=</span> <span class="ident">pool</span>.<span class="ident">inner</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">after_start</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">after_start</span>.<span class="ident">clone</span>();
             <span class="kw">let</span> <span class="ident">before_stop</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">before_stop</span>.<span class="ident">clone</span>();
-            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">thread_builder</span> <span class="op">=</span> <span class="ident">thread</span>::<span class="ident">Builder</span>::<span class="ident">new</span>();
+            <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">thread_builder</span> <span class="op">=</span> <span class="ident">thread::Builder::new</span>();
             <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">name_prefix</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">name_prefix</span> {
-                <span class="ident">thread_builder</span> <span class="op">=</span> <span class="ident">thread_builder</span>.<span class="ident">name</span>(<span class="macro">format</span><span class="macro">!</span>(<span class="string">&quot;{}{}&quot;</span>, <span class="ident">name_prefix</span>, <span class="ident">counter</span>));
+                <span class="ident">thread_builder</span> <span class="op">=</span> <span class="ident">thread_builder</span>.<span class="ident">name</span>(<span class="macro">format!</span>(<span class="string">&quot;{}{}&quot;</span>, <span class="ident">name_prefix</span>, <span class="ident">counter</span>));
             }
             <span class="kw">if</span> <span class="self">self</span>.<span class="ident">stack_size</span> <span class="op">&gt;</span> <span class="number">0</span> {
                 <span class="ident">thread_builder</span> <span class="op">=</span> <span class="ident">thread_builder</span>.<span class="ident">stack_size</span>(<span class="self">self</span>.<span class="ident">stack_size</span>);
@@ -887,21 +885,21 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
     <span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">sync</span>::<span class="ident">mpsc</span>;
+    <span class="kw">use</span> <span class="ident">std::sync::mpsc</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_drop_after_start</span>() {
-        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc</span>::<span class="ident">sync_channel</span>(<span class="number">2</span>);
-        <span class="kw">let</span> <span class="ident">_cpu_pool</span> <span class="op">=</span> <span class="ident">Builder</span>::<span class="ident">new</span>()
+        <span class="kw">let</span> (<span class="ident">tx</span>, <span class="ident">rx</span>) <span class="op">=</span> <span class="ident">mpsc::sync_channel</span>(<span class="number">2</span>);
+        <span class="kw">let</span> <span class="ident">_cpu_pool</span> <span class="op">=</span> <span class="ident">Builder::new</span>()
             .<span class="ident">pool_size</span>(<span class="number">2</span>)
             .<span class="ident">after_start</span>(<span class="kw">move</span> <span class="op">|</span><span class="op">|</span> <span class="ident">tx</span>.<span class="ident">send</span>(<span class="number">1</span>).<span class="ident">unwrap</span>()).<span class="ident">create</span>();
 
         <span class="comment">// After Builder is deconstructed, the tx should be droped</span>
         <span class="comment">// so that we can use rx as an iterator.</span>
         <span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">rx</span>.<span class="ident">into_iter</span>().<span class="ident">count</span>();
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">count</span>, <span class="number">2</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">count</span>, <span class="number">2</span>);
     }
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures_cpupool"></div>
-    <script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-current-crate="futures_cpupool" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

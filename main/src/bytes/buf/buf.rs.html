@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/bytes-0.4.12/src/buf/buf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buf.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../bytes/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;bytes-0.4.12&#x2F;src&#x2F;buf&#x2F;buf.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buf.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../bytes/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../bytes/index.html"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1155,15 +1154,14 @@
 <span id="1152">1152</span>
 <span id="1153">1153</span>
 <span id="1154">1154</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">IntoBuf</span>, <span class="ident">Take</span>, <span class="ident">Reader</span>, <span class="ident">Iter</span>, <span class="ident">FromBuf</span>, <span class="ident">Chain</span>};
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">IntoBuf</span>, <span class="ident">Take</span>, <span class="ident">Reader</span>, <span class="ident">Iter</span>, <span class="ident">FromBuf</span>, <span class="ident">Chain</span>};
 <span class="kw">use</span> <span class="ident">byteorder</span>::{<span class="ident">BigEndian</span>, <span class="ident">ByteOrder</span>, <span class="ident">LittleEndian</span>};
-<span class="kw">use</span> <span class="ident">iovec</span>::<span class="ident">IoVec</span>;
+<span class="kw">use</span> <span class="ident">iovec::IoVec</span>;
 
 <span class="kw">use</span> <span class="ident">std</span>::{<span class="ident">cmp</span>, <span class="ident">io</span>, <span class="ident">ptr</span>};
 
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">buf_get_impl</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">size</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>:<span class="ident">path</span>) <span class="op">=</span><span class="op">&gt;</span> ({
+<span class="macro">macro_rules!</span> <span class="ident">buf_get_impl</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">size</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>:<span class="ident">path</span>) =&gt; ({
          <span class="comment">// try to convert directly from the bytes</span>
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> {
             <span class="comment">// this Option&lt;ret&gt; trick is to avoid keeping a borrow on self</span>
@@ -1181,15 +1179,15 @@
         } <span class="kw">else</span> {
             <span class="comment">// if not we copy the bytes in a temp buffer then convert</span>
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">size</span>)];
-            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>); <span class="comment">// (do the advance)</span>
+            <span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>); <span class="comment">// (do the advance)</span>
             <span class="kw">return</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>);
         }
     });
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">buf_size</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>:<span class="ident">path</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> ({
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>:<span class="ident">ident</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">buf_size</span>:<span class="ident">expr</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>:<span class="ident">path</span>, <span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>:<span class="ident">expr</span>) =&gt; ({
         <span class="comment">// The same trick as above does not improve the best case speed.</span>
         <span class="comment">// It seems to be linked to the way the method is optimised by the compiler</span>
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">buf_size</span>)];
-        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>)]);
+        <span class="macro-nonterminal">$</span><span class="macro-nonterminal">this</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>[..(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>)]);
         <span class="kw">return</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">conv</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..(<span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>)], <span class="macro-nonterminal">$</span><span class="macro-nonterminal">len_to_read</span>);
     });
 }
@@ -1246,7 +1244,7 @@
     <span class="doccomment">/// Implementations of `remaining` should ensure that the return value does</span>
     <span class="doccomment">/// not change unless a call is made to `advance` or any other function that</span>
     <span class="doccomment">/// is documented to change the `Buf`&#39;s current position.</span>
-    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span>;
+    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span>;
 
     <span class="doccomment">/// Returns a slice starting at the current position and of length between 0</span>
     <span class="doccomment">/// and `Buf::remaining()`. Note that this *can* return shorter slice (this allows</span>
@@ -1275,7 +1273,7 @@
     <span class="doccomment">/// This function should never panic. Once the end of the buffer is reached,</span>
     <span class="doccomment">/// i.e., `Buf::remaining` returns 0, calls to `bytes` should return an</span>
     <span class="doccomment">/// empty slice.</span>
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>];
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">u8</span>];
 
     <span class="doccomment">/// Fills `dst` with potentially multiple slices starting at `self`&#39;s</span>
     <span class="doccomment">/// current position.</span>
@@ -1304,7 +1302,7 @@
     <span class="doccomment">/// with `dst` being a zero length slice.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// [`writev`]: http://man7.org/linux/man-pages/man2/readv.2.html</span>
-    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">IoVec</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">IoVec</span>]) -&gt; <span class="ident">usize</span> {
         <span class="kw">if</span> <span class="ident">dst</span>.<span class="ident">is_empty</span>() {
             <span class="kw">return</span> <span class="number">0</span>;
         }
@@ -1348,7 +1346,7 @@
     <span class="doccomment">/// behave as if `cnt == self.remaining()`.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// A call with `cnt == 0` should never panic and be a no-op.</span>
-    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>);
+    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>);
 
     <span class="doccomment">/// Returns true if there are any more bytes to consume</span>
     <span class="doccomment">///</span>
@@ -1368,7 +1366,7 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert!(!buf.has_remaining());</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">has_remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">bool</span> {
+    <span class="kw">fn</span> <span class="ident">has_remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">bool</span> {
         <span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span> <span class="number">0</span>
     }
 
@@ -1394,19 +1392,19 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if `self.remaining() &lt; dst.len()`</span>
-    <span class="kw">fn</span> <span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="ident">u8</span>]) {
+    <span class="kw">fn</span> <span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;mut</span> [<span class="ident">u8</span>]) {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">off</span> <span class="op">=</span> <span class="number">0</span>;
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">dst</span>.<span class="ident">len</span>());
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="ident">dst</span>.<span class="ident">len</span>());
 
         <span class="kw">while</span> <span class="ident">off</span> <span class="op">&lt;</span> <span class="ident">dst</span>.<span class="ident">len</span>() {
             <span class="kw">let</span> <span class="ident">cnt</span>;
 
             <span class="kw">unsafe</span> {
                 <span class="kw">let</span> <span class="ident">src</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">bytes</span>();
-                <span class="ident">cnt</span> <span class="op">=</span> <span class="ident">cmp</span>::<span class="ident">min</span>(<span class="ident">src</span>.<span class="ident">len</span>(), <span class="ident">dst</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">off</span>);
+                <span class="ident">cnt</span> <span class="op">=</span> <span class="ident">cmp::min</span>(<span class="ident">src</span>.<span class="ident">len</span>(), <span class="ident">dst</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="ident">off</span>);
 
-                <span class="ident">ptr</span>::<span class="ident">copy_nonoverlapping</span>(
+                <span class="ident">ptr::copy_nonoverlapping</span>(
                     <span class="ident">src</span>.<span class="ident">as_ptr</span>(), <span class="ident">dst</span>[<span class="ident">off</span>..].<span class="ident">as_mut_ptr</span>(), <span class="ident">cnt</span>);
 
                 <span class="ident">off</span> <span class="op">+</span><span class="op">=</span> <span class="ident">src</span>.<span class="ident">len</span>();
@@ -1433,8 +1431,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is no more remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u8</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u8</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>);
+    <span class="kw">fn</span> <span class="ident">get_u8</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u8</span> {
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>);
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">bytes</span>()[<span class="number">0</span>];
         <span class="self">self</span>.<span class="ident">advance</span>(<span class="number">1</span>);
         <span class="ident">ret</span>
@@ -1457,8 +1455,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is no more remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i8</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i8</span> {
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>);
+    <span class="kw">fn</span> <span class="ident">get_i8</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i8</span> {
+        <span class="macro">assert!</span>(<span class="self">self</span>.<span class="ident">remaining</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="number">1</span>);
         <span class="kw">let</span> <span class="ident">ret</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">bytes</span>()[<span class="number">0</span>] <span class="kw">as</span> <span class="ident">i8</span>;
         <span class="self">self</span>.<span class="ident">advance</span>(<span class="number">1</span>);
         <span class="ident">ret</span>
@@ -1466,10 +1464,10 @@
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_u16_be or get_u16_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_u16</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_u16</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u16</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">2</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_u16</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_u16</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets an unsigned 16 bit integer from `self` in big-endian byte order.</span>
@@ -1489,8 +1487,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u16_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">BigEndian</span>::<span class="ident">read_u16</span>);
+    <span class="kw">fn</span> <span class="ident">get_u16_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u16</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">BigEndian::read_u16</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned 16 bit integer from `self` in little-endian byte order.</span>
@@ -1510,16 +1508,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u16_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u16</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_u16</span>);
+    <span class="kw">fn</span> <span class="ident">get_u16_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u16</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">LittleEndian::read_u16</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_i16_be or get_i16_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_i16</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_i16</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i16</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">2</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_i16</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_i16</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets a signed 16 bit integer from `self` in big-endian byte order.</span>
@@ -1539,8 +1537,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i16_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">BigEndian</span>::<span class="ident">read_i16</span>);
+    <span class="kw">fn</span> <span class="ident">get_i16_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i16</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">BigEndian::read_i16</span>);
     }
 
     <span class="doccomment">/// Gets a signed 16 bit integer from `self` in little-endian byte order.</span>
@@ -1560,16 +1558,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i16_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i16</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_i16</span>);
+    <span class="kw">fn</span> <span class="ident">get_i16_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i16</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">2</span>, <span class="ident">LittleEndian::read_i16</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_u32_be or get_u32_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_u32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_u32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">4</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_u32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_u32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets an unsigned 32 bit integer from `self` in the big-endian byte order.</span>
@@ -1589,8 +1587,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u32_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian</span>::<span class="ident">read_u32</span>);
+    <span class="kw">fn</span> <span class="ident">get_u32_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian::read_u32</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned 32 bit integer from `self` in the little-endian byte order.</span>
@@ -1610,16 +1608,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u32_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_u32</span>);
+    <span class="kw">fn</span> <span class="ident">get_u32_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian::read_u32</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_i32_be or get_i32_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_i32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_i32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">4</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_i32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_i32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets a signed 32 bit integer from `self` in big-endian byte order.</span>
@@ -1639,8 +1637,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i32_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian</span>::<span class="ident">read_i32</span>);
+    <span class="kw">fn</span> <span class="ident">get_i32_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian::read_i32</span>);
     }
 
     <span class="doccomment">/// Gets a signed 32 bit integer from `self` in little-endian byte order.</span>
@@ -1660,16 +1658,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i32_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_i32</span>);
+    <span class="kw">fn</span> <span class="ident">get_i32_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian::read_i32</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_u64_be or get_u64_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_u64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_u64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_u64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_u64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets an unsigned 64 bit integer from `self` in big-endian byte order.</span>
@@ -1689,8 +1687,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u64_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian</span>::<span class="ident">read_u64</span>);
+    <span class="kw">fn</span> <span class="ident">get_u64_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian::read_u64</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned 64 bit integer from `self` in little-endian byte order.</span>
@@ -1710,16 +1708,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_u64_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_u64</span>);
+    <span class="kw">fn</span> <span class="ident">get_u64_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian::read_u64</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_i64_be or get_i64_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_i64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_i64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_i64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_i64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets a signed 64 bit integer from `self` in big-endian byte order.</span>
@@ -1739,8 +1737,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i64_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian</span>::<span class="ident">read_i64</span>);
+    <span class="kw">fn</span> <span class="ident">get_i64_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian::read_i64</span>);
     }
 
     <span class="doccomment">/// Gets a signed 64 bit integer from `self` in little-endian byte order.</span>
@@ -1760,8 +1758,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_i64_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_i64</span>);
+    <span class="kw">fn</span> <span class="ident">get_i64_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian::read_i64</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned 128 bit integer from `self` in big-endian byte order.</span>
@@ -1783,8 +1781,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_u128_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u128</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">BigEndian</span>::<span class="ident">read_u128</span>);
+    <span class="kw">fn</span> <span class="ident">get_u128_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u128</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">BigEndian::read_u128</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned 128 bit integer from `self` in little-endian byte order.</span>
@@ -1806,8 +1804,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_u128_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u128</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_u128</span>);
+    <span class="kw">fn</span> <span class="ident">get_u128_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">u128</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">LittleEndian::read_u128</span>);
     }
 
     <span class="doccomment">/// Gets a signed 128 bit integer from `self` in big-endian byte order.</span>
@@ -1829,8 +1827,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_i128_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i128</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">BigEndian</span>::<span class="ident">read_i128</span>);
+    <span class="kw">fn</span> <span class="ident">get_i128_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i128</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">BigEndian::read_i128</span>);
     }
 
     <span class="doccomment">/// Gets a signed 128 bit integer from `self` in little-endian byte order.</span>
@@ -1852,16 +1850,16 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
     <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;i128&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_i128_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i128</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_i128</span>);
+    <span class="kw">fn</span> <span class="ident">get_i128_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">i128</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">16</span>, <span class="ident">LittleEndian::read_i128</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_uint_be or get_uint_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_uint</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_uint</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="ident">nbytes</span>]);
-        <span class="ident">T</span>::<span class="ident">read_uint</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..<span class="ident">nbytes</span>], <span class="ident">nbytes</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>[..<span class="ident">nbytes</span>]);
+        <span class="ident">T::read_uint</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..<span class="ident">nbytes</span>], <span class="ident">nbytes</span>)
     }
 
     <span class="doccomment">/// Gets an unsigned n-byte integer from `self` in big-endian byte order.</span>
@@ -1881,8 +1879,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_uint_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian</span>::<span class="ident">read_uint</span>, <span class="ident">nbytes</span>);
+    <span class="kw">fn</span> <span class="ident">get_uint_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian::read_uint</span>, <span class="ident">nbytes</span>);
     }
 
     <span class="doccomment">/// Gets an unsigned n-byte integer from `self` in little-endian byte order.</span>
@@ -1902,16 +1900,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_uint_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">u64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_uint</span>, <span class="ident">nbytes</span>);
+    <span class="kw">fn</span> <span class="ident">get_uint_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">u64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian::read_uint</span>, <span class="ident">nbytes</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_int_be or get_int_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_int</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_int</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">i64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>[..<span class="ident">nbytes</span>]);
-        <span class="ident">T</span>::<span class="ident">read_int</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..<span class="ident">nbytes</span>], <span class="ident">nbytes</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>[..<span class="ident">nbytes</span>]);
+        <span class="ident">T::read_int</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>[..<span class="ident">nbytes</span>], <span class="ident">nbytes</span>)
     }
 
     <span class="doccomment">/// Gets a signed n-byte integer from `self` in big-endian byte order.</span>
@@ -1931,8 +1929,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_int_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian</span>::<span class="ident">read_int</span>, <span class="ident">nbytes</span>);
+    <span class="kw">fn</span> <span class="ident">get_int_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">i64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian::read_int</span>, <span class="ident">nbytes</span>);
     }
 
     <span class="doccomment">/// Gets a signed n-byte integer from `self` in little-endian byte order.</span>
@@ -1952,16 +1950,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_int_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">i64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_int</span>, <span class="ident">nbytes</span>);
+    <span class="kw">fn</span> <span class="ident">get_int_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">nbytes</span>: <span class="ident">usize</span>) -&gt; <span class="ident">i64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian::read_int</span>, <span class="ident">nbytes</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_f32_be or get_f32_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_f32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_f32</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f32</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">4</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_f32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_f32</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets an IEEE754 single-precision (4 bytes) floating point number from</span>
@@ -1982,8 +1980,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_f32_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian</span>::<span class="ident">read_f32</span>);
+    <span class="kw">fn</span> <span class="ident">get_f32_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">BigEndian::read_f32</span>);
     }
 
     <span class="doccomment">/// Gets an IEEE754 single-precision (4 bytes) floating point number from</span>
@@ -2004,16 +2002,16 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_f32_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f32</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_f32</span>);
+    <span class="kw">fn</span> <span class="ident">get_f32_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f32</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">4</span>, <span class="ident">LittleEndian::read_f32</span>);
     }
 
     <span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
     <span class="attribute">#[<span class="ident">deprecated</span>(<span class="ident">note</span><span class="op">=</span><span class="string">&quot;use get_f64_be or get_f64_le&quot;</span>)]</span>
-    <span class="kw">fn</span> <span class="ident">get_f64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">get_f64</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">ByteOrder</span><span class="op">&gt;</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f64</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">buf</span> <span class="op">=</span> [<span class="number">0</span>; <span class="number">8</span>];
-        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">buf</span>);
-        <span class="ident">T</span>::<span class="ident">read_f64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
+        <span class="self">self</span>.<span class="ident">copy_to_slice</span>(<span class="kw-2">&amp;mut</span> <span class="ident">buf</span>);
+        <span class="ident">T::read_f64</span>(<span class="kw-2">&amp;</span><span class="ident">buf</span>)
     }
 
     <span class="doccomment">/// Gets an IEEE754 double-precision (8 bytes) floating point number from</span>
@@ -2034,8 +2032,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_f64_be</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian</span>::<span class="ident">read_f64</span>);
+    <span class="kw">fn</span> <span class="ident">get_f64_be</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">BigEndian::read_f64</span>);
     }
 
     <span class="doccomment">/// Gets an IEEE754 double-precision (8 bytes) floating point number from</span>
@@ -2056,8 +2054,8 @@
     <span class="doccomment">/// # Panics</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This function panics if there is not enough remaining data in `self`.</span>
-    <span class="kw">fn</span> <span class="ident">get_f64_le</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">f64</span> {
-        <span class="macro">buf_get_impl</span><span class="macro">!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian</span>::<span class="ident">read_f64</span>);
+    <span class="kw">fn</span> <span class="ident">get_f64_le</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">f64</span> {
+        <span class="macro">buf_get_impl!</span>(<span class="self">self</span>, <span class="number">8</span>, <span class="ident">LittleEndian::read_f64</span>);
     }
 
     <span class="doccomment">/// Transforms a `Buf` into a concrete buffer.</span>
@@ -2077,11 +2075,11 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// assert_eq!(vec, &amp;b&quot;hello world&quot;[..]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">collect</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">B</span>
+    <span class="kw">fn</span> <span class="ident">collect</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>(<span class="self">self</span>) -&gt; <span class="ident">B</span>
         <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span>,
               <span class="ident">B</span>: <span class="ident">FromBuf</span>,
     {
-        <span class="ident">B</span>::<span class="ident">from_buf</span>(<span class="self">self</span>)
+        <span class="ident">B::from_buf</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Creates an adaptor which will read at most `limit` bytes from `self`.</span>
@@ -2106,10 +2104,10 @@
     <span class="doccomment">/// dst.put(&amp;mut buf);</span>
     <span class="doccomment">/// assert_eq!(dst, b&quot; world&quot;);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">take</span>(<span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">usize</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Take</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">take</span>(<span class="self">self</span>, <span class="ident">limit</span>: <span class="ident">usize</span>) -&gt; <span class="ident">Take</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span>
     {
-        <span class="kw">super</span>::<span class="ident">take</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">limit</span>)
+        <span class="ident"><span class="kw">super</span>::take::new</span>(<span class="self">self</span>, <span class="ident">limit</span>)
     }
 
     <span class="doccomment">/// Creates an adaptor which will chain this buffer with another.</span>
@@ -2129,11 +2127,11 @@
     <span class="doccomment">/// let full: Bytes = buf.collect();</span>
     <span class="doccomment">/// assert_eq!(full[..], b&quot;hello world&quot;[..]);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">chain</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">next</span>: <span class="ident">U</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Chain</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">U</span>::<span class="ident">Buf</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">chain</span><span class="op">&lt;</span><span class="ident">U</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">next</span>: <span class="ident">U</span>) -&gt; <span class="ident">Chain</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">U::Buf</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="ident">U</span>: <span class="ident">IntoBuf</span>,
               <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">Chain</span>::<span class="ident">new</span>(<span class="self">self</span>, <span class="ident">next</span>.<span class="ident">into_buf</span>())
+        <span class="ident">Chain::new</span>(<span class="self">self</span>, <span class="ident">next</span>.<span class="ident">into_buf</span>())
     }
 
     <span class="doccomment">/// Creates a &quot;by reference&quot; adaptor for this instance of `Buf`.</span>
@@ -2159,7 +2157,7 @@
     <span class="doccomment">/// dst.put(&amp;mut buf);</span>
     <span class="doccomment">/// assert_eq!(dst, b&quot; world&quot;);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">by_ref</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">Self</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+    <span class="kw">fn</span> <span class="ident">by_ref</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut</span> <span class="self">Self</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
         <span class="self">self</span>
     }
 
@@ -2186,8 +2184,8 @@
     <span class="doccomment">/// assert_eq!(11, num);</span>
     <span class="doccomment">/// assert_eq!(&amp;dst[..11], b&quot;hello world&quot;);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">reader</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Reader</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
-        <span class="kw">super</span>::<span class="ident">reader</span>::<span class="ident">new</span>(<span class="self">self</span>)
+    <span class="kw">fn</span> <span class="ident">reader</span>(<span class="self">self</span>) -&gt; <span class="ident">Reader</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+        <span class="ident"><span class="kw">super</span>::reader::new</span>(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Returns an iterator over the bytes contained by the buffer.</span>
@@ -2205,49 +2203,49 @@
     <span class="doccomment">/// assert_eq!(iter.next(), Some(b&#39;c&#39;));</span>
     <span class="doccomment">/// assert_eq!(iter.next(), None);</span>
     <span class="doccomment">/// ```</span>
-    <span class="kw">fn</span> <span class="ident">iter</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Iter</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
-        <span class="kw">super</span>::<span class="ident">iter</span>::<span class="ident">new</span>(<span class="self">self</span>)
+    <span class="kw">fn</span> <span class="ident">iter</span>(<span class="self">self</span>) -&gt; <span class="ident">Iter</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span> <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span> {
+        <span class="ident"><span class="kw">super</span>::iter::new</span>(<span class="self">self</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span>, <span class="ident">T</span>: <span class="ident">Buf</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Buf</span> <span class="kw">for</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="kw-2">mut</span> <span class="ident">T</span> {
-    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">remaining</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">bytes</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">IoVec</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">IoVec</span>]) -&gt; <span class="ident">usize</span> {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">bytes_vec</span>(<span class="ident">dst</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
+    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">advance</span>(<span class="ident">cnt</span>)
     }
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Buf</span> <span class="op">+</span> <span class="question-mark">?</span><span class="ident">Sized</span><span class="op">&gt;</span> <span class="ident">Buf</span> <span class="kw">for</span> <span class="ident">Box</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">remaining</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">bytes</span>()
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">IoVec</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">bytes_vec</span><span class="op">&lt;</span><span class="lifetime">&#39;b</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="self">self</span>, <span class="ident">dst</span>: <span class="kw-2">&amp;mut</span> [<span class="kw-2">&amp;</span><span class="lifetime">&#39;b</span> <span class="ident">IoVec</span>]) -&gt; <span class="ident">usize</span> {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">bytes_vec</span>(<span class="ident">dst</span>)
     }
 
-    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
+    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
         (<span class="kw-2">*</span><span class="kw-2">*</span><span class="self">self</span>).<span class="ident">advance</span>(<span class="ident">cnt</span>)
     }
 }
 
-<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Buf</span> <span class="kw">for</span> <span class="ident">io</span>::<span class="ident">Cursor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">AsRef</span><span class="op">&lt;</span>[<span class="ident">u8</span>]<span class="op">&gt;</span><span class="op">&gt;</span> <span class="ident">Buf</span> <span class="kw">for</span> <span class="ident">io::Cursor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_ref</span>().<span class="ident">as_ref</span>().<span class="ident">len</span>();
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">position</span>();
 
@@ -2258,29 +2256,29 @@
         <span class="ident">len</span> <span class="op">-</span> <span class="ident">pos</span> <span class="kw">as</span> <span class="ident">usize</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
         <span class="kw">let</span> <span class="ident">len</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">get_ref</span>().<span class="ident">as_ref</span>().<span class="ident">len</span>();
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">position</span>() <span class="kw">as</span> <span class="ident">usize</span>;
 
         <span class="kw">if</span> <span class="ident">pos</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">len</span> {
-            <span class="kw">return</span> <span class="ident">Default</span>::<span class="ident">default</span>();
+            <span class="kw">return</span> <span class="ident">Default::default</span>();
         }
 
         <span class="kw-2">&amp;</span>(<span class="self">self</span>.<span class="ident">get_ref</span>().<span class="ident">as_ref</span>())[<span class="ident">pos</span>..]
     }
 
-    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
+    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
         <span class="kw">let</span> <span class="ident">pos</span> <span class="op">=</span> (<span class="self">self</span>.<span class="ident">position</span>() <span class="kw">as</span> <span class="ident">usize</span>)
             .<span class="ident">checked_add</span>(<span class="ident">cnt</span>).<span class="ident">expect</span>(<span class="string">&quot;overflow&quot;</span>);
 
-        <span class="macro">assert</span><span class="macro">!</span>(<span class="ident">pos</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">get_ref</span>().<span class="ident">as_ref</span>().<span class="ident">len</span>());
+        <span class="macro">assert!</span>(<span class="ident">pos</span> <span class="op">&lt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">get_ref</span>().<span class="ident">as_ref</span>().<span class="ident">len</span>());
 
         <span class="self">self</span>.<span class="ident">set_position</span>(<span class="ident">pos</span> <span class="kw">as</span> <span class="ident">u64</span>);
     }
 }
 
 <span class="kw">impl</span> <span class="ident">Buf</span> <span class="kw">for</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span>[<span class="ident">u8</span>; <span class="number">1</span>]<span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">usize</span> {
+    <span class="kw">fn</span> <span class="ident">remaining</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_some</span>() {
             <span class="number">1</span>
         } <span class="kw">else</span> {
@@ -2288,20 +2286,20 @@
         }
     }
 
-    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
-        <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
-            .<span class="ident">unwrap_or</span>(<span class="ident">Default</span>::<span class="ident">default</span>())
+    <span class="kw">fn</span> <span class="ident">bytes</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">u8</span>] {
+        <span class="self">self</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
+            .<span class="ident">unwrap_or</span>(<span class="ident">Default::default</span>())
     }
 
-    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
-        <span class="kw">if</span> <span class="ident">cnt</span> <span class="op">=</span><span class="op">=</span> <span class="number">0</span> {
+    <span class="kw">fn</span> <span class="ident">advance</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">cnt</span>: <span class="ident">usize</span>) {
+        <span class="kw">if</span> <span class="ident">cnt</span> <span class="op">==</span> <span class="number">0</span> {
             <span class="kw">return</span>;
         }
 
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">is_none</span>() {
-            <span class="macro">panic</span><span class="macro">!</span>(<span class="string">&quot;overflow&quot;</span>);
+            <span class="macro">panic!</span>(<span class="string">&quot;overflow&quot;</span>);
         } <span class="kw">else</span> {
-            <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="number">1</span>, <span class="ident">cnt</span>);
+            <span class="macro">assert_eq!</span>(<span class="number">1</span>, <span class="ident">cnt</span>);
             <span class="kw-2">*</span><span class="self">self</span> <span class="op">=</span> <span class="prelude-val">None</span>;
         }
     }
@@ -2310,6 +2308,6 @@
 <span class="comment">// The existance of this function makes the compiler catch if the Buf</span>
 <span class="comment">// trait is &quot;object-safe&quot; or not.</span>
 <span class="kw">fn</span> <span class="ident">_assert_trait_object</span>(<span class="ident">_b</span>: <span class="kw-2">&amp;</span><span class="ident">Buf</span>) {}
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bytes"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="bytes" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/hyper-0.11.27/src/header/common/link.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>link.rs - source</title><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../../hyper/index.html'><div class='logo-container rust-logo'><img src='../../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../../settings.html"><img src="../../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">   1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;hyper-0.11.27&#x2F;src&#x2F;header&#x2F;common&#x2F;link.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>link.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../../storage.js"></script><script src="../../../../crates.js"></script><script defer src="../../../../main.js"></script><script defer src="../../../../source-script.js"></script><script defer src="../../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../../hyper/index.html"><div class="logo-container"><img class="rust-logo" src="../../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../../hyper/index.html"><img class="rust-logo" src="../../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">   1</span>
 <span id="2">   2</span>
 <span id="3">   3</span>
 <span id="4">   4</span>
@@ -1105,17 +1104,16 @@
 <span id="1102">1102</span>
 <span id="1103">1103</span>
 <span id="1104">1104</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">borrow</span>::<span class="ident">Cow</span>;
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">str</span>::<span class="ident">FromStr</span>;
+</pre><pre class="rust"><code><span class="kw">use</span> <span class="ident">std::fmt</span>;
+<span class="kw">use</span> <span class="ident">std::borrow::Cow</span>;
+<span class="kw">use</span> <span class="ident">std::str::FromStr</span>;
 <span class="attribute">#[<span class="ident">allow</span>(<span class="ident">unused</span>, <span class="ident">deprecated</span>)]</span>
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">ascii</span>::<span class="ident">AsciiExt</span>;
+<span class="kw">use</span> <span class="ident">std::ascii::AsciiExt</span>;
 
-<span class="kw">use</span> <span class="ident">mime</span>::<span class="ident">Mime</span>;
-<span class="kw">use</span> <span class="ident">language_tags</span>::<span class="ident">LanguageTag</span>;
+<span class="kw">use</span> <span class="ident">mime::Mime</span>;
+<span class="kw">use</span> <span class="ident">language_tags::LanguageTag</span>;
 
-<span class="kw">use</span> <span class="ident">header</span>::<span class="ident">parsing</span>;
+<span class="kw">use</span> <span class="ident">header::parsing</span>;
 <span class="kw">use</span> <span class="ident">header</span>::{<span class="ident">Header</span>, <span class="ident">Raw</span>};
 
 <span class="doccomment">/// The `Link` header, defined in</span>
@@ -1339,24 +1337,24 @@
 
 <span class="kw">impl</span> <span class="ident">Link</span> {
     <span class="doccomment">/// Create `Link` from a `Vec&lt;LinkValue&gt;`.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">link_values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LinkValue</span><span class="op">&gt;</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Link</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">link_values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LinkValue</span><span class="op">&gt;</span>) -&gt; <span class="ident">Link</span> {
         <span class="ident">Link</span> { <span class="ident">values</span>: <span class="ident">link_values</span> }
     }
 
     <span class="doccomment">/// Get the `Link` header&#39;s `LinkValue`s.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">values</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span>[<span class="ident">LinkValue</span>] {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">values</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[<span class="ident">LinkValue</span>] {
         <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">as_ref</span>()
     }
 
     <span class="doccomment">/// Add a `LinkValue` instance to the `Link` header&#39;s values.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_value</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">link_value</span>: <span class="ident">LinkValue</span>) {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_value</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">link_value</span>: <span class="ident">LinkValue</span>) {
         <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">push</span>(<span class="ident">link_value</span>);
     }
 }
 
 <span class="kw">impl</span> <span class="ident">LinkValue</span> {
     <span class="doccomment">/// Create `LinkValue` from URI-Reference.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">uri</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span>
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">new</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(<span class="ident">uri</span>: <span class="ident">T</span>) -&gt; <span class="ident">LinkValue</span>
         <span class="kw">where</span> <span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">Cow</span><span class="op">&lt;</span><span class="lifetime">&#39;static</span>, <span class="ident">str</span><span class="op">&gt;</span><span class="op">&gt;</span> {
         <span class="ident">LinkValue</span> {
             <span class="ident">link</span>: <span class="ident">uri</span>.<span class="ident">into</span>(),
@@ -1372,53 +1370,53 @@
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s value.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">link</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="ident">str</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">link</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="ident">str</span> {
         <span class="self">self</span>.<span class="ident">link</span>.<span class="ident">as_ref</span>()
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `rel` parameter(s).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rel</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">RelationType</span>]<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">rel</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rel</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">RelationType</span>]<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">rel</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `anchor` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">anchor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">anchor</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">anchor</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `rev` parameter(s).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rev</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">RelationType</span>]<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">rev</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">rev</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">RelationType</span>]<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">rev</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `hreflang` parameter(s).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">href_lang</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">LanguageTag</span>]<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">href_lang</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">href_lang</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">LanguageTag</span>]<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">href_lang</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `media` parameter(s).</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">media_desc</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">MediaDesc</span>]<span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">media_desc</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">media_desc</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span>[<span class="ident">MediaDesc</span>]<span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">media_desc</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `title` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">title</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">title</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">title</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">title</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `title*` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">title_star</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
-        <span class="self">self</span>.<span class="ident">title_star</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef</span>::<span class="ident">as_ref</span>)
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">title_star</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
+        <span class="self">self</span>.<span class="ident">title_star</span>.<span class="ident">as_ref</span>().<span class="ident">map</span>(<span class="ident">AsRef::as_ref</span>)
     }
 
     <span class="doccomment">/// Get the `LinkValue`&#39;s `type` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">media_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Mime</span><span class="op">&gt;</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">media_type</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">Mime</span><span class="op">&gt;</span> {
         <span class="self">self</span>.<span class="ident">media_type</span>.<span class="ident">as_ref</span>()
     }
 
     <span class="doccomment">/// Add a `RelationType` to the `LinkValue`&#39;s `rel` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_rel</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rel</span>: <span class="ident">RelationType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rel</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_rel</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rel</span>: <span class="ident">RelationType</span>) -&gt; <span class="ident">LinkValue</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rel</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec::new</span>());
 
         <span class="ident">v</span>.<span class="ident">push</span>(<span class="ident">rel</span>);
 
@@ -1428,15 +1426,15 @@
     }
 
     <span class="doccomment">/// Set `LinkValue`&#39;s `anchor` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_anchor</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">anchor</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_anchor</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">anchor</span>: <span class="ident">T</span>) -&gt; <span class="ident">LinkValue</span> {
         <span class="self">self</span>.<span class="ident">anchor</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">anchor</span>.<span class="ident">into</span>());
 
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Add a `RelationType` to the `LinkValue`&#39;s `rev` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_rev</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rev</span>: <span class="ident">RelationType</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rev</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_rev</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">rev</span>: <span class="ident">RelationType</span>) -&gt; <span class="ident">LinkValue</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">rev</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec::new</span>());
 
         <span class="ident">v</span>.<span class="ident">push</span>(<span class="ident">rev</span>);
 
@@ -1446,8 +1444,8 @@
     }
 
     <span class="doccomment">/// Add a `LanguageTag` to the `LinkValue`&#39;s `hreflang` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_href_lang</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">language_tag</span>: <span class="ident">LanguageTag</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">href_lang</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_href_lang</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">language_tag</span>: <span class="ident">LanguageTag</span>) -&gt; <span class="ident">LinkValue</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">href_lang</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec::new</span>());
 
         <span class="ident">v</span>.<span class="ident">push</span>(<span class="ident">language_tag</span>);
 
@@ -1457,8 +1455,8 @@
     }
 
     <span class="doccomment">/// Add a `MediaDesc` to the `LinkValue`&#39;s `media_desc` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_media_desc</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">media_desc</span>: <span class="ident">MediaDesc</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">media_desc</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">push_media_desc</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">media_desc</span>: <span class="ident">MediaDesc</span>) -&gt; <span class="ident">LinkValue</span> {
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">media_desc</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec::new</span>());
 
         <span class="ident">v</span>.<span class="ident">push</span>(<span class="ident">media_desc</span>);
 
@@ -1468,21 +1466,21 @@
     }
 
     <span class="doccomment">/// Set `LinkValue`&#39;s `title` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_title</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">title</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_title</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">title</span>: <span class="ident">T</span>) -&gt; <span class="ident">LinkValue</span> {
         <span class="self">self</span>.<span class="ident">title</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">title</span>.<span class="ident">into</span>());
 
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Set `LinkValue`&#39;s `title*` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_title_star</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">title_star</span>: <span class="ident">T</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_title_star</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Into</span><span class="op">&lt;</span><span class="ident">String</span><span class="op">&gt;</span><span class="op">&gt;</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">title_star</span>: <span class="ident">T</span>) -&gt; <span class="ident">LinkValue</span> {
         <span class="self">self</span>.<span class="ident">title_star</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">title_star</span>.<span class="ident">into</span>());
 
         <span class="self">self</span>
     }
 
     <span class="doccomment">/// Set `LinkValue`&#39;s `type` parameter.</span>
-    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_media_type</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">media_type</span>: <span class="ident">Mime</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">LinkValue</span> {
+    <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">set_media_type</span>(<span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">media_type</span>: <span class="ident">Mime</span>) -&gt; <span class="ident">LinkValue</span> {
         <span class="self">self</span>.<span class="ident">media_type</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">media_type</span>);
 
         <span class="self">self</span>
@@ -1494,72 +1492,72 @@
 <span class="comment">////////////////////////////////////////////////////////////////////////////////</span>
 
 <span class="kw">impl</span> <span class="ident">Header</span> <span class="kw">for</span> <span class="ident">Link</span> {
-    <span class="kw">fn</span> <span class="ident">header_name</span>() <span class="op">-</span><span class="op">&gt;</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
+    <span class="kw">fn</span> <span class="ident">header_name</span>() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> {
         <span class="kw">static</span> <span class="ident">NAME</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span> <span class="op">=</span> <span class="string">&quot;Link&quot;</span>;
         <span class="ident">NAME</span>
     }
 
-    <span class="kw">fn</span> <span class="ident">parse_header</span>(<span class="ident">raw</span>: <span class="kw-2">&amp;</span><span class="ident">Raw</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">parse_header</span>(<span class="ident">raw</span>: <span class="kw-2">&amp;</span><span class="ident">Raw</span>) -&gt; <span class="ident">::Result</span><span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span> {
         <span class="comment">// If more that one `Link` headers are present in a request&#39;s</span>
         <span class="comment">// headers they are combined in a single `Link` header containing</span>
         <span class="comment">// all the `link-value`s present in each of those `Link` headers.</span>
         <span class="ident">raw</span>.<span class="ident">iter</span>()
-            .<span class="ident">map</span>(<span class="ident">parsing</span>::<span class="ident">from_raw_str</span>::<span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span>)
+            .<span class="ident">map</span>(<span class="ident">parsing::from_raw_str</span>::<span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span>)
             .<span class="ident">fold</span>(<span class="prelude-val">None</span>, <span class="op">|</span><span class="ident">p</span>, <span class="ident">c</span><span class="op">|</span> {
                 <span class="kw">match</span> (<span class="ident">p</span>, <span class="ident">c</span>) {
-                    (<span class="prelude-val">None</span>, <span class="ident">c</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">c</span>),
-                    (<span class="ident">e</span> @ <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="kw">_</span>)), <span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">e</span>,
-                    (<span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">p</span>)), <span class="prelude-val">Ok</span>(<span class="ident">c</span>)) <span class="op">=</span><span class="op">&gt;</span> {
+                    (<span class="prelude-val">None</span>, <span class="ident">c</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">c</span>),
+                    (<span class="ident">e</span> @ <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="kw">_</span>)), <span class="kw">_</span>) =&gt; <span class="ident">e</span>,
+                    (<span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="kw-2">mut</span> <span class="ident">p</span>)), <span class="prelude-val">Ok</span>(<span class="ident">c</span>)) =&gt; {
                         <span class="ident">p</span>.<span class="ident">values</span>.<span class="ident">extend</span>(<span class="ident">c</span>.<span class="ident">values</span>);
 
                         <span class="prelude-val">Some</span>(<span class="prelude-val">Ok</span>(<span class="ident">p</span>))
                     },
-                    <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>)),
+                    <span class="kw">_</span> =&gt; <span class="prelude-val">Some</span>(<span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>)),
                 }
             })
-            .<span class="ident">unwrap_or</span>(<span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>))
+            .<span class="ident">unwrap_or</span>(<span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>))
     }
 
-    <span class="kw">fn</span> <span class="ident">fmt_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> ::<span class="ident">header</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+    <span class="kw">fn</span> <span class="ident">fmt_header</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">::header::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">f</span>.<span class="ident">fmt_line</span>(<span class="self">self</span>)
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">Link</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">Link</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="self">self</span>.<span class="ident">values</span>.<span class="ident">as_slice</span>(), <span class="string">&quot;, &quot;</span>, (<span class="string">&quot;&quot;</span>, <span class="string">&quot;&quot;</span>))
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">LinkValue</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
-        <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;&lt;{}&gt;&quot;</span>, <span class="self">self</span>.<span class="ident">link</span>));
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">LinkValue</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
+        <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;&lt;{}&gt;&quot;</span>, <span class="self">self</span>.<span class="ident">link</span>));
 
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">rel</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">rel</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">rel</span>.<span class="ident">as_slice</span>(), <span class="string">&quot; &quot;</span>, (<span class="string">&quot;; rel=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
+            <span class="macro">try!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">rel</span>.<span class="ident">as_slice</span>(), <span class="string">&quot; &quot;</span>, (<span class="string">&quot;; rel=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">anchor</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">anchor</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;; anchor=\&quot;{}\&quot;&quot;</span>, <span class="ident">anchor</span>));
+            <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;; anchor=\&quot;{}\&quot;&quot;</span>, <span class="ident">anchor</span>));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">rev</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">rev</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">rev</span>.<span class="ident">as_slice</span>(), <span class="string">&quot; &quot;</span>, (<span class="string">&quot;; rev=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
+            <span class="macro">try!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">rev</span>.<span class="ident">as_slice</span>(), <span class="string">&quot; &quot;</span>, (<span class="string">&quot;; rev=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">href_lang</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">href_lang</span> {
             <span class="kw">for</span> <span class="ident">tag</span> <span class="kw">in</span> <span class="ident">href_lang</span> {
-                <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;; hreflang={}&quot;</span>, <span class="ident">tag</span>));
+                <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;; hreflang={}&quot;</span>, <span class="ident">tag</span>));
             }
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">media_desc</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">media_desc</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">media_desc</span>.<span class="ident">as_slice</span>(), <span class="string">&quot;, &quot;</span>, (<span class="string">&quot;; media=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
+            <span class="macro">try!</span>(<span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="ident">media_desc</span>.<span class="ident">as_slice</span>(), <span class="string">&quot;, &quot;</span>, (<span class="string">&quot;; media=\&quot;&quot;</span>, <span class="string">&quot;\&quot;&quot;</span>)));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">title</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">title</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;; title=\&quot;{}\&quot;&quot;</span>, <span class="ident">title</span>));
+            <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;; title=\&quot;{}\&quot;&quot;</span>, <span class="ident">title</span>));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">title_star</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">title_star</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;; title*={}&quot;</span>, <span class="ident">title_star</span>));
+            <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;; title*={}&quot;</span>, <span class="ident">title_star</span>));
         }
         <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="kw-2">ref</span> <span class="ident">media_type</span>) <span class="op">=</span> <span class="self">self</span>.<span class="ident">media_type</span> {
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;; type=\&quot;{}\&quot;&quot;</span>, <span class="ident">media_type</span>));
+            <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;; type=\&quot;{}\&quot;&quot;</span>, <span class="ident">media_type</span>));
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -1567,13 +1565,13 @@
 }
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">Link</span> {
-    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> ::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">::Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">::Result</span><span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span> {
         <span class="comment">// Create a split iterator with delimiters: `;`, `,`</span>
-        <span class="kw">let</span> <span class="ident">link_split</span> <span class="op">=</span> <span class="ident">SplitAsciiUnquoted</span>::<span class="ident">new</span>(<span class="ident">s</span>, <span class="string">&quot;;,&quot;</span>);
+        <span class="kw">let</span> <span class="ident">link_split</span> <span class="op">=</span> <span class="ident">SplitAsciiUnquoted::new</span>(<span class="ident">s</span>, <span class="string">&quot;;,&quot;</span>);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">link_values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LinkValue</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec</span>::<span class="ident">new</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">link_values</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">LinkValue</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Vec::new</span>();
 
         <span class="comment">// Loop over the splits parsing the Link header into</span>
         <span class="comment">// a `Vec&lt;LinkValue&gt;`</span>
@@ -1583,8 +1581,8 @@
             <span class="kw">if</span> <span class="ident">segment</span>.<span class="ident">trim</span>().<span class="ident">starts_with</span>(<span class="string">&#39;&lt;&#39;</span>) {
                 <span class="ident">link_values</span>.<span class="ident">push</span>(
                     <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">segment</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&lt;&#39;</span>, <span class="string">b&#39;&gt;&#39;</span>)) {
-                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> {
+                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                        <span class="prelude-val">Ok</span>(<span class="ident">s</span>) =&gt; {
                             <span class="ident">LinkValue</span> {
                                 <span class="ident">link</span>: <span class="ident">s</span>.<span class="ident">to_owned</span>().<span class="ident">into</span>(),
                                 <span class="ident">rel</span>: <span class="prelude-val">None</span>,
@@ -1604,13 +1602,13 @@
                 <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">link_param_split</span> <span class="op">=</span> <span class="ident">segment</span>.<span class="ident">splitn</span>(<span class="number">2</span>, <span class="string">&#39;=&#39;</span>);
 
                 <span class="kw">let</span> <span class="ident">link_param_name</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                    <span class="prelude-val">Some</span>(<span class="ident">p</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">p</span>.<span class="ident">trim</span>(),
+                    <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">p</span>) =&gt; <span class="ident">p</span>.<span class="ident">trim</span>(),
                 };
 
                 <span class="kw">let</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_values</span>.<span class="ident">last_mut</span>() {
-                    <span class="prelude-val">None</span> <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                    <span class="prelude-val">Some</span>(<span class="ident">l</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">l</span>,
+                    <span class="prelude-val">None</span> =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                    <span class="prelude-val">Some</span>(<span class="ident">l</span>) =&gt; <span class="ident">l</span>,
                 };
 
                 <span class="kw">if</span> <span class="string">&quot;rel&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">link_param_name</span>) {
@@ -1618,13 +1616,13 @@
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.3</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">rel</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">rel</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; {
+                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
                                     .<span class="ident">split</span>(<span class="string">&#39; &#39;</span>)
                                     .<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">trim</span>().<span class="ident">parse</span>())
                                     .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RelationType</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
-                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>))
+                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>))
                                     .<span class="ident">ok</span>()
                             },
                         };
@@ -1633,10 +1631,10 @@
                     <span class="comment">// Parse the `Context IRI`.</span>
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.2</span>
                     <span class="ident">link_header</span>.<span class="ident">anchor</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                        <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                        <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
-                            <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Ok</span>(<span class="ident">a</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">a</span>)),
+                        <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                        <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
+                            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Ok</span>(<span class="ident">a</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">String::from</span>(<span class="ident">a</span>)),
                         },
                     };
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;rev&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">link_param_name</span>) {
@@ -1644,13 +1642,13 @@
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.3</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">rev</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">rev</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; {
+                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
                                     .<span class="ident">split</span>(<span class="string">&#39; &#39;</span>)
                                     .<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">trim</span>().<span class="ident">parse</span>())
                                     .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RelationType</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
-                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>))
+                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>))
                                     .<span class="ident">ok</span>()
                             },
                         }
@@ -1658,14 +1656,14 @@
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;hreflang&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">link_param_name</span>) {
                     <span class="comment">// Parse target attribute: `hreflang`.</span>
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.4</span>
-                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">link_header</span>.<span class="ident">href_lang</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec</span>::<span class="ident">new</span>());
+                    <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">v</span> <span class="op">=</span> <span class="ident">link_header</span>.<span class="ident">href_lang</span>.<span class="ident">take</span>().<span class="ident">unwrap_or</span>(<span class="ident">Vec::new</span>());
 
                     <span class="ident">v</span>.<span class="ident">push</span>(
                         <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">trim</span>().<span class="ident">parse</span>() {
-                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">t</span>,
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="kw">match</span> <span class="ident">s</span>.<span class="ident">trim</span>().<span class="ident">parse</span>() {
+                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="ident">t</span>,
                             },
                         }
                     );
@@ -1676,13 +1674,13 @@
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.4</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">media_desc</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">media_desc</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> {
-                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; {
+                                <span class="ident">s</span>.<span class="ident">trim_matches</span>(<span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="string">&#39;&quot;&#39;</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
                                     .<span class="ident">split</span>(<span class="string">&#39;,&#39;</span>)
                                     .<span class="ident">map</span>(<span class="op">|</span><span class="ident">t</span><span class="op">|</span> <span class="ident">t</span>.<span class="ident">trim</span>().<span class="ident">parse</span>())
                                     .<span class="ident">collect</span>::<span class="op">&lt;</span><span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">MediaDesc</span><span class="op">&gt;</span>, <span class="kw">_</span><span class="op">&gt;</span><span class="op">&gt;</span>()
-                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>))
+                                    .<span class="ident">or_else</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>))
                                     .<span class="ident">ok</span>()
                             },
                         };
@@ -1692,10 +1690,10 @@
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.4</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">title</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">title</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
-                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">t</span>)),
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
+                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">String::from</span>(<span class="ident">t</span>)),
                             },
                         };
                     }
@@ -1707,8 +1705,8 @@
                     <span class="comment">//       https://tools.ietf.org/html/rfc5987#section-3.2.1</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">title_star</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">title_star</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">s</span>.<span class="ident">trim</span>())),
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">String::from</span>(<span class="ident">s</span>.<span class="ident">trim</span>())),
                         };
                     }
                 } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;type&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">link_param_name</span>) {
@@ -1716,197 +1714,197 @@
                     <span class="comment">// https://tools.ietf.org/html/rfc5988#section-5.4</span>
                     <span class="kw">if</span> <span class="ident">link_header</span>.<span class="ident">media_type</span>.<span class="ident">is_none</span>() {
                         <span class="ident">link_header</span>.<span class="ident">media_type</span> <span class="op">=</span> <span class="kw">match</span> <span class="ident">link_param_split</span>.<span class="ident">next</span>() {
-                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
-                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">match</span> <span class="ident">t</span>.<span class="ident">parse</span>() {
-                                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>),
-                                    <span class="prelude-val">Ok</span>(<span class="ident">m</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>),
+                            <span class="prelude-val">None</span> <span class="op">|</span> <span class="prelude-val">Some</span>(<span class="string">&quot;&quot;</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                            <span class="prelude-val">Some</span>(<span class="ident">s</span>) =&gt; <span class="kw">match</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>.<span class="ident">trim</span>(), (<span class="string">b&#39;&quot;&#39;</span>, <span class="string">b&#39;&quot;&#39;</span>)) {
+                                <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                                <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="kw">match</span> <span class="ident">t</span>.<span class="ident">parse</span>() {
+                                    <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>),
+                                    <span class="prelude-val">Ok</span>(<span class="ident">m</span>) =&gt; <span class="prelude-val">Some</span>(<span class="ident">m</span>),
                                 },
                             },
 
                         };
                     }
                 } <span class="kw">else</span> {
-                    <span class="kw">return</span> <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>);
+                    <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>);
                 }
             }
         }
 
-        <span class="prelude-val">Ok</span>(<span class="ident">Link</span>::<span class="ident">new</span>(<span class="ident">link_values</span>))
+        <span class="prelude-val">Ok</span>(<span class="ident">Link::new</span>(<span class="ident">link_values</span>))
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">MediaDesc</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">MediaDesc</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">MediaDesc</span>::<span class="ident">Screen</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;screen&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Tty</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;tty&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Tv</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;tv&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Projection</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;projection&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Handheld</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;handheld&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Print</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;print&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Braille</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;braille&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Aural</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;aural&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">All</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;all&quot;</span>),
-            <span class="ident">MediaDesc</span>::<span class="ident">Extension</span>(<span class="kw-2">ref</span> <span class="ident">other</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">other</span>),
+            <span class="ident">MediaDesc::Screen</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;screen&quot;</span>),
+            <span class="ident">MediaDesc::Tty</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;tty&quot;</span>),
+            <span class="ident">MediaDesc::Tv</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;tv&quot;</span>),
+            <span class="ident">MediaDesc::Projection</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;projection&quot;</span>),
+            <span class="ident">MediaDesc::Handheld</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;handheld&quot;</span>),
+            <span class="ident">MediaDesc::Print</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;print&quot;</span>),
+            <span class="ident">MediaDesc::Braille</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;braille&quot;</span>),
+            <span class="ident">MediaDesc::Aural</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;aural&quot;</span>),
+            <span class="ident">MediaDesc::All</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;all&quot;</span>),
+            <span class="ident">MediaDesc::Extension</span>(<span class="kw-2">ref</span> <span class="ident">other</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">other</span>),
          }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">MediaDesc</span> {
-    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> ::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">::Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">MediaDesc</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">::Result</span><span class="op">&lt;</span><span class="ident">MediaDesc</span><span class="op">&gt;</span> {
         <span class="kw">match</span> <span class="ident">s</span> {
-            <span class="string">&quot;screen&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Screen</span>),
-            <span class="string">&quot;tty&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Tty</span>),
-            <span class="string">&quot;tv&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Tv</span>),
-            <span class="string">&quot;projection&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Projection</span>),
-            <span class="string">&quot;handheld&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Handheld</span>),
-            <span class="string">&quot;print&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Print</span>),
-            <span class="string">&quot;braille&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Braille</span>),
-            <span class="string">&quot;aural&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Aural</span>),
-            <span class="string">&quot;all&quot;</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">All</span>),
-             <span class="kw">_</span> <span class="op">=</span><span class="op">&gt;</span> <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc</span>::<span class="ident">Extension</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">s</span>))),
+            <span class="string">&quot;screen&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Screen</span>),
+            <span class="string">&quot;tty&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Tty</span>),
+            <span class="string">&quot;tv&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Tv</span>),
+            <span class="string">&quot;projection&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Projection</span>),
+            <span class="string">&quot;handheld&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Handheld</span>),
+            <span class="string">&quot;print&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Print</span>),
+            <span class="string">&quot;braille&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Braille</span>),
+            <span class="string">&quot;aural&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Aural</span>),
+            <span class="string">&quot;all&quot;</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::All</span>),
+             <span class="kw">_</span> =&gt; <span class="prelude-val">Ok</span>(<span class="ident">MediaDesc::Extension</span>(<span class="ident">String::from</span>(<span class="ident">s</span>))),
         }
     }
 }
 
-<span class="kw">impl</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">RelationType</span> {
-    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">impl</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">RelationType</span> {
+    <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
         <span class="kw">match</span> <span class="kw-2">*</span><span class="self">self</span> {
-            <span class="ident">RelationType</span>::<span class="ident">Alternate</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;alternate&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Appendix</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;appendix&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Bookmark</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;bookmark&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Chapter</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;chapter&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Contents</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;contents&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Copyright</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;copyright&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Current</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;current&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">DescribedBy</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;describedby&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Edit</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;edit&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">EditMedia</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;edit-media&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Enclosure</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;enclosure&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">First</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;first&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Glossary</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;glossary&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Help</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;help&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Hub</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;hub&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Index</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;index&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Last</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;last&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">LatestVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;latest-version&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">License</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;license&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Next</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;next&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">NextArchive</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;next-archive&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Payment</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;payment&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Prev</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;prev&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">PredecessorVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;predecessor-version&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Previous</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;previous&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">PrevArchive</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;prev-archive&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Related</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;related&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Replies</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;replies&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Section</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;section&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">RelationTypeSelf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;self&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Service</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;service&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Start</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;start&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Stylesheet</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;stylesheet&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Subsection</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;subsection&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">SuccessorVersion</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;successor-version&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Up</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;up&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">VersionHistory</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;version-history&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">Via</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;via&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">WorkingCopy</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;working-copy&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">WorkingCopyOf</span> <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;working-copy-of&quot;</span>),
-            <span class="ident">RelationType</span>::<span class="ident">ExtRelType</span>(<span class="kw-2">ref</span> <span class="ident">uri</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">uri</span>),
+            <span class="ident">RelationType::Alternate</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;alternate&quot;</span>),
+            <span class="ident">RelationType::Appendix</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;appendix&quot;</span>),
+            <span class="ident">RelationType::Bookmark</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;bookmark&quot;</span>),
+            <span class="ident">RelationType::Chapter</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;chapter&quot;</span>),
+            <span class="ident">RelationType::Contents</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;contents&quot;</span>),
+            <span class="ident">RelationType::Copyright</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;copyright&quot;</span>),
+            <span class="ident">RelationType::Current</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;current&quot;</span>),
+            <span class="ident">RelationType::DescribedBy</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;describedby&quot;</span>),
+            <span class="ident">RelationType::Edit</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;edit&quot;</span>),
+            <span class="ident">RelationType::EditMedia</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;edit-media&quot;</span>),
+            <span class="ident">RelationType::Enclosure</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;enclosure&quot;</span>),
+            <span class="ident">RelationType::First</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;first&quot;</span>),
+            <span class="ident">RelationType::Glossary</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;glossary&quot;</span>),
+            <span class="ident">RelationType::Help</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;help&quot;</span>),
+            <span class="ident">RelationType::Hub</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;hub&quot;</span>),
+            <span class="ident">RelationType::Index</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;index&quot;</span>),
+            <span class="ident">RelationType::Last</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;last&quot;</span>),
+            <span class="ident">RelationType::LatestVersion</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;latest-version&quot;</span>),
+            <span class="ident">RelationType::License</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;license&quot;</span>),
+            <span class="ident">RelationType::Next</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;next&quot;</span>),
+            <span class="ident">RelationType::NextArchive</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;next-archive&quot;</span>),
+            <span class="ident">RelationType::Payment</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;payment&quot;</span>),
+            <span class="ident">RelationType::Prev</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;prev&quot;</span>),
+            <span class="ident">RelationType::PredecessorVersion</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;predecessor-version&quot;</span>),
+            <span class="ident">RelationType::Previous</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;previous&quot;</span>),
+            <span class="ident">RelationType::PrevArchive</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;prev-archive&quot;</span>),
+            <span class="ident">RelationType::Related</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;related&quot;</span>),
+            <span class="ident">RelationType::Replies</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;replies&quot;</span>),
+            <span class="ident">RelationType::Section</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;section&quot;</span>),
+            <span class="ident">RelationType::RelationTypeSelf</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;self&quot;</span>),
+            <span class="ident">RelationType::Service</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;service&quot;</span>),
+            <span class="ident">RelationType::Start</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;start&quot;</span>),
+            <span class="ident">RelationType::Stylesheet</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;stylesheet&quot;</span>),
+            <span class="ident">RelationType::Subsection</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;subsection&quot;</span>),
+            <span class="ident">RelationType::SuccessorVersion</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;successor-version&quot;</span>),
+            <span class="ident">RelationType::Up</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;up&quot;</span>),
+            <span class="ident">RelationType::VersionHistory</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;version-history&quot;</span>),
+            <span class="ident">RelationType::Via</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;via&quot;</span>),
+            <span class="ident">RelationType::WorkingCopy</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;working-copy&quot;</span>),
+            <span class="ident">RelationType::WorkingCopyOf</span> =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;working-copy-of&quot;</span>),
+            <span class="ident">RelationType::ExtRelType</span>(<span class="kw-2">ref</span> <span class="ident">uri</span>) =&gt; <span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">uri</span>),
          }
     }
 }
 
 <span class="kw">impl</span> <span class="ident">FromStr</span> <span class="kw">for</span> <span class="ident">RelationType</span> {
-    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> ::<span class="ident">Error</span>;
+    <span class="kw">type</span> <span class="prelude-val">Err</span> <span class="op">=</span> <span class="ident">::Error</span>;
 
-    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">RelationType</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">from_str</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>) -&gt; <span class="ident">::Result</span><span class="op">&lt;</span><span class="ident">RelationType</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="string">&quot;alternate&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Alternate</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Alternate</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;appendix&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Appendix</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Appendix</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;bookmark&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Bookmark</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Bookmark</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;chapter&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Chapter</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Chapter</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;contents&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Contents</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Contents</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;copyright&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Copyright</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Copyright</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;current&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Current</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Current</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;describedby&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">DescribedBy</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::DescribedBy</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;edit&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Edit</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Edit</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;edit-media&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">EditMedia</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::EditMedia</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;enclosure&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Enclosure</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Enclosure</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;first&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">First</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::First</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;glossary&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Glossary</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Glossary</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;help&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Help</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Help</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;hub&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Hub</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Hub</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;index&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Index</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Index</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;last&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Last</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Last</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;latest-version&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">LatestVersion</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::LatestVersion</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;license&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">License</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::License</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;next&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Next</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;next-archive&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">NextArchive</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::NextArchive</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;payment&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Payment</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Payment</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;prev&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Prev</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Prev</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;predecessor-version&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">PredecessorVersion</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::PredecessorVersion</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;previous&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Previous</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;prev-archive&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">PrevArchive</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::PrevArchive</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;related&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Related</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Related</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;replies&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Replies</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Replies</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;section&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Section</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Section</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;self&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">RelationTypeSelf</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::RelationTypeSelf</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;service&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Service</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Service</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;start&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Start</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Start</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;stylesheet&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Stylesheet</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Stylesheet</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;subsection&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Subsection</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Subsection</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;successor-version&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">SuccessorVersion</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::SuccessorVersion</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;up&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Up</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Up</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;version-history&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">VersionHistory</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::VersionHistory</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;via&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">Via</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::Via</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;working-copy&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">WorkingCopy</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::WorkingCopy</span>)
         } <span class="kw">else</span> <span class="kw">if</span> <span class="string">&quot;working-copy-of&quot;</span>.<span class="ident">eq_ignore_ascii_case</span>(<span class="ident">s</span>) {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">WorkingCopyOf</span>)
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::WorkingCopyOf</span>)
         } <span class="kw">else</span> {
-            <span class="prelude-val">Ok</span>(<span class="ident">RelationType</span>::<span class="ident">ExtRelType</span>(<span class="ident">String</span>::<span class="ident">from</span>(<span class="ident">s</span>)))
+            <span class="prelude-val">Ok</span>(<span class="ident">RelationType::ExtRelType</span>(<span class="ident">String::from</span>(<span class="ident">s</span>)))
         }
     }
 }
@@ -1922,7 +1920,7 @@
 }
 
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">SplitAsciiUnquoted</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">d</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">SplitAsciiUnquoted</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">new</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>, <span class="ident">d</span>: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>) -&gt; <span class="ident">SplitAsciiUnquoted</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
         <span class="ident">SplitAsciiUnquoted</span>{
             <span class="ident">src</span>: <span class="ident">s</span>,
             <span class="ident">pos</span>: <span class="number">0</span>,
@@ -1934,7 +1932,7 @@
 <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">Iterator</span> <span class="kw">for</span> <span class="ident">SplitAsciiUnquoted</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
     <span class="kw">type</span> <span class="ident">Item</span> <span class="op">=</span> <span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span>;
 
-    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">next</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="self">self</span>.<span class="ident">pos</span> <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">src</span>.<span class="ident">len</span>() {
             <span class="kw">let</span> <span class="ident">prev_pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>;
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">pos</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">pos</span>;
@@ -1942,7 +1940,7 @@
             <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">in_quotes</span> <span class="op">=</span> <span class="bool-val">false</span>;
 
             <span class="kw">for</span> <span class="ident">c</span> <span class="kw">in</span> <span class="self">self</span>.<span class="ident">src</span>[<span class="ident">prev_pos</span>..].<span class="ident">as_bytes</span>().<span class="ident">iter</span>() {
-                <span class="ident">in_quotes</span> <span class="op">^</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="string">b&#39;&quot;&#39;</span>;
+                <span class="ident">in_quotes</span> <span class="op">^</span><span class="op">=</span> <span class="kw-2">*</span><span class="ident">c</span> <span class="op">==</span> <span class="string">b&#39;&quot;&#39;</span>;
 
                 <span class="comment">// Ignore `c` if we&#39;re `in_quotes`.</span>
                 <span class="kw">if</span> <span class="op">!</span><span class="ident">in_quotes</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">del</span>.<span class="ident">as_bytes</span>().<span class="ident">contains</span>(<span class="ident">c</span>) {
@@ -1961,35 +1959,35 @@
     }
 }
 
-<span class="kw">fn</span> <span class="ident">fmt_delimited</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt</span>::<span class="ident">Display</span><span class="op">&gt;</span>(<span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>, <span class="ident">p</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>], <span class="ident">d</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">b</span>: (<span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>)) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+<span class="kw">fn</span> <span class="ident">fmt_delimited</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">fmt::Display</span><span class="op">&gt;</span>(<span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>, <span class="ident">p</span>: <span class="kw-2">&amp;</span>[<span class="ident">T</span>], <span class="ident">d</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">b</span>: (<span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="kw-2">&amp;</span><span class="ident">str</span>)) -&gt; <span class="ident">fmt::Result</span> {
     <span class="kw">if</span> <span class="ident">p</span>.<span class="ident">len</span>() <span class="op">!</span><span class="op">=</span> <span class="number">0</span> {
         <span class="comment">// Write a starting string `b.0` before the first element</span>
-        <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}{}&quot;</span>, <span class="ident">b</span>.<span class="number">0</span>, <span class="ident">p</span>[<span class="number">0</span>]));
+        <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}{}&quot;</span>, <span class="ident">b</span>.<span class="number">0</span>, <span class="ident">p</span>[<span class="number">0</span>]));
 
         <span class="kw">for</span> <span class="ident">i</span> <span class="kw">in</span> <span class="kw-2">&amp;</span><span class="ident">p</span>[<span class="number">1</span>..] {
             <span class="comment">// Write the next element preceded by the delimiter `d`</span>
-            <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}{}&quot;</span>, <span class="ident">d</span>, <span class="ident">i</span>));
+            <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}{}&quot;</span>, <span class="ident">d</span>, <span class="ident">i</span>));
         }
 
         <span class="comment">// Write a ending string `b.1` before the first element</span>
-        <span class="macro">try</span><span class="macro">!</span>(<span class="macro">write</span><span class="macro">!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">b</span>.<span class="number">1</span>));
+        <span class="macro">try!</span>(<span class="macro">write!</span>(<span class="ident">f</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">b</span>.<span class="number">1</span>));
     }
 
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">fn</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">b</span>: (<span class="ident">u8</span>, <span class="ident">u8</span>)) <span class="op">-</span><span class="op">&gt;</span> ::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
+<span class="kw">fn</span> <span class="ident">verify_and_trim</span>(<span class="ident">s</span>: <span class="kw-2">&amp;</span><span class="ident">str</span>, <span class="ident">b</span>: (<span class="ident">u8</span>, <span class="ident">u8</span>)) -&gt; <span class="ident">::Result</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="ident">str</span><span class="op">&gt;</span> {
     <span class="kw">let</span> <span class="ident">length</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">len</span>();
     <span class="kw">let</span> <span class="ident">byte_array</span> <span class="op">=</span> <span class="ident">s</span>.<span class="ident">as_bytes</span>();
 
     <span class="comment">// Verify that `s` starts with `b.0` and ends with `b.1` and return</span>
     <span class="comment">// the contained substring after trimming whitespace.</span>
-    <span class="kw">if</span> <span class="ident">length</span> <span class="op">&gt;</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">b</span>.<span class="number">0</span> <span class="op">=</span><span class="op">=</span> <span class="ident">byte_array</span>[<span class="number">0</span>] <span class="op">&amp;&amp;</span> <span class="ident">b</span>.<span class="number">1</span> <span class="op">=</span><span class="op">=</span> <span class="ident">byte_array</span>[<span class="ident">length</span> <span class="op">-</span> <span class="number">1</span>] {
+    <span class="kw">if</span> <span class="ident">length</span> <span class="op">&gt;</span> <span class="number">1</span> <span class="op">&amp;&amp;</span> <span class="ident">b</span>.<span class="number">0</span> <span class="op">==</span> <span class="ident">byte_array</span>[<span class="number">0</span>] <span class="op">&amp;&amp;</span> <span class="ident">b</span>.<span class="number">1</span> <span class="op">==</span> <span class="ident">byte_array</span>[<span class="ident">length</span> <span class="op">-</span> <span class="number">1</span>] {
         <span class="prelude-val">Ok</span>(<span class="ident">s</span>.<span class="ident">trim_matches</span>(
-            <span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="ident">b</span>.<span class="number">0</span> <span class="kw">as</span> <span class="ident">char</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">=</span><span class="op">=</span> <span class="ident">b</span>.<span class="number">1</span> <span class="kw">as</span> <span class="ident">char</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
+            <span class="op">|</span><span class="ident">c</span>: <span class="ident">char</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="ident">b</span>.<span class="number">0</span> <span class="kw">as</span> <span class="ident">char</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span> <span class="op">==</span> <span class="ident">b</span>.<span class="number">1</span> <span class="kw">as</span> <span class="ident">char</span> <span class="op">|</span><span class="op">|</span> <span class="ident">c</span>.<span class="ident">is_whitespace</span>())
         )
     } <span class="kw">else</span> {
-        <span class="prelude-val">Err</span>(::<span class="ident">Error</span>::<span class="ident">Header</span>)
+        <span class="prelude-val">Err</span>(<span class="ident">::Error::Header</span>)
     }
 }
 
@@ -1999,43 +1997,43 @@
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span> {
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>;
-    <span class="kw">use</span> <span class="ident">std</span>::<span class="ident">fmt</span>::<span class="ident">Write</span>;
+    <span class="kw">use</span> <span class="ident">std::fmt</span>;
+    <span class="kw">use</span> <span class="ident">std::fmt::Write</span>;
 
     <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">Link</span>, <span class="ident">LinkValue</span>, <span class="ident">MediaDesc</span>, <span class="ident">RelationType</span>, <span class="ident">SplitAsciiUnquoted</span>};
     <span class="kw">use</span> <span class="kw">super</span>::{<span class="ident">fmt_delimited</span>, <span class="ident">verify_and_trim</span>};
 
-    <span class="kw">use</span> <span class="ident">header</span>::<span class="ident">Header</span>;
+    <span class="kw">use</span> <span class="ident">header::Header</span>;
 
     <span class="kw">use</span> <span class="ident">proto</span>::{<span class="ident">ServerTransaction</span>, <span class="ident">Http1Transaction</span>};
-    <span class="kw">use</span> <span class="ident">bytes</span>::<span class="ident">BytesMut</span>;
+    <span class="kw">use</span> <span class="ident">bytes::BytesMut</span>;
 
     <span class="kw">use</span> <span class="ident">mime</span>;
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link</span>() {
-        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
-            .<span class="ident">push_rev</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
+            .<span class="ident">push_rev</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">set_title</span>(<span class="string">&quot;previous chapter&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;&quot;</span>;
 
-        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_value</span>]);
+        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link::new</span>(<span class="macro">vec!</span>[<span class="ident">link_value</span>]);
 
-        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
+        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_multiple_values</span>() {
-        <span class="kw">let</span> <span class="ident">first_link</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
+        <span class="kw">let</span> <span class="ident">first_link</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;UTF-8&#39;de&#39;letztes%20Kapitel&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">second_link</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;/TheBook/chapter4&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+        <span class="kw">let</span> <span class="ident">second_link</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;/TheBook/chapter4&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;UTF-8&#39;de&#39;n%c3%a4chstes%20Kapitel&quot;</span>);
 
         <span class="kw">let</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="string">b&quot;&lt;/TheBook/chapter2&gt;; \
@@ -2043,23 +2041,23 @@
             &lt;/TheBook/chapter4&gt;; \
             rel=\&quot;next\&quot;; title*=UTF-8&#39;de&#39;n%c3%a4chstes%20Kapitel&quot;</span>;
 
-        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">first_link</span>, <span class="ident">second_link</span>]);
+        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link::new</span>(<span class="macro">vec!</span>[<span class="ident">first_link</span>, <span class="ident">second_link</span>]);
 
-        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
+        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_all_attributes</span>() {
-        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
+        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
             .<span class="ident">set_anchor</span>(<span class="string">&quot;../anchor/example/&quot;</span>)
-            .<span class="ident">push_rev</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+            .<span class="ident">push_rev</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">push_href_lang</span>(<span class="string">&quot;de&quot;</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>())
-            .<span class="ident">push_media_desc</span>(<span class="ident">MediaDesc</span>::<span class="ident">Screen</span>)
+            .<span class="ident">push_media_desc</span>(<span class="ident">MediaDesc::Screen</span>)
             .<span class="ident">set_title</span>(<span class="string">&quot;previous chapter&quot;</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;title* unparsed&quot;</span>)
-            .<span class="ident">set_media_type</span>(<span class="ident">mime</span>::<span class="ident">TEXT_PLAIN</span>);
+            .<span class="ident">set_media_type</span>(<span class="ident">mime::TEXT_PLAIN</span>);
 
         <span class="kw">let</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=\&quot;previous\&quot;; anchor=\&quot;../anchor/example/\&quot;; \
@@ -2067,30 +2065,30 @@
             title=\&quot;previous chapter\&quot;; title*=title* unparsed; \
             type=\&quot;text/plain\&quot;&quot;</span>;
 
-        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_value</span>]);
+        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link::new</span>(<span class="macro">vec!</span>[<span class="ident">link_value</span>]);
 
-        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
+        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_header</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">link</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="ident">expected_link</span>));
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_multiple_link_headers</span>() {
-        <span class="kw">let</span> <span class="ident">first_link</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
+        <span class="kw">let</span> <span class="ident">first_link</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;UTF-8&#39;de&#39;letztes%20Kapitel&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">second_link</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;/TheBook/chapter4&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+        <span class="kw">let</span> <span class="ident">second_link</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;/TheBook/chapter4&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;UTF-8&#39;de&#39;n%c3%a4chstes%20Kapitel&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">third_link</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
-            .<span class="ident">push_rev</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+        <span class="kw">let</span> <span class="ident">third_link</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
+            .<span class="ident">push_rev</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">set_title</span>(<span class="string">&quot;previous chapter&quot;</span>);
 
-        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">first_link</span>, <span class="ident">second_link</span>, <span class="ident">third_link</span>]);
+        <span class="kw">let</span> <span class="ident">expected_link</span> <span class="op">=</span> <span class="ident">Link::new</span>(<span class="macro">vec!</span>[<span class="ident">first_link</span>, <span class="ident">second_link</span>, <span class="ident">third_link</span>]);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw</span> <span class="op">=</span> <span class="ident">BytesMut</span>::<span class="ident">from</span>(<span class="string">b&quot;GET /super_short_uri/and_whatever HTTP/1.1\r\nHost: \
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">raw</span> <span class="op">=</span> <span class="ident">BytesMut::from</span>(<span class="string">b&quot;GET /super_short_uri/and_whatever HTTP/1.1\r\nHost: \
                                   hyper.rs\r\nAccept: a lot of things\r\nAccept-Charset: \
                                   utf8\r\nAccept-Encoding: *\r\nLink: &lt;/TheBook/chapter2&gt;; \
                                   rel=\&quot;previous\&quot;; title*=UTF-8&#39;de&#39;letztes%20Kapitel, \
@@ -2101,29 +2099,29 @@
                                   rel=\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;\
                                   \r\n\r\n&quot;</span>.<span class="ident">to_vec</span>());
 
-        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">res</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">ServerTransaction</span>::<span class="ident">parse</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">raw</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
+        <span class="kw">let</span> (<span class="kw-2">mut</span> <span class="ident">res</span>, <span class="kw">_</span>) <span class="op">=</span> <span class="ident">ServerTransaction::parse</span>(<span class="kw-2">&amp;mut</span> <span class="ident">raw</span>).<span class="ident">unwrap</span>().<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">res</span>.<span class="ident">headers</span>.<span class="ident">remove</span>::<span class="op">&lt;</span><span class="ident">Link</span><span class="op">&gt;</span>().<span class="ident">unwrap</span>();
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">link</span>, <span class="ident">expected_link</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">link</span>, <span class="ident">expected_link</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_display</span>() {
-        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue</span>::<span class="ident">new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
-            .<span class="ident">push_rel</span>(<span class="ident">RelationType</span>::<span class="ident">Previous</span>)
+        <span class="kw">let</span> <span class="ident">link_value</span> <span class="op">=</span> <span class="ident">LinkValue::new</span>(<span class="string">&quot;http://example.com/TheBook/chapter2&quot;</span>)
+            .<span class="ident">push_rel</span>(<span class="ident">RelationType::Previous</span>)
             .<span class="ident">set_anchor</span>(<span class="string">&quot;/anchor/example/&quot;</span>)
-            .<span class="ident">push_rev</span>(<span class="ident">RelationType</span>::<span class="ident">Next</span>)
+            .<span class="ident">push_rev</span>(<span class="ident">RelationType::Next</span>)
             .<span class="ident">push_href_lang</span>(<span class="string">&quot;de&quot;</span>.<span class="ident">parse</span>().<span class="ident">unwrap</span>())
-            .<span class="ident">push_media_desc</span>(<span class="ident">MediaDesc</span>::<span class="ident">Screen</span>)
+            .<span class="ident">push_media_desc</span>(<span class="ident">MediaDesc::Screen</span>)
             .<span class="ident">set_title</span>(<span class="string">&quot;previous chapter&quot;</span>)
             .<span class="ident">set_title_star</span>(<span class="string">&quot;title* unparsed&quot;</span>)
-            .<span class="ident">set_media_type</span>(<span class="ident">mime</span>::<span class="ident">TEXT_PLAIN</span>);
+            .<span class="ident">set_media_type</span>(<span class="ident">mime::TEXT_PLAIN</span>);
 
-        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Link</span>::<span class="ident">new</span>(<span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_value</span>]);
+        <span class="kw">let</span> <span class="ident">link</span> <span class="op">=</span> <span class="ident">Link::new</span>(<span class="macro">vec!</span>[<span class="ident">link_value</span>]);
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
-        <span class="macro">write</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">link_header</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">link</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">link_header</span> <span class="op">=</span> <span class="ident">String::new</span>();
+        <span class="macro">write!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">link_header</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">link</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">expected_link_header</span> <span class="op">=</span> <span class="string">&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=\&quot;previous\&quot;; anchor=\&quot;/anchor/example/\&quot;; \
@@ -2131,7 +2129,7 @@
             title=\&quot;previous chapter\&quot;; title*=title* unparsed; \
             type=\&quot;text/plain\&quot;&quot;</span>;
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">link_header</span>, <span class="ident">expected_link_header</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">link_header</span>, <span class="ident">expected_link_header</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
@@ -2139,77 +2137,77 @@
         <span class="kw">let</span> <span class="ident">link_a</span>  <span class="op">=</span> <span class="string">b&quot;http://example.com/TheBook/chapter2; \
             rel=\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;&quot;</span>;
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">err</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Link</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_a</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">err</span>: <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">Link</span>, <span class="kw">_</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_a</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">link_b</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             =\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;&quot;</span>;
 
-        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_b</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_b</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">link_c</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=; rev=next; title=\&quot;previous chapter\&quot;&quot;</span>;
 
-        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_c</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_c</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">link_d</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=\&quot;previous\&quot;; rev=next; title=&quot;</span>;
 
-        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_d</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_d</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
 
         <span class="kw">let</span> <span class="ident">link_e</span> <span class="op">=</span> <span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; \
             rel=\&quot;previous\&quot;; rev=next; attr=unknown&quot;</span>;
 
-        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header</span>::<span class="ident">parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec</span><span class="macro">!</span>[<span class="ident">link_e</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="ident">err</span> <span class="op">=</span> <span class="ident">Header::parse_header</span>(<span class="kw-2">&amp;</span><span class="macro">vec!</span>[<span class="ident">link_e</span>.<span class="ident">to_vec</span>()].<span class="ident">into</span>());
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
      }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_split_ascii_unquoted_iterator</span>() {
         <span class="kw">let</span> <span class="ident">string</span> <span class="op">=</span> <span class="string">&quot;some, text; \&quot;and, more; in quotes\&quot;, or not&quot;</span>;
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string_split</span> <span class="op">=</span> <span class="ident">SplitAsciiUnquoted</span>::<span class="ident">new</span>(<span class="ident">string</span>, <span class="string">&quot;;,&quot;</span>);
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string_split</span> <span class="op">=</span> <span class="ident">SplitAsciiUnquoted::new</span>(<span class="ident">string</span>, <span class="string">&quot;;,&quot;</span>);
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;some&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; text&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; \&quot;and, more; in quotes\&quot;&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; or not&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="prelude-val">None</span>, <span class="ident">string_split</span>.<span class="ident">next</span>());
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot;some&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; text&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; \&quot;and, more; in quotes\&quot;&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">Some</span>(<span class="string">&quot; or not&quot;</span>), <span class="ident">string_split</span>.<span class="ident">next</span>());
+        <span class="macro">assert_eq!</span>(<span class="prelude-val">None</span>, <span class="ident">string_split</span>.<span class="ident">next</span>());
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_fmt_delimited</span>() {
         <span class="kw">struct</span> <span class="ident">TestFormatterStruct</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> { <span class="ident">v</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;a</span> <span class="ident">str</span><span class="op">&gt;</span> };
 
-        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="ident">Display</span> <span class="kw">for</span> <span class="ident">TestFormatterStruct</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
-            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">fmt</span>::<span class="ident">Formatter</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">fmt</span>::<span class="prelude-ty">Result</span> {
+        <span class="kw">impl</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> <span class="ident">fmt::Display</span> <span class="kw">for</span> <span class="ident">TestFormatterStruct</span><span class="op">&lt;</span><span class="lifetime">&#39;a</span><span class="op">&gt;</span> {
+            <span class="kw">fn</span> <span class="ident">fmt</span>(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="ident">f</span>: <span class="kw-2">&amp;mut</span> <span class="ident">fmt::Formatter</span>) -&gt; <span class="ident">fmt::Result</span> {
                 <span class="ident">fmt_delimited</span>(<span class="ident">f</span>, <span class="self">self</span>.<span class="ident">v</span>.<span class="ident">as_slice</span>(), <span class="string">&quot;, &quot;</span>, (<span class="string">&quot;&gt;&gt;&quot;</span>, <span class="string">&quot;&lt;&lt;&quot;</span>))
             }
         }
 
-        <span class="kw">let</span> <span class="ident">test_formatter</span> <span class="op">=</span> <span class="ident">TestFormatterStruct</span> { <span class="ident">v</span>: <span class="macro">vec</span><span class="macro">!</span>[<span class="string">&quot;first&quot;</span>, <span class="string">&quot;second&quot;</span>] };
+        <span class="kw">let</span> <span class="ident">test_formatter</span> <span class="op">=</span> <span class="ident">TestFormatterStruct</span> { <span class="ident">v</span>: <span class="macro">vec!</span>[<span class="string">&quot;first&quot;</span>, <span class="string">&quot;second&quot;</span>] };
 
-        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string</span> <span class="op">=</span> <span class="ident">String</span>::<span class="ident">new</span>();
-        <span class="macro">write</span><span class="macro">!</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">string</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">test_formatter</span>).<span class="ident">unwrap</span>();
+        <span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">string</span> <span class="op">=</span> <span class="ident">String::new</span>();
+        <span class="macro">write!</span>(<span class="kw-2">&amp;mut</span> <span class="ident">string</span>, <span class="string">&quot;{}&quot;</span>, <span class="ident">test_formatter</span>).<span class="ident">unwrap</span>();
 
         <span class="kw">let</span> <span class="ident">expected_string</span> <span class="op">=</span> <span class="string">&quot;&gt;&gt;first, second&lt;&lt;&quot;</span>;
 
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">string</span>, <span class="ident">expected_string</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">string</span>, <span class="ident">expected_string</span>);
     }
 
     <span class="attribute">#[<span class="ident">test</span>]</span>
     <span class="kw">fn</span> <span class="ident">test_link_verify_and_trim</span>() {
         <span class="kw">let</span> <span class="ident">string</span> <span class="op">=</span> <span class="ident">verify_and_trim</span>(<span class="string">&quot;&gt;  some string   &lt;&quot;</span>, (<span class="string">b&#39;&gt;&#39;</span>, <span class="string">b&#39;&lt;&#39;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">string</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="string">&quot;some string&quot;</span>));
+        <span class="macro">assert_eq!</span>(<span class="ident">string</span>.<span class="ident">ok</span>(), <span class="prelude-val">Some</span>(<span class="string">&quot;some string&quot;</span>));
 
         <span class="kw">let</span> <span class="ident">err</span> <span class="op">=</span> <span class="ident">verify_and_trim</span>(<span class="string">&quot; &gt;  some string   &lt;&quot;</span>, (<span class="string">b&#39;&gt;&#39;</span>, <span class="string">b&#39;&lt;&#39;</span>));
-        <span class="macro">assert_eq</span><span class="macro">!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(<span class="ident">err</span>.<span class="ident">is_err</span>(), <span class="bool-val">true</span>);
     }
 }
 
-<span class="macro">bench_header</span><span class="macro">!</span>(<span class="ident">bench_link</span>, <span class="ident">Link</span>, { <span class="macro">vec</span><span class="macro">!</span>[<span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; rel=\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;; type=\&quot;text/html\&quot;; media=\&quot;screen, tty\&quot;&quot;</span>.<span class="ident">to_vec</span>()] });
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="hyper"></div>
-    <script src="../../../../main.js"></script><script src="../../../../source-script.js"></script><script src="../../../../source-files.js"></script><script defer src="../../../../search-index.js"></script></body></html>
+<span class="macro">bench_header!</span>(<span class="ident">bench_link</span>, <span class="ident">Link</span>, { <span class="macro">vec!</span>[<span class="string">b&quot;&lt;http://example.com/TheBook/chapter2&gt;; rel=\&quot;previous\&quot;; rev=next; title=\&quot;previous chapter\&quot;; type=\&quot;text/html\&quot;; media=\&quot;screen, tty\&quot;&quot;</span>.<span class="ident">to_vec</span>()] });
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../../" data-current-crate="hyper" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

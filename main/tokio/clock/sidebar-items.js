@@ -1,1 +1,1 @@
-initSidebarItems({"fn":[["now","Returns an `Instant` corresponding to \"now\"."]]});
+initSidebarItems({"fn":[["now","Returns an `Instant` corresponding to “now”."]]});

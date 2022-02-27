@@ -1,7 +1,6 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/tokio-core-0.1.18/src/io/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../light.css"  id="themeStyle"><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled ><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled ><script id="default-settings"></script><script src="../../../storage.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="icon" type="image/svg+xml" href="../../../favicon.svg">
-<link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png">
-<link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><style type="text/css">#crate-search{background-image:url("../../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../../tokio_core/index.html'><div class='logo-container rust-logo'><img src='../../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu"><img src="../../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices" role="menu"></div></div><script src="../../../theme.js"></script><nav class="sub"><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" disabled autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" class="help-button">?</button>
-                <a id="settings-menu" href="../../../settings.html"><img src="../../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `&#x2F;home&#x2F;runner&#x2F;.cargo&#x2F;registry&#x2F;src&#x2F;github.com-1ecc6299db9ec823&#x2F;tokio-core-0.1.18&#x2F;src&#x2F;io&#x2F;mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" type="text/css" href="../../../normalize.css"><link rel="stylesheet" type="text/css" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../../ayu.css" disabled><link rel="stylesheet" type="text/css" href="../../../dark.css" disabled><link rel="stylesheet" type="text/css" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script src="../../../crates.js"></script><script defer src="../../../main.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script>
+    <noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu" role="button">&#9776;</div><a class="sidebar-logo" href="../../../tokio_core/index.html"><div class="logo-container"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></div>
+        </a></nav><main><div class="width-limiter"><div class="sub-container"><a class="sub-logo-container" href="../../../tokio_core/index.html"><img class="rust-logo" src="../../../rust-logo.png" alt="logo"></a><nav class="sub"><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!" aria-haspopup="menu" title="themes"><img width="18" height="18" alt="Pick another theme!" src="../../../brush.svg"></button><div id="theme-choices" role="menu"></div></div><form class="search-form"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><button type="button" id="help-button" title="help">?</button><a id="settings-menu" href="../../../settings.html" title="settings"><img width="18" height="18" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav></div><section id="main-content" class="content"><div class="example-wrap"><pre class="line-numbers"><span id="1">  1</span>
 <span id="2">  2</span>
 <span id="3">  3</span>
 <span id="4">  4</span>
@@ -256,8 +255,7 @@
 <span id="253">253</span>
 <span id="254">254</span>
 <span id="255">255</span>
-</pre><div class="example-wrap"><pre class="rust ">
-<span class="doccomment">//! I/O conveniences when working with primitives in `tokio-core`</span>
+</pre><pre class="rust"><code><span class="doccomment">//! I/O conveniences when working with primitives in `tokio-core`</span>
 <span class="doccomment">//!</span>
 <span class="doccomment">//! Contains various combinators to work with I/O objects and type definitions</span>
 <span class="doccomment">//! as well.</span>
@@ -271,18 +269,18 @@
 <span class="attribute">#![<span class="ident">deprecated</span>(<span class="ident">note</span> <span class="op">=</span> <span class="string">&quot;moved to the `tokio-io` crate&quot;</span>)]</span>
 <span class="attribute">#![<span class="ident">allow</span>(<span class="ident">deprecated</span>)]</span>
 
-<span class="kw">use</span> <span class="ident">std</span>::<span class="ident">io</span>;
+<span class="kw">use</span> <span class="ident">std::io</span>;
 
 <span class="kw">use</span> <span class="ident">futures</span>::{<span class="ident">Async</span>, <span class="ident">Poll</span>};
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">future</span>::<span class="ident">BoxFuture</span>;
-<span class="kw">use</span> <span class="ident">futures</span>::<span class="ident">stream</span>::<span class="ident">BoxStream</span>;
-<span class="kw">use</span> <span class="ident">iovec</span>::<span class="ident">IoVec</span>;
+<span class="kw">use</span> <span class="ident">futures::future::BoxFuture</span>;
+<span class="kw">use</span> <span class="ident">futures::stream::BoxStream</span>;
+<span class="kw">use</span> <span class="ident">iovec::IoVec</span>;
 
 <span class="doccomment">/// A convenience typedef around a `Future` whose error component is `io::Error`</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">IoFuture</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BoxFuture</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">IoFuture</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BoxFuture</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io::Error</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// A convenience typedef around a `Stream` whose error component is `io::Error`</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">IoStream</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BoxStream</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">IoStream</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">BoxStream</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">io::Error</span><span class="op">&gt;</span>;
 
 <span class="doccomment">/// A convenience macro for working with `io::Result&lt;T&gt;` from the `Read` and</span>
 <span class="doccomment">/// `Write` traits.</span>
@@ -291,13 +289,13 @@
 <span class="doccomment">/// the input type is of the `Err` variant, then `Poll::NotReady` is returned if</span>
 <span class="doccomment">/// it indicates `WouldBlock` or otherwise `Err` is returned.</span>
 <span class="attribute">#[<span class="ident">macro_export</span>]</span>
-<span class="macro">macro_rules</span><span class="macro">!</span> <span class="ident">try_nb</span> {
-    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) <span class="op">=</span><span class="op">&gt;</span> (<span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span> {
-        <span class="prelude-val">Ok</span>(<span class="ident">t</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="ident">t</span>,
-        <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">=</span><span class="op">=</span> ::<span class="ident">std</span>::<span class="ident">io</span>::<span class="ident">ErrorKind</span>::<span class="ident">WouldBlock</span> <span class="op">=</span><span class="op">&gt;</span> {
-            <span class="kw">return</span> <span class="prelude-val">Ok</span>(::<span class="ident">futures</span>::<span class="ident">Async</span>::<span class="ident">NotReady</span>)
+<span class="macro">macro_rules!</span> <span class="ident">try_nb</span> {
+    (<span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span>:<span class="ident">expr</span>) =&gt; (<span class="kw">match</span> <span class="macro-nonterminal">$</span><span class="macro-nonterminal">e</span> {
+        <span class="prelude-val">Ok</span>(<span class="ident">t</span>) =&gt; <span class="ident">t</span>,
+        <span class="prelude-val">Err</span>(<span class="kw-2">ref</span> <span class="ident">e</span>) <span class="kw">if</span> <span class="ident">e</span>.<span class="ident">kind</span>() <span class="op">==</span> <span class="ident">::std::io::ErrorKind::WouldBlock</span> =&gt; {
+            <span class="kw">return</span> <span class="prelude-val">Ok</span>(<span class="ident">::futures::Async::NotReady</span>)
         }
-        <span class="prelude-val">Err</span>(<span class="ident">e</span>) <span class="op">=</span><span class="op">&gt;</span> <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
+        <span class="prelude-val">Err</span>(<span class="ident">e</span>) =&gt; <span class="kw">return</span> <span class="prelude-val">Err</span>(<span class="ident">e</span>.<span class="ident">into</span>()),
     })
 }
 
@@ -311,16 +309,16 @@
 <span class="kw">mod</span> <span class="ident">split</span>;
 <span class="kw">mod</span> <span class="ident">window</span>;
 <span class="kw">mod</span> <span class="ident">write_all</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">copy</span>::{<span class="ident">copy</span>, <span class="ident">Copy</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">frame</span>::{<span class="ident">EasyBuf</span>, <span class="ident">EasyBufMut</span>, <span class="ident">Framed</span>, <span class="ident">Codec</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">flush</span>::{<span class="ident">flush</span>, <span class="ident">Flush</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">read_exact</span>::{<span class="ident">read_exact</span>, <span class="ident">ReadExact</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">read_to_end</span>::{<span class="ident">read_to_end</span>, <span class="ident">ReadToEnd</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">read</span>::{<span class="ident">read</span>, <span class="ident">Read</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">read_until</span>::{<span class="ident">read_until</span>, <span class="ident">ReadUntil</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">split</span>::{<span class="ident">ReadHalf</span>, <span class="ident">WriteHalf</span>};
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">window</span>::<span class="ident">Window</span>;
-<span class="kw">pub</span> <span class="kw">use</span> <span class="self">self</span>::<span class="ident">write_all</span>::{<span class="ident">write_all</span>, <span class="ident">WriteAll</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::copy</span>::{<span class="ident">copy</span>, <span class="ident">Copy</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::frame</span>::{<span class="ident">EasyBuf</span>, <span class="ident">EasyBufMut</span>, <span class="ident">Framed</span>, <span class="ident">Codec</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::flush</span>::{<span class="ident">flush</span>, <span class="ident">Flush</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::read_exact</span>::{<span class="ident">read_exact</span>, <span class="ident">ReadExact</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::read_to_end</span>::{<span class="ident">read_to_end</span>, <span class="ident">ReadToEnd</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::read</span>::{<span class="ident">read</span>, <span class="ident">Read</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::read_until</span>::{<span class="ident">read_until</span>, <span class="ident">ReadUntil</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::split</span>::{<span class="ident">ReadHalf</span>, <span class="ident">WriteHalf</span>};
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::window::Window</span>;
+<span class="kw">pub</span> <span class="kw">use</span> <span class="ident"><span class="self">self</span>::write_all</span>::{<span class="ident">write_all</span>, <span class="ident">WriteAll</span>};
 
 <span class="doccomment">/// A trait for read/write I/O objects</span>
 <span class="doccomment">///</span>
@@ -333,7 +331,7 @@
 <span class="doccomment">/// value that indicates &quot;would block&quot; the current future&#39;s task is arranged to</span>
 <span class="doccomment">/// receive a notification when the method would otherwise not indicate that it</span>
 <span class="doccomment">/// would block.</span>
-<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Io</span>: <span class="ident">io</span>::<span class="ident">Read</span> <span class="op">+</span> <span class="ident">io</span>::<span class="ident">Write</span> {
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Io</span>: <span class="ident">io::Read</span> <span class="op">+</span> <span class="ident">io::Write</span> {
     <span class="doccomment">/// Tests to see if this I/O object may be readable.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// This method returns an `Async&lt;()&gt;` indicating whether the object</span>
@@ -352,8 +350,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This method is likely to panic if called from outside the context of a</span>
     <span class="doccomment">/// future&#39;s task.</span>
-    <span class="kw">fn</span> <span class="ident">poll_read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="ident">Async</span>::<span class="ident">Ready</span>(())
+    <span class="kw">fn</span> <span class="ident">poll_read</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="ident">Async::Ready</span>(())
     }
 
     <span class="doccomment">/// Tests to see if this I/O object may be writable.</span>
@@ -374,8 +372,8 @@
     <span class="doccomment">///</span>
     <span class="doccomment">/// This method is likely to panic if called from outside the context of a</span>
     <span class="doccomment">/// future&#39;s task.</span>
-    <span class="kw">fn</span> <span class="ident">poll_write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
-        <span class="ident">Async</span>::<span class="ident">Ready</span>(())
+    <span class="kw">fn</span> <span class="ident">poll_write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span> {
+        <span class="ident">Async::Ready</span>(())
     }
 
     <span class="doccomment">/// Read in a list of buffers all at once.</span>
@@ -396,11 +394,11 @@
     <span class="doccomment">/// can implement this as an atomic read using all the buffers are</span>
     <span class="doccomment">/// recommended to do so. For example, `TcpStream` can implement this</span>
     <span class="doccomment">/// using the `readv` syscall.</span>
-    <span class="kw">fn</span> <span class="ident">read_vec</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;</span><span class="kw-2">mut</span> [<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">IoVec</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">read_vec</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;mut</span> [<span class="kw-2">&amp;mut</span> <span class="ident">IoVec</span>]) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">bufs</span>.<span class="ident">is_empty</span>() {
             <span class="prelude-val">Ok</span>(<span class="number">0</span>)
         } <span class="kw">else</span> {
-            <span class="self">self</span>.<span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="ident">bufs</span>[<span class="number">0</span>])
+            <span class="self">self</span>.<span class="ident">read</span>(<span class="kw-2">&amp;mut</span> <span class="ident">bufs</span>[<span class="number">0</span>])
         }
     }
 
@@ -421,7 +419,7 @@
     <span class="doccomment">/// first buffer only, but objects which can implement this as an atomic</span>
     <span class="doccomment">/// write using all the buffers are  recommended to do so. For example,</span>
     <span class="doccomment">/// `TcpStream` can implement this  using the `writev` syscall.</span>
-    <span class="kw">fn</span> <span class="ident">write_vec</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">IoVec</span>]) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">io</span>::<span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
+    <span class="kw">fn</span> <span class="ident">write_vec</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">bufs</span>: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span><span class="ident">IoVec</span>]) -&gt; <span class="ident">io::Result</span><span class="op">&lt;</span><span class="ident">usize</span><span class="op">&gt;</span> {
         <span class="kw">if</span> <span class="ident">bufs</span>.<span class="ident">is_empty</span>() {
             <span class="prelude-val">Ok</span>(<span class="number">0</span>)
         } <span class="kw">else</span> {
@@ -446,20 +444,20 @@
     <span class="doccomment">/// If you want to work more directly with the streams and sink, consider</span>
     <span class="doccomment">/// calling `split` on the `Framed` returned by this method, which will</span>
     <span class="doccomment">/// break them into separate objects, allowing them to interact more easily.</span>
-    <span class="kw">fn</span> <span class="ident">framed</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">Codec</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">codec</span>: <span class="ident">C</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Framed</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">C</span><span class="op">&gt;</span>
+    <span class="kw">fn</span> <span class="ident">framed</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">Codec</span><span class="op">&gt;</span>(<span class="self">self</span>, <span class="ident">codec</span>: <span class="ident">C</span>) -&gt; <span class="ident">Framed</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">C</span><span class="op">&gt;</span>
         <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span>,
     {
-        <span class="ident">frame</span>::<span class="ident">framed</span>(<span class="self">self</span>, <span class="ident">codec</span>)
+        <span class="ident">frame::framed</span>(<span class="self">self</span>, <span class="ident">codec</span>)
     }
 
     <span class="doccomment">/// Helper method for splitting this read/write object into two halves.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// The two halves returned implement the `Read` and `Write` traits,</span>
     <span class="doccomment">/// respectively.</span>
-    <span class="kw">fn</span> <span class="ident">split</span>(<span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> (<span class="ident">ReadHalf</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">WriteHalf</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>)
+    <span class="kw">fn</span> <span class="ident">split</span>(<span class="self">self</span>) -&gt; (<span class="ident">ReadHalf</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>, <span class="ident">WriteHalf</span><span class="op">&lt;</span><span class="self">Self</span><span class="op">&gt;</span>)
         <span class="kw">where</span> <span class="self">Self</span>: <span class="ident">Sized</span>
     {
-        <span class="ident">split</span>::<span class="ident">split</span>(<span class="self">self</span>)
+        <span class="ident">split::split</span>(<span class="self">self</span>)
     }
 }
 
@@ -486,20 +484,20 @@
     <span class="kw">type</span> <span class="ident">Out</span>;
 
     <span class="doccomment">/// Tests to see if this `FramedIo` may be readable.</span>
-    <span class="kw">fn</span> <span class="ident">poll_read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">poll_read</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
     <span class="doccomment">/// Read a message frame from the `FramedIo`</span>
-    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span><span class="self">Self</span>::<span class="ident">Out</span>, <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">read</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span><span class="ident"><span class="self">Self</span>::Out</span>, <span class="ident">io::Error</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Tests to see if this `FramedIo` may be writable.</span>
     <span class="doccomment">///</span>
     <span class="doccomment">/// Unlike most other calls to poll readiness, it is important that when</span>
     <span class="doccomment">/// `FramedIo::poll_write` returns `Async::Ready` that a write will</span>
     <span class="doccomment">/// succeed.</span>
-    <span class="kw">fn</span> <span class="ident">poll_write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">poll_write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Async</span><span class="op">&lt;</span>()<span class="op">&gt;</span>;
 
     <span class="doccomment">/// Write a message frame to the `FramedIo`</span>
-    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>, <span class="ident">req</span>: <span class="self">Self</span>::<span class="ident">In</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">write</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">req</span>: <span class="ident"><span class="self">Self</span>::In</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io::Error</span><span class="op">&gt;</span>;
 
     <span class="doccomment">/// Flush pending writes or do any other work not driven by reading /</span>
     <span class="doccomment">/// writing.</span>
@@ -510,8 +508,8 @@
     <span class="doccomment">/// buffer the remaining data to write. Calls to `FramedIo:flush` attempt</span>
     <span class="doccomment">/// to write any remaining data in the write buffer to the underlying</span>
     <span class="doccomment">/// source.</span>
-    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;</span><span class="kw-2">mut</span> <span class="self">self</span>) <span class="op">-</span><span class="op">&gt;</span> <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io</span>::<span class="ident">Error</span><span class="op">&gt;</span>;
+    <span class="kw">fn</span> <span class="ident">flush</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>) -&gt; <span class="ident">Poll</span><span class="op">&lt;</span>(), <span class="ident">io::Error</span><span class="op">&gt;</span>;
 }
-</pre></div>
-</section><section id="search" class="content hidden"></section><section class="footer"></section><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio_core"></div>
-    <script src="../../../main.js"></script><script src="../../../source-script.js"></script><script src="../../../source-files.js"></script><script defer src="../../../search-index.js"></script></body></html>
+</code></pre></div>
+</section><section id="search" class="content hidden"></section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="tokio_core" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.59.0 (9d1b2106e 2022-02-23)" ></div>
+</body></html>

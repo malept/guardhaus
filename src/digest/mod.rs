@@ -162,66 +162,58 @@ impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
         let param_map = parse_parameters(s);
-        let username: Username;
-        let realm: String;
-        let nonce: String;
-        let response: String;
-        let request_uri: String;
-        let algorithm: HashAlgorithm;
-        let charset: Option<Charset>;
-        let userhash: bool;
-        match parse_username(&param_map) {
-            Ok(value) => username = value,
+        let username: Username = match parse_username(&param_map) {
+            Ok(value) => value,
             Err(err) => return Err(err),
-        }
-        match unraveled_map_value(&param_map, "realm") {
-            Some(value) => realm = value,
+        };
+        let realm: String = match unraveled_map_value(&param_map, "realm") {
+            Some(value) => value,
             None => return Err(Error::Header),
-        }
-        match unraveled_map_value(&param_map, "nonce") {
-            Some(value) => nonce = value,
+        };
+        let nonce: String = match unraveled_map_value(&param_map, "nonce") {
+            Some(value) => value,
             None => return Err(Error::Header),
-        }
+        };
         let nonce_count = match NonceCount::from_parameters(&param_map) {
             Ok(value) => value,
             Err(err) => return Err(err),
         };
-        match unraveled_map_value(&param_map, "response") {
-            Some(value) => response = value,
+        let response: String = match unraveled_map_value(&param_map, "response") {
+            Some(value) => value,
             None => return Err(Error::Header),
-        }
-        match unraveled_map_value(&param_map, "uri") {
-            Some(value) => request_uri = value,
+        };
+        let request_uri: String = match unraveled_map_value(&param_map, "uri") {
+            Some(value) => value,
             None => return Err(Error::Header),
-        }
-        if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
+        };
+        let algorithm: HashAlgorithm = if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
             match HashAlgorithm::from_str(&value[..]) {
-                Ok(converted) => algorithm = converted,
+                Ok(converted) => converted,
                 Err(_) => return Err(Error::Header),
             }
         } else {
-            algorithm = HashAlgorithm::Md5;
-        }
-        let qop = Qop::from_parameters(&param_map)?;
-        if let Some(value) = unraveled_map_value(&param_map, "charset") {
+            HashAlgorithm::Md5
+        };
+        let charset: Option<Charset> = if let Some(value) = unraveled_map_value(&param_map, "charset") {
             let utf8 = UniCase::new("utf-8".to_owned());
-            charset = if UniCase::new(value) == utf8 {
+            if UniCase::new(value) == utf8 {
                 Some(Charset::Ext("UTF-8".to_owned()))
             } else {
                 return Err(Error::Header);
             }
         } else {
-            charset = None;
-        }
-        if let Some(value) = unraveled_map_value(&param_map, "userhash") {
+            None
+        };
+        let userhash: bool = if let Some(value) = unraveled_map_value(&param_map, "userhash") {
             match &value[..] {
-                "true" => userhash = true,
-                "false" => userhash = false,
+                "true" => true,
+                "false" => false,
                 _ => return Err(Error::Header),
             }
         } else {
-            userhash = false;
-        }
+            false
+        };
+        let qop = Qop::from_parameters(&param_map)?;
         Ok(Digest {
             username,
             realm,

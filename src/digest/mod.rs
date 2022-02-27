@@ -183,24 +183,26 @@ impl FromStr for Digest {
         };
         let response: String = unravel_map_value!(param_map, "response");
         let request_uri: String = unravel_map_value!(param_map, "uri");
-        let algorithm: HashAlgorithm = if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
-            match HashAlgorithm::from_str(&value[..]) {
-                Ok(converted) => converted,
-                Err(_) => return Err(Error::Header),
-            }
-        } else {
-            HashAlgorithm::Md5
-        };
-        let charset: Option<Charset> = if let Some(value) = unraveled_map_value(&param_map, "charset") {
-            let utf8 = UniCase::new("utf-8".to_owned());
-            if UniCase::new(value) == utf8 {
-                Some(Charset::Ext("UTF-8".to_owned()))
+        let algorithm: HashAlgorithm =
+            if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
+                match HashAlgorithm::from_str(&value[..]) {
+                    Ok(converted) => converted,
+                    Err(_) => return Err(Error::Header),
+                }
             } else {
-                return Err(Error::Header);
-            }
-        } else {
-            None
-        };
+                HashAlgorithm::Md5
+            };
+        let charset: Option<Charset> =
+            if let Some(value) = unraveled_map_value(&param_map, "charset") {
+                let utf8 = UniCase::new("utf-8".to_owned());
+                if UniCase::new(value) == utf8 {
+                    Some(Charset::Ext("UTF-8".to_owned()))
+                } else {
+                    return Err(Error::Header);
+                }
+            } else {
+                None
+            };
         let userhash: bool = if let Some(value) = unraveled_map_value(&param_map, "userhash") {
             match &value[..] {
                 "true" => true,

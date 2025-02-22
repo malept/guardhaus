@@ -33,8 +33,7 @@ Want to contribute? Find an issue that fits your skillset.
 Here are some things to keep in mind as you file a pull request to fix a bug, add a new feature,
 etc.:
 
-* Travis CI (for Linux and OS X) and AppVeyor (for Windows) are used to make sure that the project
-  builds as expected on the supported platforms, using the current stable and beta versions of Rust.
+* GitHub Actions are used to make sure that the project builds as expected on the supported platforms, using the current stable version of Rust.
   Make sure the testsuite passes locally by running `cargo test`.
 * Unless it's impractical, please write tests for your changes. This will help spot regressions
   much easier.

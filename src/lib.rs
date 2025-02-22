@@ -20,12 +20,6 @@
 
 //! Guardhaus is an HTTP authentication/authorization library.
 
-extern crate crypto_hash;
-extern crate hex;
-extern crate hyper;
-extern crate percent_encoding;
-extern crate unicase;
-
 #[warn(missing_docs)]
 pub mod authentication_info;
 #[warn(missing_docs)]

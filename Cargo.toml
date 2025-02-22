@@ -8,6 +8,7 @@ repository = "https://github.com/malept/guardhaus"
 readme = "README.md"
 keywords = ["http", "hyper", "authentication", "authorization", "digest"]
 license = "MIT"
+edition = "2024"
 
 [dependencies]
 crypto-hash = "0.3"

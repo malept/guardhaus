@@ -20,12 +20,12 @@
 
 //! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
 
-use super::types::{HashAlgorithm, NonceCount, Qop};
-use hyper::error::Error;
-use hyper::header::parsing::{parse_extended_value, ExtendedValue};
-use hyper::header::{Charset, Scheme};
+use crate::parsing::{append_parameter, parse_parameters, unraveled_map_value};
+use crate::types::{HashAlgorithm, NonceCount, Qop};
 use hyper::Method;
-use parsing::{append_parameter, parse_parameters, unraveled_map_value};
+use hyper::error::Error;
+use hyper::header::parsing::{ExtendedValue, parse_extended_value};
+use hyper::header::{Charset, Scheme};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;

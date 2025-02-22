@@ -20,11 +20,11 @@
 
 #![allow(dead_code)]
 
-use super::super::types::{HashAlgorithm, NonceCount, Qop};
-use super::{Digest, Username};
+use crate::digest::{Digest, Username};
+use crate::parsing::test_helper;
+use crate::types::{HashAlgorithm, NonceCount, Qop};
 use hyper::header::parsing::parse_extended_value;
 use hyper::header::{Authorization, Header, Headers, Raw};
-use parsing::test_helper;
 
 pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
     test_helper::assert_parsed_header_equal(expected, data)

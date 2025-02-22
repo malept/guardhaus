@@ -20,7 +20,7 @@
 
 //! Common authentication types.
 
-use super::parsing::unraveled_map_value;
+use crate::parsing::unraveled_map_value;
 use crypto_hash;
 use hex::FromHex;
 use hyper::error::Error;

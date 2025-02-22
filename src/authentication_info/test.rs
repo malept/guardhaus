@@ -20,11 +20,11 @@
 
 #![cfg(test)]
 
-use super::super::types::{NonceCount, Qop};
 use super::AuthenticationInfo;
-use parsing::test_helper::{
+use crate::parsing::test_helper::{
     assert_header_parsing_error, assert_parsed_header_equal, assert_serialized_header_equal,
 };
+use crate::types::{NonceCount, Qop};
 
 #[test]
 fn test_parse_authentication_info_with_digest_and_nextnonce() {

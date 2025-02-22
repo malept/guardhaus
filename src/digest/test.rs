@@ -19,16 +19,16 @@
 // THE SOFTWARE.
 
 #![cfg(test)]
-use super::super::types::{HashAlgorithm, Qop};
 use super::test_helper::{
     assert_header_parsing_error, assert_parsed_header_equal, assert_serialized_header_equal,
     parse_digest_header, rfc2069_a1_digest_header, rfc2069_a2_digest_header, rfc2069_username,
     rfc2617_digest_header, rfc7616_digest_header, rfc7616_sha512_256_header, rfc7616_username,
 };
 use super::{Digest, Username};
+use crate::types::{HashAlgorithm, Qop};
+use hyper::Method;
 use hyper::header::parsing::parse_extended_value;
 use hyper::header::{Authorization, Header, Raw, Scheme};
-use hyper::Method;
 
 #[test]
 fn test_display_sha256_for_hashalgorithm() {
@@ -584,9 +584,11 @@ fn test_validate_using_password() {
                                       opaque=\"FQhe/qaU925kfnzjCev0ciny7QMkPqMAFRtzCUYo5tdS\", \
                                       qop=auth, nc=00000001, cnonce=\"b24ce2519b8cdb10\"",
     );
-    assert!(header
-        .0
-        .validate_using_password(Method::Get, b"", password.clone(),));
+    assert!(
+        header
+            .0
+            .validate_using_password(Method::Get, b"", password.clone(),)
+    );
     let mut digest = header.0.clone();
     digest.client_nonce = Some("somethingelse".to_owned());
     assert!(!digest.validate_using_password(Method::Get, b"", password));
@@ -608,9 +610,11 @@ fn test_validate_using_encoded_username_and_password() {
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false",
     );
-    assert!(header
-        .0
-        .validate_using_password(Method::Get, b"", password.clone(),));
+    assert!(
+        header
+            .0
+            .validate_using_password(Method::Get, b"", password.clone(),)
+    );
 }
 
 #[test]

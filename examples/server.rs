@@ -25,9 +25,9 @@ extern crate hyper;
 use futures::future::FutureResult;
 use futures::{Future, Stream};
 use guardhaus::digest::{Digest, Username};
+use hyper::StatusCode;
 use hyper::header::Authorization;
 use hyper::server::{Http, Request, Response, Service};
-use hyper::StatusCode;
 
 const LISTEN: &str = "127.0.0.1:1337";
 const USERNAME: &str = "Spy";

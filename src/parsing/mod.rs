@@ -20,8 +20,8 @@
 
 //! Utility functions to parse headers.
 
-use hyper::header::parsing::from_comma_delimited;
 use hyper::header::Raw;
+use hyper::header::parsing::from_comma_delimited;
 use percent_encoding::percent_decode;
 use std::collections::HashMap;
 use unicase::UniCase;

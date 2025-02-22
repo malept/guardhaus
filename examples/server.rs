@@ -29,9 +29,9 @@ use hyper::header::Authorization;
 use hyper::server::{Http, Request, Response, Service};
 use hyper::StatusCode;
 
-const LISTEN: &'static str = "127.0.0.1:1337";
-const USERNAME: &'static str = "Spy";
-const PASSWORD: &'static str = "vs. Spy";
+const LISTEN: &str = "127.0.0.1:1337";
+const USERNAME: &str = "Spy";
+const PASSWORD: &str = "vs. Spy";
 // const REALM: &'static str = "MadMag";
 
 #[derive(Clone, Copy)]

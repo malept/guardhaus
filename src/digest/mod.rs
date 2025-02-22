@@ -171,16 +171,10 @@ impl FromStr for Digest {
     type Err = Error;
     fn from_str(s: &str) -> Result<Digest, Error> {
         let param_map = parse_parameters(s);
-        let username: Username = match parse_username(&param_map) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
+        let username: Username = parse_username(&param_map)?;
         let realm: String = unravel_map_value!(param_map, "realm");
         let nonce: String = unravel_map_value!(param_map, "nonce");
-        let nonce_count = match NonceCount::from_parameters(&param_map) {
-            Ok(value) => value,
-            Err(err) => return Err(err),
-        };
+        let nonce_count = NonceCount::from_parameters(&param_map)?;
         let response: String = unravel_map_value!(param_map, "response");
         let request_uri: String = unravel_map_value!(param_map, "uri");
         let algorithm: HashAlgorithm =

@@ -41,7 +41,7 @@ fn open_passwdfile(path: String, create_passwdfile: bool) -> io::Result<File> {
     if create_passwdfile {
         File::create(path)
     } else {
-        OpenOptions::new().write(true).append(true).open(path)
+        OpenOptions::new().append(true).open(path)
     }
 }
 
@@ -69,7 +69,7 @@ fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: 
         realm.to_string(),
         password,
     );
-    if let Err(failure) = write!(file, "{}:{}:{}\n", username, realm, hashed) {
+    if let Err(failure) = writeln!(file, "{}:{}:{}", username, realm, hashed) {
         panic_any(failure.to_string())
     }
 }
@@ -110,6 +110,5 @@ fn main() {
         }
     } else {
         print_usage(&program, &opts);
-        return;
-    };
+    }
 }

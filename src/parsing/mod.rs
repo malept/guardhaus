@@ -60,10 +60,7 @@ pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
 }
 
 pub fn unraveled_map_value(map: &HashMap<UniCase<String>, String>, key: &str) -> Option<String> {
-    let value = match map.get(&UniCase::new(key.to_owned())) {
-        Some(v) => v,
-        None => return None,
-    };
+    let value = map.get(&UniCase::new(key.to_owned()))?;
     match percent_decode(value.as_bytes()).decode_utf8() {
         Ok(string) => Some(string.into_owned()),
         Err(_) => None,

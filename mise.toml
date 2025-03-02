@@ -5,6 +5,16 @@ actionlint = "latest"
 description = "Lints Rust files with Clippy"
 run = "cargo clippy --all-features --all-targets --workspace"
 
+[tasks."example-server:curl"]
+description = "Call example server via curl"
+run = "curl -vvv --digest --user \"Spy:vs. Spy\" http://127.0.0.1:1337/"
+
+[tasks."example-server:run"]
+description = "Run example server"
+run = "cargo run --example server"
+sources = ["Cargo.toml", "src/**/*.rs", "examples/server.rs"]
+outputs = ["target/debug/examples/server"]
+
 [tasks.lint]
 description = "Lint project"
 depends = ["clippy", "rustfmt-check", "taplo-format-check", "taplo-lint"]

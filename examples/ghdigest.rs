@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016 Mark Lee
+// Copyright (c) 2015, 2016, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -25,7 +25,7 @@ extern crate rpassword;
 use getopts::Options;
 use guardhaus::digest::{Digest, Username};
 use guardhaus::types::HashAlgorithm;
-use rpassword::prompt_password_stdout;
+use rpassword::prompt_password;
 use std::env;
 use std::fs::{File, OpenOptions};
 use std::io;
@@ -46,7 +46,7 @@ fn open_passwdfile(path: String, create_passwdfile: bool) -> io::Result<File> {
 }
 
 fn getpass(prompt: &str) -> String {
-    match prompt_password_stdout(prompt) {
+    match prompt_password(prompt) {
         Ok(password) => password,
         Err(failure) => panic_any(failure.to_string()),
     }

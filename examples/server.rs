@@ -32,7 +32,7 @@ use headers::authorization::Credentials;
 
 const USERNAME: &str = "Spy";
 const PASSWORD: &str = "vs. Spy";
-// const REALM: &'static str = "MadMag";
+const REALM: &str = "MadMag";
 
 async fn auth(headers: HeaderMap, request: Request, next: Next) -> Result<Response, StatusCode> {
     if let Some(auth) = headers.get(http::header::AUTHORIZATION) {
@@ -57,7 +57,12 @@ async fn auth(headers: HeaderMap, request: Request, next: Next) -> Result<Respon
             Err(StatusCode::BAD_REQUEST)
         }
     } else {
-        Err(StatusCode::UNAUTHORIZED)
+        let authenticate = format!("Digest realm=\"{}\", nonce=\"abcd\"", REALM);
+        Ok(Response::builder()
+            .status(StatusCode::UNAUTHORIZED)
+            .header(http::header::WWW_AUTHENTICATE, authenticate)
+            .body(Body::empty())
+            .expect("Could not construct response"))
     }
 }
 
@@ -68,7 +73,9 @@ async fn main() {
         .route("/", get(|| async { "Hello, World!" }))
         .route_layer(middleware::from_fn(auth));
 
-    // run our app, listening globally on port 1337
-    let listener = tokio::net::TcpListener::bind("0.0.0.0:1337").await.unwrap();
+    // run our app, listening locally on port 1337
+    let listener = tokio::net::TcpListener::bind("127.0.0.1:1337")
+        .await
+        .unwrap();
     axum::serve(listener, app).await.unwrap();
 }

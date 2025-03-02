@@ -45,8 +45,7 @@ async fn auth(headers: HeaderMap, request: Request, next: Next) -> Result<Respon
                 Ok(b) => b.to_vec(),
                 Err(_) => return Err(StatusCode::PAYLOAD_TOO_LARGE),
             };
-            let data: Vec<u8> = bytes.to_vec();
-            if digest.validate_using_userhash_and_password(method, &data, username, password) {
+            if digest.validate_using_userhash_and_password(method, &bytes, username, password) {
                 let req = Request::from_parts(parts, Body::from(bytes));
                 let response = next.run(req).await;
                 Ok(response)

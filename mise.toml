@@ -1,3 +1,6 @@
+[alias]
+cargo-machete = "ubi:bnjbvr/cargo-machete"
+
 [tools]
 actionlint = "latest"
 
@@ -13,11 +16,22 @@ outputs = ["target/debug/examples/server"]
 
 [tasks.lint]
 description = "Lint project"
-depends = ["lint:clippy", "lint:rustfmt", "lint:taplo", "lint:taplo-format"]
+depends = [
+  "lint:clippy",
+  "lint:rust-unused-deps",
+  "lint:rustfmt",
+  "lint:taplo",
+  "lint:taplo-format",
+]
 
 [tasks."lint:clippy"]
 description = "Lints Rust files with Clippy"
 run = "cargo clippy --all-features --all-targets --workspace"
+
+[tasks."lint:rust-unused-deps"]
+tools.cargo-machete = "latest"
+description = "Checks if there are any unused crate dependencies declared"
+run = "cargo machete"
 
 [tasks."lint:rustfmt"]
 description = "Checks if Rust files are formatted correctly"

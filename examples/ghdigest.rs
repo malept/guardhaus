@@ -18,10 +18,6 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-extern crate getopts;
-extern crate guardhaus;
-extern crate rpassword;
-
 use getopts::Options;
 use guardhaus::digest::{Digest, Username};
 use guardhaus::types::HashAlgorithm;

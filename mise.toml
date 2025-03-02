@@ -1,10 +1,6 @@
 [tools]
 actionlint = "latest"
 
-[tasks.clippy]
-description = "Lints Rust files with Clippy"
-run = "cargo clippy --all-features --all-targets --workspace"
-
 [tasks."example-server:curl"]
 description = "Call example server via curl"
 run = "curl -vvv --digest --user \"Spy:vs. Spy\" http://127.0.0.1:1337/"
@@ -17,18 +13,22 @@ outputs = ["target/debug/examples/server"]
 
 [tasks.lint]
 description = "Lint project"
-depends = ["clippy", "rustfmt-check", "taplo-format-check", "taplo-lint"]
+depends = ["lint:clippy", "lint:rustfmt", "lint:taplo", "lint:taplo-format"]
 
-[tasks.rustfmt-check]
+[tasks."lint:clippy"]
+description = "Lints Rust files with Clippy"
+run = "cargo clippy --all-features --all-targets --workspace"
+
+[tasks."lint:rustfmt"]
 description = "Checks if Rust files are formatted correctly"
 run = "cargo fmt --all --check"
 
-[tasks.taplo-format-check]
-tools.taplo = "latest"
-description = "Checks if TOML files are formatted correctly"
-run = "taplo format --check --diff"
-
-[tasks.taplo-lint]
+[tasks."lint:taplo"]
 tools.taplo = "latest"
 description = "Lints TOML files with Taplo"
 run = "taplo lint"
+
+[tasks."lint:taplo-format"]
+tools.taplo = "latest"
+description = "Checks if TOML files are formatted correctly"
+run = "taplo format --check --diff"

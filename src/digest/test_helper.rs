@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -21,27 +21,68 @@
 #![allow(dead_code)]
 
 use crate::digest::{Digest, Username};
+use crate::parsing::fromheaders::ExtendedValue;
 use crate::parsing::test_helper;
 use crate::types::{HashAlgorithm, NonceCount, Qop};
-use hyper::header::parsing::parse_extended_value;
-use hyper::header::{Authorization, Header, Headers, Raw};
+use headers::HeaderValue;
+use headers::authorization::Credentials;
 
-pub fn assert_parsed_header_equal(expected: Authorization<Digest>, data: &str) {
-    test_helper::assert_parsed_header_equal(expected, data)
+fn serialize_headers(headers: headers::HeaderMap) -> Result<String, http::header::ToStrError> {
+    let mut serialized = String::new();
+    for (name, value) in headers.iter() {
+        serialized.push_str(name.as_str());
+        serialized.push_str(": ");
+        serialized.push_str(value.to_str()?);
+        serialized.push('\r');
+        serialized.push('\n');
+    }
+
+    Ok(serialized)
+}
+
+pub fn assert_parsed_header_equal(expected: Digest, data: &str) {
+    assert!(data.starts_with("Digest "));
+    let digest_params = data
+        .get(7..)
+        .expect("Header value should be at least 7 chars");
+    let actual: Digest = digest_params
+        .parse()
+        .expect("Could not parse digest params");
+    assert_eq!(expected, actual);
 }
 
 pub fn assert_header_parsing_error(data: &str) {
-    test_helper::assert_header_parsing_error::<Authorization<Digest>>(data)
+    test_helper::assert_header_parsing_error(data)
 }
 
 pub fn assert_serialized_header_equal(digest: Digest, actual: &str) {
-    let mut headers = Headers::new();
-    headers.set(Authorization(digest));
-    assert_eq!(headers.to_string(), format!("{}\r\n", actual))
+    let mut headers = headers::HeaderMap::new();
+    let credentials = format!(
+        "Digest {}",
+        digest
+            .encode()
+            .to_str()
+            .expect("Could not serialize Digest credentials")
+    );
+    headers.insert(
+        http::header::AUTHORIZATION,
+        HeaderValue::from_str(credentials.as_str())
+            .expect("Could not deserialize Digest credentials"),
+    );
+    let expected = serialize_headers(headers).expect("Could not serialize headers");
+    assert_eq!(expected, format!("{}\r\n", actual))
 }
 
-pub fn parse_digest_header(data: &str) -> Authorization<Digest> {
-    Header::parse_header(&Raw::from(data)).expect("Could not parse digest header")
+pub fn parse_digest_header(data: &str) -> Digest {
+    assert!(data.starts_with("Digest "));
+    let digest_params = data
+        .get(7..)
+        .expect("Header value should be at least 7 chars");
+    let header_value = HeaderValue::from_str(digest_params).expect("Could not parse digest header");
+    match Digest::decode(&header_value) {
+        Some(digest) => digest,
+        None => panic!("Could not decode header into Digest struct"),
+    }
 }
 
 pub fn rfc2069_username() -> Username {
@@ -94,7 +135,7 @@ pub fn rfc2617_digest_header(algorithm: HashAlgorithm) -> Digest {
 }
 
 pub fn rfc7616_username() -> Username {
-    let result = parse_extended_value("UTF-8''J%C3%A4s%C3%B8n%20Doe");
+    let result: Result<ExtendedValue, headers::Error> = "UTF-8''J%C3%A4s%C3%B8n%20Doe".parse();
     Username::Encoded(result.expect("Could not parse extended value"))
 }
 
@@ -117,7 +158,7 @@ pub fn rfc7616_digest_header(algorithm: HashAlgorithm, response: &str) -> Digest
 }
 
 pub fn rfc7616_sha512_256_header(username: String, userhash: bool) -> Digest {
-    use hyper::header::Charset;
+    use crate::parsing::fromheaders::Charset;
 
     Digest {
         username: Username::Plain(username),
@@ -130,7 +171,7 @@ pub fn rfc7616_sha512_256_header(username: String, userhash: bool) -> Digest {
         qop: Some(Qop::Auth),
         client_nonce: Some("NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v".to_owned()),
         opaque: Some("HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS".to_owned()),
-        charset: Some(Charset::Ext("UTF-8".to_owned())),
+        charset: Some(Charset::UTF_8),
         userhash,
     }
 }

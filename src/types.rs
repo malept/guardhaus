@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2020 Mark Lee
+// Copyright (c) 2015, 2016, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,10 +23,10 @@
 use crate::parsing::unraveled_map_value;
 use crypto_hash;
 use hex::FromHex;
-use hyper::error::Error;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
+use thiserror::Error;
 use unicase::UniCase;
 
 /// Allowable hash algorithms for the `algorithm` parameter.
@@ -46,10 +46,24 @@ pub enum HashAlgorithm {
     Sha512256Session,
 }
 
-impl FromStr for HashAlgorithm {
-    type Err = Error;
+/// Errors relating to parsing/serializing digest authorization.
+#[derive(Debug, Error)]
+pub enum AuthorizationError {
+    /// Parse errors for the nonce_count parameter.
+    #[error("Could not parse nonce count")]
+    ParseNonceCount,
+    /// Parse errors around the qop (quality of protection) parameter.
+    #[error("Unknown quality of protection parameter: {0}")]
+    UnknownQop(String),
+    /// Unknown/unsupported digest hash algorithm.
+    #[error("Unknown hash algorithm: {0}")]
+    UnknownAlgorithm(String),
+}
 
-    fn from_str(s: &str) -> Result<HashAlgorithm, Error> {
+impl FromStr for HashAlgorithm {
+    type Err = AuthorizationError;
+
+    fn from_str(s: &str) -> Result<HashAlgorithm, AuthorizationError> {
         match s {
             "MD5" => Ok(HashAlgorithm::Md5),
             "MD5-sess" => Ok(HashAlgorithm::Md5Session),
@@ -57,7 +71,7 @@ impl FromStr for HashAlgorithm {
             "SHA-256-sess" => Ok(HashAlgorithm::Sha256Session),
             "SHA-512-256" => Ok(HashAlgorithm::Sha512256),
             "SHA-512-256-sess" => Ok(HashAlgorithm::Sha512256Session),
-            _ => Err(Error::Header),
+            _ => Err(AuthorizationError::UnknownAlgorithm(s.to_string())),
         }
     }
 }
@@ -103,8 +117,8 @@ impl HashAlgorithm {
 pub struct NonceCount(pub u32);
 
 impl FromStr for NonceCount {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<NonceCount, Error> {
+    type Err = AuthorizationError;
+    fn from_str(s: &str) -> Result<NonceCount, AuthorizationError> {
         match Vec::from_hex(s) {
             Ok(bytes) => {
                 let mut count: u32 = 0;
@@ -114,7 +128,7 @@ impl FromStr for NonceCount {
                 count |= bytes[3] as u32;
                 Ok(NonceCount(count))
             }
-            _ => Err(Error::Header),
+            _ => Err(AuthorizationError::ParseNonceCount),
         }
     }
 }
@@ -131,11 +145,11 @@ impl NonceCount {
     /// Returns an error if the value is not a valid nonce count.
     pub fn from_parameters(
         map: &HashMap<UniCase<String>, String>,
-    ) -> Result<Option<NonceCount>, Error> {
+    ) -> Result<Option<NonceCount>, AuthorizationError> {
         if let Some(value) = unraveled_map_value(map, "nc") {
             match NonceCount::from_str(&value[..]) {
                 Ok(count) => Ok(Some(count)),
-                _ => Err(Error::Header),
+                Err(err) => Err(err),
             }
         } else {
             Ok(None)
@@ -153,12 +167,12 @@ pub enum Qop {
 }
 
 impl FromStr for Qop {
-    type Err = Error;
-    fn from_str(s: &str) -> Result<Qop, Error> {
+    type Err = AuthorizationError;
+    fn from_str(s: &str) -> Result<Qop, AuthorizationError> {
         match s {
             "auth" => Ok(Qop::Auth),
             "auth-int" => Ok(Qop::AuthInt),
-            _ => Err(Error::Header),
+            _ => Err(AuthorizationError::UnknownQop(s.to_string())),
         }
     }
 }
@@ -175,11 +189,13 @@ impl fmt::Display for Qop {
 impl Qop {
     /// Extracts a `Qop` object from a map of header parameters.
     /// Returns an error if the value is not a valid qop value.
-    pub fn from_parameters(map: &HashMap<UniCase<String>, String>) -> Result<Option<Qop>, Error> {
+    pub fn from_parameters(
+        map: &HashMap<UniCase<String>, String>,
+    ) -> Result<Option<Qop>, AuthorizationError> {
         if let Some(value) = unraveled_map_value(map, "qop") {
             match Qop::from_str(&value[..]) {
                 Ok(converted) => Ok(Some(converted)),
-                Err(_) => Err(Error::Header),
+                Err(err) => Err(err),
             }
         } else {
             Ok(None)

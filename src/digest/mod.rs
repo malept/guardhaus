@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,14 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-//! An HTTP Digest implementation for [Hyper](http://hyper.rs)'s `Authorization` header.
+//! An HTTP Digest implementation for the [`headers`](https://docs.rs/headers) crate's `Authorization` header.
 
-use crate::parsing::{append_parameter, parse_parameters, unraveled_map_value};
+use crate::parsing::fromheaders::{Charset, ExtendedValue};
+use crate::parsing::{DigestParameters, parse_parameters, unraveled_map_value};
 use crate::types::{HashAlgorithm, NonceCount, Qop};
-use hyper::Method;
-use hyper::error::Error;
-use hyper::header::parsing::{ExtendedValue, parse_extended_value};
-use hyper::header::{Charset, Scheme};
+use headers::Error;
+use headers::authorization::Credentials;
+use http::{HeaderValue, Method};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
@@ -87,74 +87,77 @@ pub struct Digest {
     pub userhash: bool,
 }
 
-impl Scheme for Digest {
-    fn scheme() -> Option<&'static str> {
-        Some("Digest")
+impl Credentials for Digest {
+    const SCHEME: &'static str = "Digest";
+
+    fn decode(value: &HeaderValue) -> Option<Self> {
+        if let Ok(serialized) = value.to_str() {
+            match serialized.parse() {
+                Ok(digest) => Some(digest),
+                Err(_) => None,
+            }
+        } else {
+            None
+        }
     }
 
-    fn fmt_scheme(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut serialized = String::new();
+    fn encode(&self) -> headers::HeaderValue {
+        let mut parameters = DigestParameters::new();
         match self.username {
-            Username::Plain(ref username) => {
-                append_parameter(&mut serialized, "username", username, true)
-            }
+            Username::Plain(ref username) => parameters.append("username", username, true),
             Username::Encoded(ref encoded) => {
-                append_parameter(&mut serialized, "username*", &encoded.to_string(), false)
+                parameters.append("username*", &encoded.to_string(), false)
             }
         }
-        append_parameter(&mut serialized, "realm", &self.realm, true);
-        append_parameter(&mut serialized, "nonce", &self.nonce, true);
+        parameters.append("realm", &self.realm, true);
+        parameters.append("nonce", &self.nonce, true);
         if let Some(ref nonce_count) = self.nonce_count {
-            append_parameter(&mut serialized, "nc", &nonce_count.to_string(), false);
+            parameters.append("nc", &nonce_count.to_string(), false);
         }
-        append_parameter(&mut serialized, "response", &self.response, true);
-        append_parameter(&mut serialized, "uri", &self.request_uri, true);
-        append_parameter(
-            &mut serialized,
-            "algorithm",
-            &self.algorithm.to_string(),
-            false,
-        );
+        parameters.append("response", &self.response, true);
+        parameters.append("uri", &self.request_uri, true);
+        parameters.append("algorithm", &self.algorithm.to_string(), false);
         if let Some(ref qop) = self.qop {
-            append_parameter(&mut serialized, "qop", &qop.to_string(), false);
+            parameters.append("qop", &qop.to_string(), false);
         }
         if let Some(ref client_nonce) = self.client_nonce {
-            append_parameter(&mut serialized, "cnonce", client_nonce, true);
+            parameters.append("cnonce", client_nonce, true);
         }
         if let Some(ref opaque) = self.opaque {
-            append_parameter(&mut serialized, "opaque", opaque, true);
+            parameters.append("opaque", opaque, true);
         }
         if let Some(ref charset) = self.charset {
-            append_parameter(&mut serialized, "charset", &charset.to_string(), false);
+            parameters.append("charset", &charset.to_string(), false);
         }
         if self.userhash {
-            append_parameter(&mut serialized, "userhash", "true", false);
+            parameters.append("userhash", "true", false);
         }
-        write!(f, "{}", serialized)
+        HeaderValue::from_str(&parameters.to_string())
+            .expect("Could not generate HeaderValue for Authorization")
     }
 }
 
 fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Error> {
     if let Some(value) = unraveled_map_value(map, "username") {
         if unraveled_map_value(map, "username*").is_some() {
-            Err(Error::Header)
+            Err(Error::invalid())
         } else {
             Ok(Username::Plain(value))
         }
     } else if let Some(encoded) = unraveled_map_value(map, "username*") {
         if let Some(userhash) = unraveled_map_value(map, "userhash") {
             if userhash == "true" {
-                return Err(Error::Header);
+                return Err(Error::invalid());
             }
         }
 
-        if let Ok(extended_value) = parse_extended_value(&encoded) {
+        if let Ok(extended_value) = encoded.parse() {
             Ok(Username::Encoded(extended_value))
         } else {
-            Err(Error::Header)
+            Err(Error::invalid())
         }
     } else {
-        Err(Error::Header)
+        Err(Error::invalid())
     }
 }
 
@@ -162,7 +165,7 @@ macro_rules! unravel_map_value {
     ($map: ident, $param_name:literal) => {
         match unraveled_map_value(&$map, $param_name) {
             Some(value) => value,
-            None => return Err(Error::Header),
+            None => return Err(Error::invalid()),
         }
     };
 }
@@ -174,14 +177,17 @@ impl FromStr for Digest {
         let username: Username = parse_username(&param_map)?;
         let realm: String = unravel_map_value!(param_map, "realm");
         let nonce: String = unravel_map_value!(param_map, "nonce");
-        let nonce_count = NonceCount::from_parameters(&param_map)?;
+        let nonce_count = match NonceCount::from_parameters(&param_map) {
+            Ok(c) => c,
+            Err(_) => return Err(Error::invalid()),
+        };
         let response: String = unravel_map_value!(param_map, "response");
         let request_uri: String = unravel_map_value!(param_map, "uri");
         let algorithm: HashAlgorithm =
             if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
                 match HashAlgorithm::from_str(&value[..]) {
                     Ok(converted) => converted,
-                    Err(_) => return Err(Error::Header),
+                    Err(_) => return Err(Error::invalid()),
                 }
             } else {
                 HashAlgorithm::Md5
@@ -190,9 +196,9 @@ impl FromStr for Digest {
             if let Some(value) = unraveled_map_value(&param_map, "charset") {
                 let utf8 = UniCase::new("utf-8".to_owned());
                 if UniCase::new(value) == utf8 {
-                    Some(Charset::Ext("UTF-8".to_owned()))
+                    Some(Charset::UTF_8)
                 } else {
-                    return Err(Error::Header);
+                    return Err(Error::invalid());
                 }
             } else {
                 None
@@ -201,12 +207,15 @@ impl FromStr for Digest {
             match &value[..] {
                 "true" => true,
                 "false" => false,
-                _ => return Err(Error::Header),
+                _ => return Err(Error::invalid()),
             }
         } else {
             false
         };
-        let qop = Qop::from_parameters(&param_map)?;
+        let qop = match Qop::from_parameters(&param_map) {
+            Ok(val) => val,
+            Err(_) => return Err(headers::Error::invalid()),
+        };
         Ok(Digest {
             username,
             realm,
@@ -304,7 +313,7 @@ impl Digest {
                     a1.append(&mut client_nonce.clone().into_bytes());
                     Ok(a1)
                 } else {
-                    Err(Error::Header)
+                    Err(Error::invalid())
                 }
             }
         }
@@ -318,7 +327,7 @@ impl Digest {
         if let Ok(a1) = self.a1(username, password) {
             Ok(self.algorithm.hex_digest(a1.as_slice()))
         } else {
-            Err(Error::Header)
+            Err(Error::invalid())
         }
     }
 
@@ -355,7 +364,7 @@ impl Digest {
         if let Ok(a1) = self.hashed_a1(username, password) {
             self.using_hashed_a1(method, entity_body, a1)
         } else {
-            Err(Error::Header)
+            Err(Error::invalid())
         }
     }
 
@@ -372,7 +381,7 @@ impl Digest {
         if let Ok(a1) = self.hashed_a1(self.username.clone(), password) {
             self.using_hashed_a1(method, entity_body, a1)
         } else {
-            Err(Error::Header)
+            Err(Error::invalid())
         }
     }
 
@@ -395,7 +404,7 @@ impl Digest {
             match *qop {
                 Qop::Auth | Qop::AuthInt => {
                     if self.client_nonce.is_none() || self.nonce_count.is_none() {
-                        return Err(Error::Header);
+                        return Err(Error::invalid());
                     }
                     let nonce = self.nonce.clone();
                     let nonce_count = self.nonce_count.clone().expect("No nonce count found");

@@ -1,4 +1,4 @@
-// Copyright (c) 2016, 2017 Mark Lee
+// Copyright (c) 2016, 2017, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -18,63 +18,57 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-extern crate futures;
-extern crate guardhaus;
-extern crate hyper;
-
-use futures::future::FutureResult;
-use futures::{Future, Stream};
+use axum::{
+    Router,
+    body::Body,
+    extract::Request,
+    http::{HeaderMap, StatusCode},
+    middleware::{self, Next},
+    response::Response,
+    routing::get,
+};
 use guardhaus::digest::{Digest, Username};
-use hyper::StatusCode;
-use hyper::header::Authorization;
-use hyper::server::{Http, Request, Response, Service};
+use headers::authorization::Credentials;
 
-const LISTEN: &str = "127.0.0.1:1337";
 const USERNAME: &str = "Spy";
 const PASSWORD: &str = "vs. Spy";
 // const REALM: &'static str = "MadMag";
 
-#[derive(Clone, Copy)]
-struct AuthEndpoint;
-
-impl Service for AuthEndpoint {
-    type Request = Request;
-    type Response = Response;
-    type Error = hyper::Error;
-    type Future = FutureResult<Response, hyper::Error>;
-
-    fn call(&self, req: Request) -> Self::Future {
-        let mut response = Response::new();
-        let headers = req.headers().clone();
-        if let Some(auth) = headers.get::<Authorization<Digest>>() {
+async fn auth(headers: HeaderMap, request: Request, next: Next) -> Result<Response, StatusCode> {
+    if let Some(auth) = headers.get(http::header::AUTHORIZATION) {
+        if let Some(digest) = Digest::decode(auth) {
             let username = Username::Plain(USERNAME.to_owned());
             let password = PASSWORD.to_owned();
-            let method = req.method().clone();
-            let entity_body = req.body().concat2().wait().unwrap().to_vec().clone();
-            if auth.0.validate_using_userhash_and_password(
-                method,
-                entity_body.as_slice(),
-                username,
-                password,
-            ) {
-                response.set_status(StatusCode::Ok);
+            let method = request.method().clone();
+            let (parts, body) = request.into_parts();
+            let bytes: Vec<u8> = match axum::body::to_bytes(body, usize::MAX).await {
+                Ok(b) => b.to_vec(),
+                Err(_) => return Err(StatusCode::PAYLOAD_TOO_LARGE),
+            };
+            let data: Vec<u8> = bytes.to_vec();
+            if digest.validate_using_userhash_and_password(method, &data, username, password) {
+                let req = Request::from_parts(parts, Body::from(bytes));
+                let response = next.run(req).await;
+                Ok(response)
             } else {
-                response.set_status(StatusCode::Forbidden);
+                Err(StatusCode::FORBIDDEN)
             }
         } else {
-            response.set_status(StatusCode::Unauthorized);
+            Err(StatusCode::BAD_REQUEST)
         }
-        futures::future::ok(response)
+    } else {
+        Err(StatusCode::UNAUTHORIZED)
     }
 }
 
-fn main() {
-    let server = Http::new()
-        .bind(
-            &LISTEN.parse().expect("Could not parse listen address"),
-            || Ok(AuthEndpoint),
-        )
-        .expect("Could not create HTTP server");
-    server.run().expect("Could not run HTTP server");
-    println!("Listening on {}", LISTEN);
+#[tokio::main]
+async fn main() {
+    // build our application with a single route
+    let app = Router::new()
+        .route("/", get(|| async { "Hello, World!" }))
+        .route_layer(middleware::from_fn(auth));
+
+    // run our app, listening globally on port 1337
+    let listener = tokio::net::TcpListener::bind("0.0.0.0:1337").await.unwrap();
+    axum::serve(listener, app).await.unwrap();
 }

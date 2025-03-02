@@ -1,0 +1,24 @@
+[tools]
+actionlint = "latest"
+
+[tasks.clippy]
+description = "Lints Rust files with Clippy"
+run = "cargo clippy --all-features --all-targets --workspace"
+
+[tasks.lint]
+description = "Lint project"
+depends = ["clippy", "rustfmt-check", "taplo-format-check", "taplo-lint"]
+
+[tasks.rustfmt-check]
+description = "Checks if Rust files are formatted correctly"
+run = "cargo fmt --all --check"
+
+[tasks.taplo-format-check]
+tools.taplo = "latest"
+description = "Checks if TOML files are formatted correctly"
+run = "taplo format --check --diff"
+
+[tasks.taplo-lint]
+tools.taplo = "latest"
+description = "Lints TOML files with Taplo"
+run = "taplo lint"

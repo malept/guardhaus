@@ -1,4 +1,4 @@
-// Copyright (c) 2016, 2017, 2020 Mark Lee
+// Copyright (c) 2016, 2017, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,17 +20,16 @@
 
 //! An implementation of the `Authentication-Info` header.
 
-use crate::parsing::{append_parameter, parse_parameters, unraveled_map_value};
+use crate::parsing::{DigestParameters, parse_parameters, unraveled_map_value};
 use crate::types::{NonceCount, Qop};
-use hyper::header::parsing::from_one_raw_str;
-use hyper::header::{Formatter, Header, Raw};
-use hyper::{Error as HyperError, Result as HyperResult};
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
 use unicase::UniCase;
 
 mod test;
+
+type HeadersResult<T> = Result<T, headers::Error>;
 
 /// Parameters for the `Authentication-Info` header.
 #[derive(Clone, PartialEq, Debug)]
@@ -48,10 +47,10 @@ pub struct AuthenticationInfo {
     pub nonce_count: Option<NonceCount>,
 }
 
-fn parse_digest(map: &HashMap<UniCase<String>, String>) -> Result<Option<String>, HyperError> {
+fn parse_digest(map: &HashMap<UniCase<String>, String>) -> HeadersResult<Option<String>> {
     if let Some(rspauth) = unraveled_map_value(map, "rspauth") {
         if unraveled_map_value(map, "digest").is_some() {
-            Err(HyperError::Header)
+            Err(headers::Error::invalid())
         } else {
             Ok(Some(rspauth))
         }
@@ -63,17 +62,23 @@ fn parse_digest(map: &HashMap<UniCase<String>, String>) -> Result<Option<String>
 }
 
 impl FromStr for AuthenticationInfo {
-    type Err = HyperError;
+    type Err = headers::Error;
 
-    fn from_str(s: &str) -> Result<AuthenticationInfo, HyperError> {
+    fn from_str(s: &str) -> HeadersResult<AuthenticationInfo> {
         let parameters = parse_parameters(s);
         let digest = parse_digest(&parameters)?;
-        let qop = Qop::from_parameters(&parameters)?;
+        let qop = match Qop::from_parameters(&parameters) {
+            Ok(val) => val,
+            Err(_) => return Err(headers::Error::invalid()),
+        };
         let client_nonce = unraveled_map_value(&parameters, "cnonce");
-        let nonce_count = NonceCount::from_parameters(&parameters)?;
+        let nonce_count = match NonceCount::from_parameters(&parameters) {
+            Ok(val) => val,
+            Err(_) => return Err(headers::Error::invalid()),
+        };
 
         if qop.is_some() && (digest.is_none() || client_nonce.is_none() || nonce_count.is_none()) {
-            return Err(HyperError::Header);
+            return Err(headers::Error::invalid());
         }
 
         Ok(AuthenticationInfo {
@@ -86,44 +91,58 @@ impl FromStr for AuthenticationInfo {
     }
 }
 
-impl Header for AuthenticationInfo {
-    fn header_name() -> &'static str {
-        "Authentication-Info"
+impl headers::Header for AuthenticationInfo {
+    fn name() -> &'static http::HeaderName {
+        static NAME: http::HeaderName = http::HeaderName::from_static("authentication-info");
+        &NAME
     }
 
-    fn parse_header(raw: &Raw) -> HyperResult<AuthenticationInfo> {
-        from_one_raw_str(raw).and_then(|s: String| AuthenticationInfo::from_str(&s[..]))
+    fn decode<'i, I>(values: &mut I) -> HeadersResult<Self>
+    where
+        I: Iterator<Item = &'i headers::HeaderValue>,
+    {
+        let value = values.next().ok_or_else(headers::Error::invalid)?;
+        Self::from_str(
+            value
+                .to_str()
+                .expect("Could not serialize Authentication-Info header value"),
+        )
     }
 
-    fn fmt_header(&self, f: &mut Formatter) -> fmt::Result {
-        f.fmt_line(self)
+    fn encode<E>(&self, values: &mut E)
+    where
+        E: Extend<headers::HeaderValue>,
+    {
+        let value = headers::HeaderValue::from_str(&self.to_string())
+            .expect("Could not generate HeaderValue for Authentication-Info");
+        values.extend(std::iter::once(value));
     }
 }
 
 impl fmt::Display for AuthenticationInfo {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        let mut serialized = String::new();
+        let mut parameters = DigestParameters::new();
 
         if let Some(ref digest) = self.digest {
-            append_parameter(&mut serialized, "rspauth", digest, true);
+            parameters.append("rspauth", digest, true);
         }
 
         if let Some(ref next_nonce) = self.next_nonce {
-            append_parameter(&mut serialized, "nextnonce", next_nonce, true);
+            parameters.append("nextnonce", next_nonce, true);
         }
 
         if let Some(ref qop) = self.qop {
-            append_parameter(&mut serialized, "qop", &qop.to_string(), false);
+            parameters.append("qop", &qop.to_string(), false);
         }
 
         if let Some(ref client_nonce) = self.client_nonce {
-            append_parameter(&mut serialized, "cnonce", client_nonce, true);
+            parameters.append("cnonce", client_nonce, true);
         }
 
         if let Some(ref nonce_count) = self.nonce_count {
-            append_parameter(&mut serialized, "nc", &nonce_count.to_string(), false);
+            parameters.append("nc", &nonce_count.to_string(), false);
         }
 
-        write!(f, "{}", serialized)
+        write!(f, "{}", parameters)
     }
 }

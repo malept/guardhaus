@@ -1,4 +1,4 @@
-// Copyright (c) 2015, 2016, 2017, 2020 Mark Lee
+// Copyright (c) 2015, 2016, 2017, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,33 +20,65 @@
 
 //! Utility functions to parse headers.
 
-use hyper::header::Raw;
-use hyper::header::parsing::from_comma_delimited;
+use crate::parsing::fromheaders::from_comma_delimited;
 use percent_encoding::percent_decode;
 use std::collections::HashMap;
 use unicase::UniCase;
 
+pub(crate) mod fromheaders;
 pub mod test_helper;
 
-/// Append a header parameter to a serialized header.
-pub fn append_parameter(serialized: &mut String, key: &str, value: &str, quoted: bool) {
-    if !serialized.is_empty() {
-        serialized.push_str(", ")
+/// Represents a parameter of a Digest Authorization header.
+struct DigestParameter {
+    key: String,
+    value: String,
+    quoted: bool,
+}
+
+/// Serializes digest header parameters into a string.
+pub struct DigestParameters(Vec<DigestParameter>);
+
+impl DigestParameters {
+    /// Creates a new SerializedParameters builder.
+    pub fn new() -> Self {
+        Self(vec![])
     }
-    serialized.push_str(key);
-    serialized.push('=');
-    if quoted {
-        serialized.push('"');
+
+    /// Append a header parameter to a serialized header.
+    pub fn append(&mut self, key: &str, value: &str, quoted: bool) {
+        self.0.push(DigestParameter {
+            key: key.to_string(),
+            value: value.to_string(),
+            quoted,
+        });
     }
-    serialized.push_str(value);
-    if quoted {
-        serialized.push('"');
+}
+
+impl std::fmt::Display for DigestParameters {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        let mut first_element = true;
+        for param in self.0.iter() {
+            if first_element {
+                first_element = false;
+            } else {
+                write!(f, ", ")?;
+            }
+            write!(f, "{}=", param.key)?;
+            if param.quoted {
+                write!(f, "\"")?;
+            }
+            write!(f, "{}", param.value)?;
+            if param.quoted {
+                write!(f, "\"")?;
+            }
+        }
+        Ok(())
     }
 }
 
 pub fn parse_parameters(s: &str) -> HashMap<UniCase<String>, String> {
     let parameters: Vec<String> =
-        from_comma_delimited(&Raw::from(s)).expect("Could not parse header parameters");
+        from_comma_delimited(s).expect("Could not parse header parameters");
     let mut param_map: HashMap<UniCase<String>, String> = HashMap::with_capacity(parameters.len());
     for parameter in parameters {
         let parts: Vec<&str> = parameter.splitn(2, '=').collect();

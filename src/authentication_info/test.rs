@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Mark Lee
+// Copyright (c) 2016, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -20,11 +20,35 @@
 
 #![cfg(test)]
 
+use std::str::FromStr;
+
 use super::AuthenticationInfo;
-use crate::parsing::test_helper::{
-    assert_header_parsing_error, assert_parsed_header_equal, assert_serialized_header_equal,
-};
+use crate::parsing::test_helper;
 use crate::types::{NonceCount, Qop};
+
+pub fn assert_header_parsing_error(data: &str) {
+    test_helper::assert_header_parsing_error(data)
+}
+
+pub fn assert_parsed_header_equal(expected: AuthenticationInfo, actual: &str) {
+    if let Ok(header) = AuthenticationInfo::from_str(actual) {
+        assert_eq!(header, expected)
+    } else {
+        panic!("Could not parse Authentication-Info header")
+    }
+}
+
+fn assert_serialized_header_equal(expected: AuthenticationInfo, actual_header: &str) {
+    let header_value = expected.to_string();
+    let header = httparse::Header {
+        name: "Authentication-Info",
+        value: header_value.as_bytes(),
+    };
+    let mut actual = String::new();
+    actual.push_str(actual_header);
+    actual.push_str("\n\n");
+    test_helper::assert_parsed_header_equal(header, &actual)
+}
 
 #[test]
 fn test_parse_authentication_info_with_digest_and_nextnonce() {
@@ -52,7 +76,7 @@ fn test_parse_authentication_info_with_digest() {
 
 #[test]
 fn test_parse_authentication_info_with_digest_and_rspauth() {
-    assert_header_parsing_error::<AuthenticationInfo>("digest=\"abcdef\", rspauth=\"abcdef\"");
+    assert_header_parsing_error("digest=\"abcdef\", rspauth=\"abcdef\"");
 }
 
 #[test]
@@ -73,12 +97,12 @@ fn test_parse_authentication_info_with_qop() {
 #[test]
 fn test_parse_authentication_info_with_qop_but_not_all_required_params() {
     // missing nc (nonce_count)
-    assert_header_parsing_error::<AuthenticationInfo>("qop=auth, digest=\"abcd\", cnonce=\"1234\"");
+    assert_header_parsing_error("qop=auth, digest=\"abcd\", cnonce=\"1234\"");
 }
 
 #[test]
 fn test_parse_authentication_info_with_bad_qop() {
-    assert_header_parsing_error::<AuthenticationInfo>("qop=invalid");
+    assert_header_parsing_error("qop=invalid");
 }
 
 #[test]
@@ -95,7 +119,7 @@ fn test_parse_authentication_info_with_nextnonce() {
 
 #[test]
 fn test_parse_authentication_info_with_bad_nonce_count() {
-    assert_header_parsing_error::<AuthenticationInfo>("nc=-1");
+    assert_header_parsing_error("nc=-1");
 }
 
 #[test]

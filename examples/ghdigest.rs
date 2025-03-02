@@ -18,15 +18,14 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+use anyhow::Result;
 use getopts::Options;
 use guardhaus::digest::{Digest, Username};
 use guardhaus::types::HashAlgorithm;
 use rpassword::prompt_password;
 use std::env;
 use std::fs::{File, OpenOptions};
-use std::io;
-use std::io::Write;
-use std::panic::panic_any;
+use std::io::{self, Write};
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} [options] passwdfile realm username", program);
@@ -41,36 +40,33 @@ fn open_passwdfile(path: String, create_passwdfile: bool) -> io::Result<File> {
     }
 }
 
-fn getpass(prompt: &str) -> String {
-    match prompt_password(prompt) {
-        Ok(password) => password,
-        Err(failure) => panic_any(failure.to_string()),
-    }
-}
-
-fn get_password() -> String {
-    let password = getpass("Enter password: ");
-    let confirmation = getpass("Re-enter password: ");
+fn get_password() -> Result<String> {
+    let password = prompt_password("Enter password: ")?;
+    let confirmation = prompt_password("Re-enter password: ")?;
     if password == confirmation {
-        password
+        Ok(password)
     } else {
         panic!("Passwords do not match")
     }
 }
 
-fn append_to_passwdfile(file: &mut File, username: &str, realm: &str, password: String) {
+fn append_to_passwdfile(
+    file: &mut File,
+    username: &str,
+    realm: &str,
+    password: String,
+) -> Result<()> {
     let hashed = Digest::simple_hashed_a1(
         &HashAlgorithm::Md5,
         Username::Plain(username.to_string()),
         realm.to_string(),
         password,
     );
-    if let Err(failure) = writeln!(file, "{}:{}:{}", username, realm, hashed) {
-        panic_any(failure.to_string())
-    }
+    writeln!(file, "{}:{}:{}", username, realm, hashed)?;
+    Ok(())
 }
 
-fn main() {
+fn main() -> Result<()> {
     let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
 
@@ -82,14 +78,10 @@ fn main() {
         "Create the passwdfile. If passwdfile already exists, it is deleted first.",
     );
 
-    let matches = match opts.parse(&args[1..]) {
-        Ok(opt) => opt,
-        Err(failure) => panic_any(failure.to_string()),
-    };
-
+    let matches = opts.parse(&args[1..])?;
     if matches.opt_present("h") {
         print_usage(&program, &opts);
-        return;
+        return Ok(());
     }
 
     let create_passwdfile = matches.opt_present("c");
@@ -98,13 +90,11 @@ fn main() {
         let passwdfile_path = matches.free[0].clone();
         let realm = matches.free[1].as_ref();
         let username = matches.free[2].as_ref();
-        match open_passwdfile(passwdfile_path, create_passwdfile) {
-            Ok(mut passwdfile) => {
-                append_to_passwdfile(&mut passwdfile, username, realm, get_password())
-            }
-            Err(failure) => panic_any(failure.to_string()),
-        }
+        let mut passwdfile = open_passwdfile(passwdfile_path, create_passwdfile)?;
+        append_to_passwdfile(&mut passwdfile, username, realm, get_password()?)?;
     } else {
         print_usage(&program, &opts);
     }
+
+    Ok(())
 }

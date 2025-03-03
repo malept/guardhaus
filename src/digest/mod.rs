@@ -87,6 +87,15 @@ pub struct Digest {
     pub userhash: bool,
 }
 
+macro_rules! ensure_ok {
+    ($expr: expr) => {
+        match $expr {
+            Ok(value) => value,
+            Err(_) => return Err(headers::Error::invalid()),
+        }
+    };
+}
+
 impl Credentials for Digest {
     const SCHEME: &'static str = "Digest";
 
@@ -151,18 +160,15 @@ fn parse_username(map: &HashMap<UniCase<String>, String>) -> Result<Username, Er
             }
         }
 
-        if let Ok(extended_value) = encoded.parse() {
-            Ok(Username::Encoded(extended_value))
-        } else {
-            Err(Error::invalid())
-        }
+        let extended_value = ensure_ok!(encoded.parse());
+        Ok(Username::Encoded(extended_value))
     } else {
         Err(Error::invalid())
     }
 }
 
 macro_rules! unravel_map_value {
-    ($map: ident, $param_name:literal) => {
+    ($map: ident, $param_name: literal) => {
         match unraveled_map_value(&$map, $param_name) {
             Some(value) => value,
             None => return Err(Error::invalid()),
@@ -177,18 +183,12 @@ impl FromStr for Digest {
         let username: Username = parse_username(&param_map)?;
         let realm: String = unravel_map_value!(param_map, "realm");
         let nonce: String = unravel_map_value!(param_map, "nonce");
-        let nonce_count = match NonceCount::from_parameters(&param_map) {
-            Ok(c) => c,
-            Err(_) => return Err(Error::invalid()),
-        };
+        let nonce_count = ensure_ok!(NonceCount::from_parameters(&param_map));
         let response: String = unravel_map_value!(param_map, "response");
         let request_uri: String = unravel_map_value!(param_map, "uri");
         let algorithm: HashAlgorithm =
             if let Some(value) = unraveled_map_value(&param_map, "algorithm") {
-                match HashAlgorithm::from_str(&value[..]) {
-                    Ok(converted) => converted,
-                    Err(_) => return Err(Error::invalid()),
-                }
+                ensure_ok!(HashAlgorithm::from_str(&value[..]))
             } else {
                 HashAlgorithm::Md5
             };
@@ -212,10 +212,7 @@ impl FromStr for Digest {
         } else {
             false
         };
-        let qop = match Qop::from_parameters(&param_map) {
-            Ok(val) => val,
-            Err(_) => return Err(headers::Error::invalid()),
-        };
+        let qop = ensure_ok!(Qop::from_parameters(&param_map));
         Ok(Digest {
             username,
             realm,
@@ -324,11 +321,8 @@ impl Digest {
     /// To see how an A1 value is constructed, see
     /// [RFC 7616, section 3.4.2](https://tools.ietf.org/html/rfc7616#section-3.4.2).
     fn hashed_a1(&self, username: Username, password: String) -> Result<String, Error> {
-        if let Ok(a1) = self.a1(username, password) {
-            Ok(self.algorithm.hex_digest(a1.as_slice()))
-        } else {
-            Err(Error::invalid())
-        }
+        let a1 = ensure_ok!(self.a1(username, password));
+        Ok(self.algorithm.hex_digest(a1.as_slice()))
     }
 
     // RFC 7616, Section 3.4.3
@@ -361,11 +355,8 @@ impl Digest {
         username: Username,
         password: String,
     ) -> Result<String, Error> {
-        if let Ok(a1) = self.hashed_a1(username, password) {
-            self.using_hashed_a1(method, entity_body, a1)
-        } else {
-            Err(Error::invalid())
-        }
+        let a1 = ensure_ok!(self.hashed_a1(username, password));
+        self.using_hashed_a1(method, entity_body, a1)
     }
 
     /// Generates a digest, given an HTTP request and a password.
@@ -378,11 +369,8 @@ impl Digest {
         entity_body: &[u8],
         password: String,
     ) -> Result<String, Error> {
-        if let Ok(a1) = self.hashed_a1(self.username.clone(), password) {
-            self.using_hashed_a1(method, entity_body, a1)
-        } else {
-            Err(Error::invalid())
-        }
+        let a1 = ensure_ok!(self.hashed_a1(self.username.clone(), password));
+        self.using_hashed_a1(method, entity_body, a1)
     }
 
     /// Generates a digest, given an HTTP request and a hexadecimal digest of an A1 string.

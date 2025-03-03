@@ -389,30 +389,30 @@ fn test_simple_hashed_a1() {
 }
 
 #[test]
-fn test_a1() {
+fn test_a1() -> Result<(), headers::Error> {
     let digest = rfc2069_a1_digest_header();
     let password = "CircleOfLife".to_owned();
     let expected = "Mufasa:testrealm@host.com:CircleOfLife"
         .to_owned()
         .into_bytes();
-    let a1 = digest.a1(digest.username.clone(), password);
-    assert!(a1.is_ok());
-    assert_eq!(expected, a1.unwrap())
+    let a1 = digest.a1(digest.username.clone(), password)?;
+    assert_eq!(expected, a1);
+    Ok(())
 }
 
 #[test]
-fn test_a1_for_md5_sess() {
+fn test_a1_for_md5_sess() -> Result<(), headers::Error> {
     let digest = rfc2617_digest_header(HashAlgorithm::Md5Session);
     let password = "Circle Of Life".to_owned();
-    let a1 = digest.a1(digest.username.clone(), password);
-    assert!(a1.is_ok());
+    let a1 = digest.a1(digest.username.clone(), password)?;
     let expected = format!(
         "939e7578ed9e3c518a452acee763bce9:{}:{}",
         digest.nonce,
         digest.client_nonce.unwrap()
     )
     .into_bytes();
-    assert_eq!(expected, a1.unwrap())
+    assert_eq!(expected, a1);
+    Ok(())
 }
 
 #[test]
@@ -425,12 +425,12 @@ fn test_a1_for_md5_sess_without_client_nonce() {
 }
 
 #[test]
-fn test_hashed_a1() {
+fn test_hashed_a1() -> Result<(), headers::Error> {
     let digest = rfc2069_a1_digest_header();
     let expected = "939e7578ed9e3c518a452acee763bce9";
-    let hashed_a1 = digest.hashed_a1(digest.username.clone(), "Circle Of Life".to_owned());
-    assert!(hashed_a1.is_ok());
-    assert_eq!(expected, hashed_a1.unwrap())
+    let hashed_a1 = digest.hashed_a1(digest.username.clone(), "Circle Of Life".to_owned())?;
+    assert_eq!(expected, hashed_a1);
+    Ok(())
 }
 
 #[test]
@@ -459,7 +459,7 @@ fn test_hashed_a2() {
 }
 
 #[test]
-fn test_from_header() {
+fn test_from_header() -> Result<(), headers::Error> {
     let password = "CircleOfLife".to_owned();
     let header = parse_digest_header(
         "Digest \
@@ -471,13 +471,13 @@ fn test_from_header() {
             opaque=\"5ccc069c403ebaf9f0171e9517f40e41\"",
     );
 
-    let hex_digest = header.using_password(Method::GET, b"", password);
-    assert!(hex_digest.is_ok());
-    assert_eq!(header.response, hex_digest.unwrap())
+    let hex_digest = header.using_password(Method::GET, b"", password)?;
+    assert_eq!(header.response, hex_digest);
+    Ok(())
 }
 
 #[test]
-fn test_from_passport_http_header() {
+fn test_from_passport_http_header() -> Result<(), headers::Error> {
     let password = "secret".to_owned();
     let header = parse_digest_header(
         "Digest username=\"bob\", realm=\"Users\", \
@@ -485,9 +485,9 @@ fn test_from_passport_http_header() {
                                       response=\"22e3e0a9bbefeb9d229905230cb9ddc8\"",
     );
 
-    let hex_digest = header.using_password(Method::HEAD, b"", password);
-    assert!(hex_digest.is_ok());
-    assert_eq!(header.response, hex_digest.unwrap())
+    let hex_digest = header.using_password(Method::HEAD, b"", password)?;
+    assert_eq!(header.response, hex_digest);
+    Ok(())
 }
 
 #[test]
@@ -500,36 +500,36 @@ fn test_using_password_and_md5_session_sans_client_nonce() {
 }
 
 #[test]
-fn test_using_password_and_sha256() {
+fn test_using_password_and_sha256() -> Result<(), headers::Error> {
     let password = "Circle of Life".to_owned();
     let digest = rfc7616_digest_header(
         HashAlgorithm::Sha256,
         "753927fa0e85d155564e2e272a28d1802ca10daf4496794697cf8db58\
                                         56cb6c1",
     );
-    let hex_digest = digest.using_password(Method::GET, b"", password);
-    assert!(hex_digest.is_ok());
-    assert_eq!(digest.response, hex_digest.unwrap())
+    let hex_digest = digest.using_password(Method::GET, b"", password)?;
+    assert_eq!(digest.response, hex_digest);
+    Ok(())
 }
 
 #[test]
-fn test_using_hashed_a1() {
+fn test_using_hashed_a1() -> Result<(), headers::Error> {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let digest = rfc2617_digest_header(HashAlgorithm::Md5);
-    let hex_digest = digest.using_hashed_a1(Method::GET, b"", hashed_a1);
-    assert!(hex_digest.is_ok());
-    assert_eq!(digest.response, hex_digest.unwrap())
+    let hex_digest = digest.using_hashed_a1(Method::GET, b"", hashed_a1)?;
+    assert_eq!(digest.response, hex_digest);
+    Ok(())
 }
 
 #[test]
-fn test_using_hashed_a1_with_auth_int_qop() {
+fn test_using_hashed_a1_with_auth_int_qop() -> Result<(), headers::Error> {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let expected = "7b9be1c2def9d4ad657b26ac8bc651a0".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::Md5);
     digest.qop = Some(Qop::AuthInt);
-    let hex_digest = digest.using_hashed_a1(Method::GET, b"foo=bar", hashed_a1);
-    assert!(hex_digest.is_ok());
-    assert_eq!(expected, hex_digest.unwrap())
+    let hex_digest = digest.using_hashed_a1(Method::GET, b"foo=bar", hashed_a1)?;
+    assert_eq!(expected, hex_digest);
+    Ok(())
 }
 
 #[test]
@@ -553,14 +553,14 @@ fn test_using_hashed_a1_with_auth_int_qop_sans_client_nonce() {
 }
 
 #[test]
-fn test_using_hashed_a1_sans_qop() {
+fn test_using_hashed_a1_sans_qop() -> Result<(), headers::Error> {
     let hashed_a1 = "939e7578ed9e3c518a452acee763bce9".to_owned();
     let expected = "670fd8c2df070c60b045671b8b24ff02".to_owned();
     let mut digest = rfc2617_digest_header(HashAlgorithm::Md5);
     digest.qop = None;
-    let hex_digest = digest.using_hashed_a1(Method::GET, b"", hashed_a1);
-    assert!(hex_digest.is_ok());
-    assert_eq!(expected, hex_digest.unwrap())
+    let hex_digest = digest.using_hashed_a1(Method::GET, b"", hashed_a1)?;
+    assert_eq!(expected, hex_digest);
+    Ok(())
 }
 
 #[test]

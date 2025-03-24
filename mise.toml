@@ -4,11 +4,19 @@ cargo-machete = "ubi:bnjbvr/cargo-machete"
 [tools]
 actionlint = "latest"
 
-[tasks."docs:http"]
-description = "Build Rust docs & run static HTTP server for them"
-run = ["cargo doc", "python3 -m http.server --directory target/doc 1338"]
+[tasks."docs:build"]
+description = "Build Rust docs"
+run = "cargo doc"
 sources = ["Cargo.toml", "src/**/*.rs"]
 outputs = ["target/doc/**/*.html"]
+
+[tasks."docs"]
+description = "Build Rust docs and run static HTTP server for them"
+depends = ["docs:*"]
+
+[tasks."docs:http"]
+description = "Run static HTTP server for built Rust docs"
+run = ["python3 -m http.server --directory target/doc 1338"]
 
 [tasks."example-server:curl"]
 description = "Call example server via curl"

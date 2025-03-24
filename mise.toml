@@ -22,13 +22,7 @@ outputs = ["target/debug/examples/server"]
 
 [tasks.lint]
 description = "Lint project"
-depends = [
-  "lint:clippy",
-  "lint:rust-unused-deps",
-  "lint:rustfmt",
-  "lint:taplo",
-  "lint:taplo-format",
-]
+depends = ["lint:*"]
 
 [tasks."lint:clippy"]
 description = "Lints Rust files with Clippy"

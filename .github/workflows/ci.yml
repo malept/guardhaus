@@ -16,19 +16,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          override: true
-          profile: minimal
-          toolchain: stable
+          experimental: true
 
-      - name: Run cargo check
-        uses: actions-rs/cargo@v1
-        with:
-          command: check
+      - name: Run 'cargo check'
+        run: cargo check
 
   test:
     name: Test Suite
@@ -38,45 +34,36 @@ jobs:
         os: [macOS, windows]
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          override: true
-          profile: minimal
-          toolchain: stable
+          experimental: true
 
       - name: Run Tests
-        uses: actions-rs/cargo@v1
-        with:
-          command: test
+        run: mise run test
 
   coverage:
     name: Test Suite (Linux, Code Coverage)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          override: true
-          profile: minimal
-          toolchain: stable
+          experimental: true
 
       - name: Run cargo-tarpaulin
-        uses: actions-rs/tarpaulin@v0.1
-        with:
-          version: '0.14.2'
-          args: '-- --test-threads 1'
+        run: mise run test:coverage
 
       - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
 
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v1
+        uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report
           path: cobertura.xml
@@ -118,24 +105,16 @@ jobs:
           sudo dpkg --add-architecture i386
           sudo apt update
           sudo apt-get install --yes --no-install-recommends libssl-dev:i386
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
+      - uses: actions/checkout@v4
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          override: true
-          profile: minimal
-          target: ${{ matrix.target }}
-          toolchain: stable
-      - name: Install Cross 0.1.x
+          experimental: true
+      - name: Install Cross 0.2.x
         if: matrix.cross == true
-        uses: actions-rs/cargo@v1
-        with:
-          command: install
-          args: cross --version 0.1.16
-      - uses: actions-rs/cargo@v1
-        with:
-          use-cross: ${{ matrix.cross }}
-          command: build
-          args: --release --target=${{ matrix.target }}
+        run: cargo install cross --version 0.2.5
+      - name: Build with Cross
+        run: cross build --release --target ${{ matrix.target }}
         env:
           PKG_CONFIG_ALLOW_CROSS: 1
 
@@ -144,50 +123,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
-          components: rustfmt, clippy
+          experimental: true
 
-      - name: rustfmt
-        uses: mbrobbel/rustfmt-check@b8caf241958773f7f6b0fba68879316da6be821d
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Clippy
-        uses: actions-rs/clippy-check@v1
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          args: --all-features -- -D warnings
+      - name: Run linters
+        run: mise run lint
 
   docs:
     name: Docs
     runs-on: ubuntu-latest
     steps:
       - name: Checkout sources
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Fetch all git branches
         run: git fetch --no-tags --prune --depth=1 origin +refs/heads/*:refs/remotes/origin/*
 
-      - name: Install stable toolchain
-        uses: actions-rs/toolchain@v1
+      - name: Install Rust via mise
+        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
-          profile: minimal
-          toolchain: stable
-          override: true
+          experimental: true
 
       - name: Build docs
-        uses: actions-rs/cargo@v1
-        with:
-          command: doc
+        run: cargo doc
+
       - name: Publish to GitHub Pages
-        uses: docker://malept/gha-gh-pages:1.2.0
+        uses: malept/github-action-gh-pages@v1.4.0
         if: github.event_name == 'push'
         with:
           defaultBranch: main

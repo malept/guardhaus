@@ -1,8 +1,13 @@
 [alias]
 cargo-machete = "ubi:bnjbvr/cargo-machete"
+cargo-nextest = "aqua:nextest-rs/nextest/cargo-nextest"
+cargo-tarpaulin = "cargo:cargo-tarpaulin"
+cross = "ubi:cross-rs/cross"
 
 [tools]
 actionlint = "latest"
+cross = "latest"
+rust = "stable"
 
 [tasks."docs:build"]
 description = "Build Rust docs"
@@ -54,3 +59,13 @@ run = "taplo lint"
 tools.taplo = "latest"
 description = "Checks if TOML files are formatted correctly"
 run = "taplo format --check --diff"
+
+[tasks.test]
+tools.cargo-nextest = "latest"
+description = "Run Rust tests"
+run = "cargo nextest run"
+
+[tasks."test:coverage"]
+tools.cargo-tarpaulin = "latest"
+description = "Run test coverage via tarpaulin"
+run = "cargo tarpaulin"

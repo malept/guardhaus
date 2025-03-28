@@ -47,6 +47,8 @@ jobs:
 
       - name: Run Tests
         run: mise run test
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   coverage:
     name: Test Suite (Linux, Code Coverage)
@@ -65,9 +67,13 @@ jobs:
       # Should speed up cargo-tarpaulin installation
       - name: Install cargo-binstall
         run: mise use cargo-binstall
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run cargo-tarpaulin
         run: mise run test:coverage
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
@@ -147,6 +153,8 @@ jobs:
 
       - name: Run linters
         run: mise run lint
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   docs:
     name: Docs

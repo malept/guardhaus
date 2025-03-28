@@ -63,7 +63,7 @@ run = "taplo format --check --diff"
 [tasks.test]
 tools.cargo-nextest = "latest"
 description = "Run Rust tests"
-run = "cargo nextest run"
+run = "cargo nextest run --no-fail-fast"
 
 [tasks."test:coverage"]
 tools.cargo-tarpaulin = "latest"

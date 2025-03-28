@@ -132,6 +132,8 @@ jobs:
             "ubi:cross-rs/cross" = "0.1"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Ensure target is installed
+        run: rustup target add ${{ matrix.target }}
       - name: Build with Cross
         run: cross build --release --target ${{ matrix.target }}
         env:

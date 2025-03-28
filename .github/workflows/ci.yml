@@ -126,14 +126,13 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+          install_args: --force
           mise_toml: |
             [tools]
             rust = { version = "stable", profile = "minimal", targets = "${{ matrix.target }}" }
             "ubi:cross-rs/cross" = "0.1"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Ensure target is installed
-        run: rustup target add ${{ matrix.target }}
       - name: Build with Cross
         run: cross build --release --target ${{ matrix.target }}
         env:

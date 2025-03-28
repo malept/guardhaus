@@ -122,7 +122,7 @@ jobs:
           experimental: true
           mise_toml: |
             [tools]
-            rust = "stable"
+            rust = { version = "stable", profile = "minimal", targets = "${{ matrix.target }}" }
             "ubi:cross-rs/cross" = "0.1"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

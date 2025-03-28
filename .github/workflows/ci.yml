@@ -22,6 +22,8 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run 'cargo check'
         run: cargo check
@@ -40,6 +42,8 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Tests
         run: mise run test
@@ -55,6 +59,8 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Should speed up cargo-tarpaulin installation
       - name: Install cargo-binstall
@@ -118,6 +124,8 @@ jobs:
             [tools]
             rust = "stable"
             "ubi:cross-rs/cross" = "0.1"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Build with Cross
         run: cross build --release --target ${{ matrix.target }}
         env:
@@ -134,6 +142,8 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run linters
         run: mise run lint
@@ -152,6 +162,8 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build docs
         run: cargo doc

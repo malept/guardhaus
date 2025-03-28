@@ -56,6 +56,10 @@ jobs:
         with:
           experimental: true
 
+      # Should speed up cargo-tarpaulin installation
+      - name: Install cargo-binstall
+        run: mise use cargo-binstall
+
       - name: Run cargo-tarpaulin
         run: mise run test:coverage
 

@@ -6,7 +6,7 @@ cross = "ubi:cross-rs/cross"
 
 [tools]
 actionlint = "latest"
-cross = "latest"
+cross = "0.1"
 rust = "stable"
 
 [tasks."docs:build"]

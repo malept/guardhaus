@@ -2,11 +2,9 @@
 cargo-machete = "ubi:bnjbvr/cargo-machete"
 cargo-nextest = "aqua:nextest-rs/nextest/cargo-nextest"
 cargo-tarpaulin = "cargo:cargo-tarpaulin"
-cross = "ubi:cross-rs/cross"
 
 [tools]
 actionlint = "latest"
-cross = "0.1"
 rust = "stable"
 
 [tasks."docs:build"]

@@ -114,9 +114,10 @@ jobs:
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
         with:
           experimental: true
-      - name: Install Cross 0.2.x
-        if: matrix.cross == true
-        run: cargo install cross --version 0.2.5
+          mise_toml: |
+            [tools]
+            rust = "stable"
+            "ubi:cross-rs/cross" = "0.1"
       - name: Build with Cross
         run: cross build --release --target ${{ matrix.target }}
         env:

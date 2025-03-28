@@ -66,4 +66,4 @@ run = "cargo nextest run --no-fail-fast"
 [tasks."test:coverage"]
 tools.cargo-tarpaulin = "latest"
 description = "Run test coverage via tarpaulin"
-run = "cargo tarpaulin"
+run = "cargo tarpaulin --out xml"

@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["Username","Represents a `username` (or user hash, if the header’s `userhash` parameter is `true`)."]],"struct":[["Digest","Parameters for the `Authorization` header when using the `Digest` scheme."]]});
+window.SIDEBAR_ITEMS = {"enum":["Username"],"struct":["Digest"]};

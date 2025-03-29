@@ -1,1 +1,1 @@
-initSidebarItems({"mod":[["authentication_info","An implementation of the `Authentication-Info` header."],["digest","An HTTP Digest implementation for Hyper’s `Authorization` header."],["types","Common authentication types."]]});
+window.SIDEBAR_ITEMS = {"mod":["authentication_info","digest","types"]};

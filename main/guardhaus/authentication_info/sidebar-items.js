@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["AuthenticationInfo","Parameters for the `Authentication-Info` header."]]});
+window.SIDEBAR_ITEMS = {"struct":["AuthenticationInfo"]};

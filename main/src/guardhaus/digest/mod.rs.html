@@ -474,7 +474,13 @@
 <a href="#473" id="473">473</a>
 <a href="#474" id="474">474</a>
 <a href="#475" id="475">475</a>
-<a href="#476" id="476">476</a></pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2015, 2016, 2017, 2020, 2025 Mark Lee
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a></pre></div><pre class="rust"><code><span class="comment">// Copyright (c) 2015, 2016, 2017, 2020, 2025 Mark Lee
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -499,8 +505,8 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::parsing::fromheaders::{Charset, ExtendedValue};
 <span class="kw">use </span><span class="kw">crate</span>::parsing::{DigestParameters, parse_parameters, unraveled_map_value};
 <span class="kw">use </span><span class="kw">crate</span>::types::{HashAlgorithm, NonceCount, Qop};
-<span class="kw">use </span>headers::Error;
 <span class="kw">use </span>headers::authorization::Credentials;
+<span class="kw">use </span>headers::{Authorization, Error};
 <span class="kw">use </span>http::{HeaderValue, Method};
 <span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::fmt;
@@ -707,12 +713,18 @@
 }
 
 <span class="kw">impl </span>Digest {
+    <span class="doccomment">/// Returns a copy wrapped with an Authorization header.
+    </span><span class="kw">pub fn </span>to_header(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Authorization&lt;Digest&gt; {
+        Authorization(<span class="self">self</span>.clone())
+    }
+
     <span class="doccomment">/// Generates a userhash, as defined in
     /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
     </span><span class="kw">pub fn </span>userhash(algorithm: <span class="kw-2">&amp;</span>HashAlgorithm, username: Vec&lt;u8&gt;, realm: String) -&gt; String {
-        <span class="kw">let </span><span class="kw-2">mut </span>to_hash = username;
+        <span class="kw">let </span><span class="kw-2">mut </span>to_hash = username.clone();
         to_hash.push(<span class="string">b':'</span>);
         to_hash.append(<span class="kw-2">&amp;mut </span>realm.into_bytes());
+        <span class="macro">println!</span>(<span class="string">"value: {:?}"</span>, std::str::from_utf8(<span class="kw-2">&amp;</span>to_hash));
         algorithm.hex_digest(to_hash.as_slice())
     }
 

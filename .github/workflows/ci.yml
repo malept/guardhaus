@@ -30,6 +30,7 @@ jobs:
 
   test:
     name: Test Suite
+    needs: [check]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -53,6 +54,7 @@ jobs:
 
   coverage:
     name: Test Suite (Linux, Code Coverage)
+    needs: [check]
     strategy:
       matrix:
         os: [ubuntu-24.04, ubuntu-24.04-arm]
@@ -91,6 +93,7 @@ jobs:
   build:
     name: Build Only
     runs-on: ${{ matrix.os }}-latest
+    needs: [check]
     strategy:
       matrix:
         include:

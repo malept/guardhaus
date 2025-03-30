@@ -23,8 +23,8 @@
 use crate::parsing::fromheaders::{Charset, ExtendedValue};
 use crate::parsing::{DigestParameters, parse_parameters, unraveled_map_value};
 use crate::types::{HashAlgorithm, NonceCount, Qop};
-use headers::Error;
 use headers::authorization::Credentials;
+use headers::{Authorization, Error};
 use http::{HeaderValue, Method};
 use std::collections::HashMap;
 use std::fmt;
@@ -231,12 +231,18 @@ impl FromStr for Digest {
 }
 
 impl Digest {
+    /// Returns a copy wrapped with an Authorization header.
+    pub fn to_header(&self) -> Authorization<Digest> {
+        Authorization(self.clone())
+    }
+
     /// Generates a userhash, as defined in
     /// [RFC 7616, section 3.4.4](https://tools.ietf.org/html/rfc7616#section-3.4.4).
     pub fn userhash(algorithm: &HashAlgorithm, username: Vec<u8>, realm: String) -> String {
-        let mut to_hash = username;
+        let mut to_hash = username.clone();
         to_hash.push(b':');
         to_hash.append(&mut realm.into_bytes());
+        println!("value: {:?}", std::str::from_utf8(&to_hash));
         algorithm.hex_digest(to_hash.as_slice())
     }
 

@@ -30,6 +30,7 @@ jobs:
 
   test:
     name: Test Suite
+    needs: [check]
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -53,6 +54,7 @@ jobs:
 
   coverage:
     name: Test Suite (Linux, Code Coverage)
+    needs: [check]
     strategy:
       matrix:
         os: [ubuntu-24.04, ubuntu-24.04-arm]
@@ -91,40 +93,27 @@ jobs:
   build:
     name: Build Only
     runs-on: ${{ matrix.os }}-latest
+    needs: [check]
     strategy:
       matrix:
         include:
           - os: ubuntu
             target: aarch64-linux-android
-            cross: true
           - os: ubuntu
             target: arm-linux-androideabi
-            cross: true
           - os: ubuntu
             target: armv7-unknown-linux-gnueabihf
-            cross: true
           - os: ubuntu
             target: powerpc64-unknown-linux-gnu
-            cross: true
           - os: ubuntu
             target: x86_64-unknown-linux-musl
-            cross: true
           - os: ubuntu
             target: i686-unknown-linux-gnu
-            cross: false
           - os: macOS
             target: aarch64-apple-ios
-            cross: false
           - os: macOS
             target: x86_64-apple-ios
-            cross: false
     steps:
-      - name: Install OpenSSL (32-bit)
-        if: matrix.target == 'i686-unknown-linux-gnu'
-        run: |
-          sudo dpkg --add-architecture i386
-          sudo apt update
-          sudo apt-get install --yes --no-install-recommends libssl-dev:i386
       - uses: actions/checkout@v4
       - name: Install Rust via mise
         uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
@@ -133,7 +122,7 @@ jobs:
           mise_toml: |
             [tools]
             rust = { version = "stable", profile = "minimal", targets = "${{ matrix.target }}" }
-            "ubi:cross-rs/cross" = "0.1"
+            "ubi:cross-rs/cross" = "0.2"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Ensure target is installed

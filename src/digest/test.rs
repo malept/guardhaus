@@ -335,8 +335,11 @@ fn test_fmt_scheme_with_extended_username() {
 }
 
 #[test]
-fn test_userhash() {
-    let expected = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
+fn userhash_with_extended_value_username_and_sha256512() {
+    // From: RFC 7616, Section 3.9.2
+    // https://datatracker.ietf.org/doc/html/rfc7616#section-3.9.2
+    // Expected hash from: https://www.rfc-editor.org/errata/eid4897
+    let expected = "793263caabb707a56211940d90411ea4a575adeccb7e360aeb624ed06ece9b0b".to_owned();
     if let Username::Encoded(username) = rfc7616_username() {
         let actual = Digest::userhash(
             &HashAlgorithm::Sha512256,
@@ -351,7 +354,7 @@ fn test_userhash() {
 
 #[test]
 fn test_validate_userhash() {
-    let userhash = "488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec".to_owned();
+    let userhash = "793263caabb707a56211940d90411ea4a575adeccb7e360aeb624ed06ece9b0b".to_owned();
     let digest = rfc7616_sha512_256_header(userhash, true);
 
     assert!(digest.validate_userhash(rfc7616_username()));
@@ -584,7 +587,9 @@ fn test_validate_using_password() {
 
 #[test]
 fn test_validate_using_encoded_username_and_password() {
-    // From RFC 7616
+    // From: RFC 7616, Section 3.9.2
+    // https://datatracker.ietf.org/doc/html/rfc7616#section-3.9.2
+    // Adjusted from errata: https://www.rfc-editor.org/errata/eid4897
     let password = "Secret, or not?".to_owned();
     let header = parse_digest_header(
         "Digest username*=UTF-8''J%C3%A4s%C3%B8n%20Doe, \
@@ -594,7 +599,7 @@ fn test_validate_using_encoded_username_and_password() {
                                       nc=00000001, \
                                       cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
                                       qop=auth, \
-                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
+                                      response=\"3798d4131c277846293534c3edc11bd8a5e4cdcbff78b05db9d95eeb1cec68a5\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       userhash=false",
     );
@@ -603,17 +608,19 @@ fn test_validate_using_encoded_username_and_password() {
 
 #[test]
 fn test_validate_using_userhash_and_password() {
-    // From RFC 7616
+    // From: RFC 7616, Section 3.9.2
+    // https://datatracker.ietf.org/doc/html/rfc7616#section-3.9.2
+    // Adjusted from errata: https://www.rfc-editor.org/errata/eid4897
     let password = "Secret, or not?".to_owned();
     let header = parse_digest_header(
-        "Digest username=\"488869477bf257147b804c45308cd62ac4e25eb717b12b298c79e62dcea254ec\", \
+        "Digest username=\"793263caabb707a56211940d90411ea4a575adeccb7e360aeb624ed06ece9b0b\", \
                                       realm=\"api@example.org\", uri=\"/doe.json\", \
                                       algorithm=SHA-512-256, \
                                       nonce=\"5TsQWLVdgBdmrQ0XsxbDODV+57QdFR34I9HAbC/RVvkK\", \
                                       nc=00000001, \
                                       cnonce=\"NTg6RKcb9boFIAS3KrFK9BGeh+iDa/sm6jUMp2wds69v\", \
                                       qop=auth, \
-                                      response=\"ae66e67d6b427bd3f120414a82e4acff38e8ecd9101d6c861229025f607a79dd\", \
+                                      response=\"3798d4131c277846293534c3edc11bd8a5e4cdcbff78b05db9d95eeb1cec68a5\", \
                                       opaque=\"HRPCssKJSGjCrkzDg8OhwpzCiGPChXYjwrI2QmXDnsOS\", \
                                       charset=UTF-8, userhash=true",
     );

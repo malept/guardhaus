@@ -134,12 +134,15 @@ pub fn rfc2617_digest_header(algorithm: HashAlgorithm) -> Digest {
     }
 }
 
+// See: RFC 7616, Section 3.9.2
+// https://datatracker.ietf.org/doc/html/rfc7616#section-3.9.2
 pub fn rfc7616_username() -> Username {
     let result: Result<ExtendedValue, headers::Error> = "UTF-8''J%C3%A4s%C3%B8n%20Doe".parse();
     Username::Encoded(result.expect("Could not parse extended value"))
 }
 
 // See: RFC 7616, Section 3.9.1
+// https://datatracker.ietf.org/doc/html/rfc7616#section-3.9.1
 pub fn rfc7616_digest_header(algorithm: HashAlgorithm, response: &str) -> Digest {
     Digest {
         username: rfc2069_username(),

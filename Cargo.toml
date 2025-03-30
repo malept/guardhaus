@@ -35,3 +35,7 @@ tokio = { version = "1.43.0", features = ["macros", "rt-multi-thread"] }
 
 [lints.clippy]
 pedantic = "allow"
+
+[package.metadata.cargo-machete]
+# This is because the crate name does not match the library name (md5)
+ignored = ["md-5"]

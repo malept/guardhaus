@@ -21,8 +21,7 @@
 //! Common authentication types.
 
 use crate::parsing::unraveled_map_value;
-use crypto_hash;
-use hex::FromHex;
+use digest::Digest;
 use std::collections::HashMap;
 use std::fmt;
 use std::str::FromStr;
@@ -90,25 +89,18 @@ impl fmt::Display for HashAlgorithm {
 }
 
 impl HashAlgorithm {
-    fn to_algorithm(&self) -> crypto_hash::Algorithm {
-        match *self {
-            HashAlgorithm::Md5 | HashAlgorithm::Md5Session => crypto_hash::Algorithm::MD5,
-            HashAlgorithm::Sha256 | HashAlgorithm::Sha256Session => crypto_hash::Algorithm::SHA256,
-            HashAlgorithm::Sha512256 | HashAlgorithm::Sha512256Session => {
-                crypto_hash::Algorithm::SHA512
-            }
-        }
-    }
-
     /// Generate a hexadecimal representation of the output of a cryptographic hash function, given
     /// `data` and the algorithm.
     pub fn hex_digest(&self, data: &[u8]) -> String {
-        let mut digest = crypto_hash::hex_digest(self.to_algorithm(), data);
-        if *self == HashAlgorithm::Sha512256 || *self == HashAlgorithm::Sha256Session {
-            digest.truncate(64);
+        match self {
+            Self::Md5 | Self::Md5Session => base16ct::lower::encode_string(&md5::Md5::digest(data)),
+            Self::Sha256 | Self::Sha256Session => {
+                base16ct::lower::encode_string(&sha2::Sha256::digest(data))
+            }
+            Self::Sha512256 | Self::Sha512256Session => {
+                base16ct::lower::encode_string(&sha2::Sha512_256::digest(data))
+            }
         }
-
-        digest
     }
 }
 
@@ -119,7 +111,7 @@ pub struct NonceCount(pub u32);
 impl FromStr for NonceCount {
     type Err = AuthorizationError;
     fn from_str(s: &str) -> Result<NonceCount, AuthorizationError> {
-        match Vec::from_hex(s) {
+        match base16ct::mixed::decode_vec(s) {
             Ok(bytes) => {
                 let mut count: u32 = 0;
                 count |= (bytes[0] as u32) << 24;

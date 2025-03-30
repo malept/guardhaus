@@ -194,3 +194,36 @@ impl Qop {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::HashAlgorithm;
+
+    #[test]
+    fn hash_algorithm_hex_digest_md5() {
+        // From: https://en.wikipedia.org/wiki/MD5#MD5_hashes
+        let data = "The quick brown fox jumps over the lazy dog";
+        assert_eq!(
+            HashAlgorithm::Md5.hex_digest(data.as_bytes()),
+            String::from("9e107d9d372bb6826bd81d3542a419d6")
+        )
+    }
+
+    #[test]
+    fn hash_algorithm_hex_digest_sha256() {
+        // From: https://en.wikipedia.org/wiki/SHA-2#Test_vectors
+        assert_eq!(
+            HashAlgorithm::Sha256.hex_digest("".as_bytes()),
+            String::from("e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855")
+        )
+    }
+
+    #[test]
+    fn hash_algorithm_hex_digest_sha512256() {
+        // From: https://en.wikipedia.org/wiki/SHA-2#Test_vectors
+        assert_eq!(
+            HashAlgorithm::Sha512256.hex_digest("".as_bytes()),
+            String::from("c672b8d1ef56ed28ab87c3622c5114069bdd3ad7b8f9737498d0c01ecef0967a")
+        )
+    }
+}

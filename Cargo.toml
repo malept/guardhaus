@@ -2,7 +2,7 @@ cargo-features = ["edition2024"]
 
 [package]
 name = "guardhaus"
-version = "0.0.16"
+version = "0.0.17"
 authors = ["Mark Lee"]
 description = "An HTTP authentication/authorization library."
 documentation = "https://malept.github.io/guardhaus/"

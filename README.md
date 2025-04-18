@@ -1,7 +1,7 @@
 # Guardhaus
 
-[![CI Status](https://github.com/malept/guardhaus/workflows/CI/badge.svg?branch=main)](https://github.com/malept/guardhaus/actions?query=workflow%3ACI)
-[![Coverage Status](https://coveralls.io/repos/malept/guardhaus/badge.svg?branch=main&service=github)](https://coveralls.io/github/malept/guardhaus?branch=main)
+[![CI](https://github.com/malept/guardhaus/actions/workflows/ci.yml/badge.svg)](https://github.com/malept/guardhaus/actions/workflows/ci.yml)
+[![Coverage Status](https://codecov.io/gh/malept/guardhaus/graph/badge.svg?token=dtyMhcbE2w)](https://codecov.io/gh/malept/guardhaus)
 
 Guardhaus is an HTTP authentication/authorization library, written in Rust.
 

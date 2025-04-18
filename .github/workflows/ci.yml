@@ -35,7 +35,7 @@ jobs:
     strategy:
       matrix:
         # macos-13 is Intel macOS, macos-latest is Apple Silicon macOS
-        os: [macos-13, macos-latest, windows-latest]
+        os: [macos-13, macos-latest, windows-latest, windows-11-arm]
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4

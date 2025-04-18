@@ -58,6 +58,7 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           files: target/nextest/ci/junit.xml
+          flags: ${{ matrix.os }}
 
   coverage:
     name: Test Suite (Linux, Code Coverage)

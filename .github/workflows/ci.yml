@@ -48,9 +48,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Tests
-        run: mise run test
+        run: mise run test:ci
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload test results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@f2dba722c67b86c6caa034178c6e4d35335f6706 #v1.1.0
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: target/nextest/ci/junit.xml
 
   coverage:
     name: Test Suite (Linux, Code Coverage)

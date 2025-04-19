@@ -1,3 +1,4 @@
 *.bk
 Cargo.lock
 target
+lcov.info

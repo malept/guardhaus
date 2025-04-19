@@ -64,6 +64,7 @@ description = "Run Rust tests"
 run = "cargo nextest run --no-fail-fast"
 
 [tasks."test:ci"]
+tools.cargo-nextest = "latest"
 description = "Run Rust tests via nextest with the ci profile"
 run = "cargo nextest run --no-fail-fast --profile ci"
 

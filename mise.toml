@@ -63,16 +63,12 @@ tools.cargo-nextest = "latest"
 description = "Run Rust tests"
 run = "cargo nextest run --no-fail-fast"
 
-[tasks."test:ci"]
-tools.cargo-nextest = "latest"
-description = "Run Rust tests via nextest with the ci profile"
-run = "cargo nextest run --no-fail-fast --profile ci"
-
 [tasks."test:coverage"]
 tools.cargo-llvm-cov = "latest"
+tools.cargo-nextest = "latest"
 description = "Run test coverage via cargo-llvm-cov"
 run = [
-  "cargo llvm-cov --no-report nextest",
+  "cargo llvm-cov --no-report nextest --no-fail-fast --profile ci",
   # No doctests yet because it's nightly-only
   "cargo llvm-cov report --lcov --output-path lcov.info",
 ]

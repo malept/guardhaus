@@ -1,11 +1,11 @@
 [alias]
+cargo-llvm-cov = "ubi:taiki-e/cargo-llvm-cov"
 cargo-machete = "ubi:bnjbvr/cargo-machete"
 cargo-nextest = "aqua:nextest-rs/nextest/cargo-nextest"
-cargo-tarpaulin = "cargo:cargo-tarpaulin"
 
 [tools]
 actionlint = "latest"
-rust = "stable"
+rust = { version = "stable", components = "llvm-tools-preview" }
 
 [tasks."docs:build"]
 description = "Build Rust docs"
@@ -69,6 +69,11 @@ description = "Run Rust tests via nextest with the ci profile"
 run = "cargo nextest run --no-fail-fast --profile ci"
 
 [tasks."test:coverage"]
-tools.cargo-tarpaulin = "latest"
-description = "Run test coverage via tarpaulin"
-run = "cargo tarpaulin --out xml"
+tools.cargo-llvm-cov = "latest"
+tools.cargo-nextest = "latest"
+description = "Run test coverage via cargo-llvm-cov"
+run = [
+  "cargo llvm-cov --no-report nextest --no-fail-fast --profile ci",
+  # No doctests yet because it's nightly-only
+  "cargo llvm-cov report --lcov --output-path lcov.info",
+]

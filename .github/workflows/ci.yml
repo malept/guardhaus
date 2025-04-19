@@ -34,8 +34,13 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        # macos-13 is Intel macOS, macos-latest is Apple Silicon macOS
-        os: [macos-13, macos-latest, windows-latest, windows-11-arm]
+        os:
+          - macos-13 # Intel
+          - macos-latest # Apple Silicon
+          - ubuntu-24.04
+          - ubuntu-24.04-arm
+          - windows-latest
+          - windows-11-arm
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
@@ -48,7 +53,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Tests
+        if: matrix.os == 'windows-11-arm'
         run: mise run test:ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Tests (Code coverage)
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
+        run: mise run test:coverage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -60,45 +72,18 @@ jobs:
           files: target/nextest/ci/junit.xml
           flags: ${{ matrix.os }}
 
-  coverage:
-    name: Test Suite (Linux, Code Coverage)
-    needs: [check]
-    strategy:
-      matrix:
-        os: [ubuntu-24.04, ubuntu-24.04-arm]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - name: Checkout sources
-        uses: actions/checkout@v4
-
-      - name: Install Rust via mise
-        uses: jdx/mise-action@5083fe46898c414b2475087cc79da59e7da859e8 # v2.1.11
-        with:
-          experimental: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Should speed up cargo-tarpaulin installation
-      - name: Install cargo-binstall
-        run: mise use cargo-binstall
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run cargo-tarpaulin
-        run: mise run test:coverage
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: Upload coverage to Codecov
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Archive code coverage results
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-${{ matrix.os }}
-          path: cobertura.xml
+          path: lcov.info
 
   build:
     name: Build Only

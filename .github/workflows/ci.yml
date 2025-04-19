@@ -53,6 +53,13 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Tests
+        if: matrix.os == 'windows-11-arm'
+        run: mise run test:ci
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Tests (Code coverage)
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
         run: mise run test:coverage
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -66,11 +73,13 @@ jobs:
           flags: ${{ matrix.os }}
 
       - name: Upload coverage to Codecov
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
         uses: codecov/codecov-action@0565863a31f2c772f9f0395002a31e3f06189574 # v5.4.0
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
       - name: Archive code coverage results
+        if: matrix.os != 'windows-11-arm' # cargo-llvm-cov doesn't have Windows/Arm support yet
         uses: actions/upload-artifact@v4
         with:
           name: code-coverage-report-${{ matrix.os }}

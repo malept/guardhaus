@@ -63,6 +63,10 @@ tools.cargo-nextest = "latest"
 description = "Run Rust tests"
 run = "cargo nextest run --no-fail-fast"
 
+[tasks."test:ci"]
+description = "Run Rust tests via nextest with the ci profile"
+run = "cargo nextest run --no-fail-fast --profile ci"
+
 [tasks."test:coverage"]
 tools.cargo-llvm-cov = "latest"
 tools.cargo-nextest = "latest"
